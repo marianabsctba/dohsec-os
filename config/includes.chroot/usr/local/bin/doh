@@ -1,0 +1,34 @@
+#!/bin/bash
+# doh - saudacao do D'OH!Sec OS: banner, uma frase e o resumo da maquina
+
+Y=$'\e[1;33m'; P=$'\e[38;5;205m'; B=$'\e[1;34m'; N=$'\e[0m'
+
+frases=(
+  "Mmm... patch aplicado."
+  "Senha forte e igual donut: ninguem divide."
+  "Se o SIEM apitou, nao e hora do lanche."
+  "Backup testado e o melhor donut do dia."
+  "Clicou no anexo? D'oh!"
+  "MFA ligado, cerveja gelada, tudo certo."
+  "Usina segura comeca no menor privilegio."
+  "Atualize hoje, durma tranquilo no sofa."
+)
+
+cat <<EOF
+${Y}  ____    ___  _   _ _
+ |  _ \\ _/ _ \\| | | | |
+ | | | | | | | | |_| | |
+ | |_| | | |_| |  _  |_|
+ |____/   \\___/|_| |_(_)${P}Sec OS${N}
+
+EOF
+
+printf "  ${P}\"%s\"${N}\n\n" "${frases[RANDOM % ${#frases[@]}]}"
+
+. /etc/os-release
+mem=$(free -h | awk '/^Mem:/ {print $3 " / " $2}')
+printf "  ${B}sistema${N}  %s\n" "$PRETTY_NAME"
+printf "  ${B}kernel${N}   %s\n" "$(uname -r)"
+printf "  ${B}host${N}     %s\n" "$(hostname)"
+printf "  ${B}ativo${N}    %s\n" "$(uptime -p | sed 's/^up //')"
+printf "  ${B}memoria${N}  %s\n\n" "$mem"

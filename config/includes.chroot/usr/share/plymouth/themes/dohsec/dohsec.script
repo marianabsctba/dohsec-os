@@ -1,0 +1,31 @@
+// Boot do D'OH!Sec OS: ceu amarelo, donut girando e as mensagens do sistema
+
+Window.SetBackgroundTopColor(1.00, 0.85, 0.30);
+Window.SetBackgroundBottomColor(1.00, 0.61, 0.19);
+
+cx = Window.GetX() + Window.GetWidth() / 2;
+cy = Window.GetY() + Window.GetHeight() / 2;
+
+donut.image = Image("donut.png");
+donut.sprite = Sprite(donut.image);
+donut.sprite.SetPosition(cx - donut.image.GetWidth() / 2, cy - donut.image.GetHeight() / 2 - 40, 1);
+
+title.image = Image.Text("D'OH!Sec OS", 0.09, 0.09, 0.09, 1, "Sans Bold 32");
+title.sprite = Sprite(title.image);
+title.sprite.SetPosition(cx - title.image.GetWidth() / 2, cy + donut.image.GetHeight() / 2, 2);
+
+msg.sprite = Sprite();
+angle = 0;
+
+fun refresh_cb() {
+  angle += 0.06;
+  donut.sprite.SetImage(donut.image.Rotate(angle));
+}
+Plymouth.SetRefreshFunction(refresh_cb);
+
+fun message_cb(text) {
+  msg.image = Image.Text(text, 0.09, 0.09, 0.09, 1, "Sans 14");
+  msg.sprite.SetImage(msg.image);
+  msg.sprite.SetPosition(cx - msg.image.GetWidth() / 2, cy + donut.image.GetHeight() / 2 + 60, 2);
+}
+Plymouth.SetMessageFunction(message_cb);

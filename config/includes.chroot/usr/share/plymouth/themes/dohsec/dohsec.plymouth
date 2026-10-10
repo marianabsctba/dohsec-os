@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=D'OH!Sec
+Description=Donut girando enquanto o sistema sobe
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/dohsec
+ScriptFile=/usr/share/plymouth/themes/dohsec/dohsec.script

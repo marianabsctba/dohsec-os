@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""donut - um donut 3D girando no terminal. Ctrl+C sai."""
+import math
+import shutil
+import sys
+import time
+
+LUZ = ".,-~:;=!*#$@"
+R1, R2, K2 = 1.0, 2.0, 5.0
+
+
+def quadro(a, b, larg, alt):
+    tela = [" "] * (larg * alt)
+    prof = [0.0] * (larg * alt)
+    escala = min(larg / 80, alt / 24)
+    kx, ky = 30 * escala, 15 * escala
+    ca, sa, cb, sb = math.cos(a), math.sin(a), math.cos(b), math.sin(b)
+
+    t = 0.0
+    while t < 2 * math.pi:
+        ct, st = math.cos(t), math.sin(t)
+        p = 0.0
+        while p < 2 * math.pi:
+            cp, sp = math.cos(p), math.sin(p)
+            cx, cy = R2 + R1 * ct, R1 * st
+            x = cx * (cb * cp + sa * sb * sp) - cy * ca * sb
+            y = cx * (sb * cp - sa * cb * sp) + cy * ca * cb
+            inv = 1 / (K2 + ca * cx * sp + cy * sa)
+            col = int(larg / 2 + kx * inv * x)
+            lin = int(alt / 2 - ky * inv * y)
+            brilho = cp * ct * sb - ca * ct * sp - sa * st + cb * (ca * st - ct * sa * sp)
+            if brilho > 0 and 0 <= col < larg and 0 <= lin < alt:
+                i = col + larg * lin
+                if inv > prof[i]:
+                    prof[i] = inv
+                    tela[i] = LUZ[min(int(brilho * 8), len(LUZ) - 1)]
+            p += 0.03
+        t += 0.08
+    return "\n".join("".join(tela[r * larg:(r + 1) * larg]) for r in range(alt))
+
+
+def main():
+    cols, rows = shutil.get_terminal_size((80, 24))
+    larg, alt = min(cols, 80), min(rows - 1, 24)
+    a = b = 0.0
+    sys.stdout.write("\x1b[?25l\x1b[2J")
+    try:
+        while True:
+            sys.stdout.write("\x1b[H\x1b[38;5;205m" + quadro(a, b, larg, alt) + "\x1b[0m")
+            sys.stdout.flush()
+            a += 0.07
+            b += 0.03
+            time.sleep(0.03)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        sys.stdout.write("\x1b[0m\x1b[?25h\n")
+
+
+if __name__ == "__main__":
+    main()

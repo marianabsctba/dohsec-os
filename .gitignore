@@ -1,0 +1,11 @@
+chroot/
+binary/
+cache/
+.build/
+*.iso
+*.log
+config/binary
+config/bootstrap
+config/chroot
+config/common
+config/source

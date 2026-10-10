@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=D'OH!Sec Session
+Exec=/usr/local/bin/dohsec-session
+OnlyShowIn=XFCE;
+NoDisplay=true

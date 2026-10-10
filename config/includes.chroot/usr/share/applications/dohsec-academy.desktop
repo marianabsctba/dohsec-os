@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=D'OH!Sec Academy
+Comment=Simulador de resposta a incidentes da usina
+Exec=firefox-esr --new-window file:///usr/share/dohsec/academy/index.html
+Icon=/usr/share/plymouth/themes/dohsec/donut.png
+Terminal=false
+Categories=Education;Security;

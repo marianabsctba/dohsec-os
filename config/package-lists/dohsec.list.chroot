@@ -1,0 +1,30 @@
+# Desktop
+xfce4
+xfce4-terminal
+xfce4-whiskermenu-plugin
+lightdm
+lightdm-gtk-greeter
+desktop-base
+network-manager-gnome
+
+# Navegador que roda a D'OH!Sec Academy
+firefox-esr
+firefox-esr-l10n-pt-br
+
+# Boot tematizado
+plymouth
+plymouth-label
+plymouth-themes
+
+# Usados pelo hook de branding e pelos comandos doh/donut
+librsvg2-bin
+librsvg2-common
+python3
+
+# Base
+sudo
+locales
+console-setup
+keyboard-configuration
+fonts-dejavu
+fonts-noto-color-emoji

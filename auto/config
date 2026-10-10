@@ -1,0 +1,15 @@
+#!/bin/sh
+# Configuracao do live-build do D'OH!Sec OS (Debian 13 trixie, amd64)
+set -e
+
+lb config noauto \
+  --distribution trixie \
+  --archive-areas "main contrib non-free non-free-firmware" \
+  --debian-installer none \
+  --memtest none \
+  --image-name dohsec-os \
+  --iso-application "DOHSec OS" \
+  --iso-publisher "Be Safe Inc." \
+  --iso-volume "DOHSEC_OS" \
+  --bootappend-live "boot=live components quiet splash username=homer hostname=springfield locales=pt_BR.UTF-8 keyboard-layouts=br timezone=America/Sao_Paulo" \
+  "${@}"

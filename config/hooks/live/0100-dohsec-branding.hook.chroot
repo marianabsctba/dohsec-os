@@ -1,0 +1,37 @@
+#!/bin/sh
+# Aplica a identidade do D'OH!Sec OS dentro do chroot
+set -e
+
+# Identidade do sistema (VERSION_CODENAME fica trixie para nao quebrar ferramentas do apt)
+cat > /usr/lib/os-release <<'EOF'
+PRETTY_NAME="D'OH!Sec OS 2.0 (Springfield)"
+NAME="D'OH!Sec OS"
+VERSION_ID="2.0"
+VERSION="2.0 (Springfield)"
+VERSION_CODENAME=trixie
+ID=dohsec
+ID_LIKE=debian
+HOME_URL="https://github.com/marianabsctba/Desafio_Homer"
+EOF
+
+printf "D'OH!Sec OS 2.0 \\\\n \\\\l\n\n" > /etc/issue
+printf "D'OH!Sec OS 2.0\n" > /etc/issue.net
+
+# SVG -> PNG (papel de parede, donut do boot)
+rsvg-convert -w 1920 -h 1080 /usr/share/dohsec/wallpaper.svg -o /usr/share/dohsec/wallpaper.png
+rsvg-convert -w 200 -h 200 /usr/share/plymouth/themes/dohsec/donut.svg -o /usr/share/plymouth/themes/dohsec/donut.png
+
+# Papel de parede padrao do Debian aponta para o nosso
+update-alternatives --install /usr/share/images/desktop-base/desktop-background \
+  desktop-background /usr/share/dohsec/wallpaper.png 100
+update-alternatives --set desktop-background /usr/share/dohsec/wallpaper.png
+
+# Tema de boot (o initramfs e regerado pelo live-build no fim do chroot)
+plymouth-set-default-theme dohsec
+
+# Prompt e comandos do D'OH!Sec em todo shell interativo
+if ! grep -q '/etc/dohsec/bashrc' /etc/bash.bashrc; then
+  printf '\n[ -f /etc/dohsec/bashrc ] && . /etc/dohsec/bashrc\n' >> /etc/bash.bashrc
+fi
+
+chmod 755 /usr/local/bin/doh /usr/local/bin/donut /usr/local/bin/dohsec-session
