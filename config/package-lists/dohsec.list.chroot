@@ -6,6 +6,7 @@ lightdm
 lightdm-gtk-greeter
 desktop-base
 network-manager-gnome
+x11-xserver-utils
 
 # Visual
 papirus-icon-theme

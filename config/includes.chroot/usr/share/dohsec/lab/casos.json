@@ -1,0 +1,186 @@
+[
+  {
+    "id": "01-andando-pelas-pastas",
+    "titulo": "Andando pelas pastas",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Qual e a palavra-chave escrita no bilhete da sala de controle?",
+    "resposta": "c10cf3a1c606243a68a59848d30bf5f6567075d8fac382a3535c3a3c0330581e",
+    "dicas": [
+      "Comece com: ls usina",
+      "Entre na sala: cd usina/sala-de-controle e rode ls de novo.",
+      "Achou a gaveta? cat gaveta/bilhete.txt"
+    ],
+    "aprendizado": [
+      "pwd mostra onde voce esta, ls lista, cd entra e cd .. volta.",
+      "cat mostra o conteudo de um arquivo de texto.",
+      "Tab completa nomes: menos digitacao, menos erro."
+    ]
+  },
+  {
+    "id": "02-arquivos-escondidos",
+    "titulo": "Arquivos escondidos",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Qual e a senha escrita no arquivo escondido do armario?",
+    "resposta": "19fe1417dc674159daaf495d3d6e0190d7d802639b1ebdba0089abdd4527e6bc",
+    "dicas": [
+      "ls armario mostra so os arquivos visiveis.",
+      "Tente: ls -a armario",
+      "O arquivo comeca com ponto: cat armario/.esconderijo"
+    ],
+    "aprendizado": [
+      "Nome comecando com ponto = arquivo escondido.",
+      "ls -la mostra tudo, com dono, tamanho e data.",
+      "Em investigacao, sempre liste com -a: o que esta escondido costuma ser o mais interessante."
+    ]
+  },
+  {
+    "id": "03-procurando-com-grep",
+    "titulo": "Procurando com grep",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Em qual numero de linha do turno.log esta o ALERTA?",
+    "resposta": "afcf8bc077e68eb94dfe783205f32cabdeead61fd32ff5710947b6111ff2ff77",
+    "dicas": [
+      "grep mostra so as linhas com a palavra: grep ALERTA turno.log",
+      "Para ver o numero da linha: grep -n ALERTA turno.log",
+      "A resposta e so o numero, antes dos dois-pontos."
+    ],
+    "aprendizado": [
+      "grep PALAVRA arquivo mostra so as linhas que interessam.",
+      "-n mostra o numero da linha, -i ignora maiusculas.",
+      "less, head e tail ajudam a olhar arquivos grandes sem se perder."
+    ]
+  },
+  {
+    "id": "04-contando-com-pipe",
+    "titulo": "Contando com pipe",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Quantas linhas de FALHA tem no bombas.log?",
+    "resposta": "6208ef0f7750c111548cf90b6ea1d0d0a66f6bff40dbef07cb45ec436263c7d6",
+    "dicas": [
+      "Primeiro veja as falhas: grep FALHA bombas.log",
+      "Agora conte: ligue o grep ao wc -l com um pipe (|).",
+      "grep FALHA bombas.log | wc -l"
+    ],
+    "aprendizado": [
+      "O pipe | liga comandos: a saida de um vira a entrada do proximo.",
+      "grep ALGO arquivo | wc -l conta quantas linhas tem ALGO.",
+      "Com pipe voce monta perguntas grandes juntando comandos pequenos."
+    ]
+  },
+  {
+    "id": "05-filtrando-colunas",
+    "titulo": "Filtrando colunas",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Quem passou o cracha mais vezes?",
+    "resposta": "43d26e8db66a76f646f2d559e592493070c7e02048ada7fd8b96fcc0369f5d11",
+    "dicas": [
+      "Pegue so a coluna das pessoas: cut -d, -f2 cracha.csv",
+      "Junte e conte os repetidos: cut -d, -f2 cracha.csv | sort | uniq -c",
+      "Ordene do maior para o menor: ... | sort | uniq -c | sort -rn | head -1"
+    ],
+    "aprendizado": [
+      "cut pega colunas, sort ordena, uniq -c conta repetidos.",
+      "A receita cut | sort | uniq -c | sort -rn responde 'quem/o que mais aparece'.",
+      "Essa mesma receita acha o IP que mais atacou, o usuario que mais errou senha e por ai vai."
+    ]
+  },
+  {
+    "id": "06-forca-bruta",
+    "titulo": "Brute force em conta de servico",
+    "trilha": "casos",
+    "aprendizado": [
+      "O que aconteceu: alguem testou milhares de senhas ate acertar a da conta svc_backup (ataque de forca bruta).",
+      "Por que e perigoso: contas de servico costumam ter muito acesso e ninguem percebe quando sao usadas.",
+      "Como se previne: login por chave em vez de senha, bloqueio apos varias falhas, MFA e alerta para login de IP de fora.",
+      "Comando que ficou: grep 'Accepted' auth.log"
+    ],
+    "nivel": "facil",
+    "pergunta": "Qual IP conseguiu entrar na conta svc_backup?",
+    "resposta": "3696668f6f827407e5ff469091d3da2449de15b914b45b1afe87aeb5436f3ecb",
+    "dicas": [
+      "Login que deu certo aparece como 'Accepted' no auth.log.",
+      "Filtre por usuario: grep 'Accepted' auth.log | grep svc_backup",
+      "Os funcionarios entram por chave (publickey); o invasor entrou por senha (password)."
+    ]
+  },
+  {
+    "id": "07-powershell-financeiro",
+    "titulo": "PowerShell encoded no Financeiro",
+    "trilha": "casos",
+    "aprendizado": [
+      "O que aconteceu: um documento do Word abriu um PowerShell escondido que baixa um script da internet.",
+      "Por que e perigoso: o -enc esconde o comando de quem olha rapido; e um truque comum para fugir de filtros.",
+      "Como se previne: bloquear macros de documentos da internet, registrar os comandos do PowerShell e alertar quando o Word abre um PowerShell.",
+      "Comando que ficou: echo 'VALOR' | base64 -d | iconv -f utf-16le"
+    ],
+    "nivel": "medio",
+    "pergunta": "Qual dominio o comando codificado tenta contatar?",
+    "resposta": "d18eafc3b63d1368c8801ade0bf69e0354b8852a4ee2c35d0641d2a623637d91",
+    "dicas": [
+      "Procure o parametro -enc (EncodedCommand) no CSV.",
+      "O valor e base64. Decodifique com: echo 'VALOR' | base64 -d",
+      "O PowerShell codifica em UTF-16LE: echo 'VALOR' | base64 -d | iconv -f utf-16le"
+    ]
+  },
+  {
+    "id": "08-donutcoin",
+    "titulo": "Servidor minerando donutcoin",
+    "trilha": "casos",
+    "aprendizado": [
+      "O que aconteceu: um invasor usou o servidor web para minerar criptomoeda e agendou no cron um script que religa o minerador.",
+      "Por que e perigoso: matar o processo nao resolve; sem remover a persistencia, o problema volta sozinho.",
+      "Como se previne: manter o site e o sistema atualizados, monitorar CPU e conexoes de saida, revisar crontabs.",
+      "Comando que ficou: crontab -l -u USUARIO"
+    ],
+    "nivel": "medio",
+    "pergunta": "Qual arquivo garante que o minerador volta depois de ser morto?",
+    "resposta": "20ab9b249d5a051a06b8966875cd5e0217a944ae66f6d1334ea6d09a99ee2893",
+    "dicas": [
+      "Primeiro ache o minerador: qual processo usa quase 100% de CPU e de qual usuario ele e?",
+      "Algo agendado roda a cada 5 minutos para religar o processo.",
+      "Olhe o crontab do mesmo usuario do processo minerador."
+    ]
+  },
+  {
+    "id": "09-pdf-exe",
+    "titulo": "invoice_real.pdf.exe executado",
+    "trilha": "casos",
+    "aprendizado": [
+      "O que aconteceu: phishing. O From dizia Financeiro, mas o e-mail saiu de outro dominio, e o anexo era um programa disfarcado de PDF.",
+      "Por que e perigoso: o campo From e escrito por quem envia; so os outros cabecalhos mostram a origem real.",
+      "Como se previne: SPF, DKIM e DMARC configurados, mostrar extensoes de arquivo no Windows e desconfiar de urgencia.",
+      "Comando que ficou: grep -iE '^(Return-Path|Received|Authentication-Results)' email.eml"
+    ],
+    "nivel": "facil",
+    "pergunta": "Qual o dominio real de quem enviou o e-mail?",
+    "resposta": "655b4e51db63b0dfd2271be46f02964649bb493dc97e2a0577f6db2eb44234ff",
+    "dicas": [
+      "O campo From: pode ser escrito por qualquer um. Olhe os outros cabecalhos.",
+      "Return-Path e Received mostram de onde a mensagem saiu de verdade.",
+      "O SPF falhou para qual dominio?"
+    ]
+  },
+  {
+    "id": "10-everyone-privilegiado",
+    "titulo": "Everyone em grupo privilegiado",
+    "trilha": "casos",
+    "aprendizado": [
+      "O que aconteceu: uma conta sem necessidade de acesso adicionou o grupo Everyone (todo mundo) num grupo de administradores.",
+      "Por que e perigoso: qualquer conta da empresa virou administradora, inclusive uma conta invadida.",
+      "Como se previne: menor privilegio, revisao periodica de acessos e alerta sempre que um grupo administrativo muda.",
+      "Comando que ficou: grep Everyone grupos.csv"
+    ],
+    "nivel": "facil",
+    "pergunta": "Qual conta adicionou o Everyone no grupo privilegiado?",
+    "resposta": "7197564d91f3daaac208e93cd3bdddda2fec10ecc0a2f65737ce093c1360a894",
+    "dicas": [
+      "Procure a linha em que o membro e Everyone: grep Everyone grupos.csv",
+      "A terceira coluna diz quem fez a alteracao."
+    ]
+  }
+]

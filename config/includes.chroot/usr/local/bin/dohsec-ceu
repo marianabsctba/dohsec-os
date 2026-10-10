@@ -1,0 +1,49 @@
+#!/bin/bash
+# Mantem o ceu do papel de parede: dia, ou noite com estrelas piscando.
+# Le ~/.config/dohsec/ceu.conf (escrito pelo comando noturno) a cada ciclo.
+
+DIR=/usr/share/dohsec
+CONF="$HOME/.config/dohsec/ceu.conf"
+INTERVALO=1.5
+NOITE=("$DIR"/noite-*.png)
+
+modo() {
+  local modo=auto pisca=on
+  [ -f "$CONF" ] && . "$CONF"
+  if [ "$modo" = auto ]; then
+    local h=$((10#$(date +%H)))
+    if [ "$h" -ge 18 ] || [ "$h" -lt 6 ]; then modo=on; else modo=off; fi
+  fi
+  echo "$modo $pisca"
+}
+
+aplica() {
+  local img="$1" mon ws
+  for mon in $(xrandr --listmonitors 2>/dev/null | awk 'NR > 1 {print $NF}'); do
+    for ws in 0 1 2 3; do
+      xfconf-query -c xfce4-desktop -p "/backdrop/screen0/monitor$mon/workspace$ws/last-image" \
+        -n -t string -s "$img" 2>/dev/null
+    done
+  done
+}
+
+atual=""
+quadro=0
+while true; do
+  read -r noite pisca <<< "$(modo)"
+  if [ "$noite" = on ]; then
+    if [ "$pisca" = on ]; then
+      img="${NOITE[quadro % ${#NOITE[@]}]}"
+      quadro=$((quadro + 1))
+    else
+      img="${NOITE[0]}"
+    fi
+  else
+    img="$DIR/wallpaper.png"
+  fi
+  if [ "$img" != "$atual" ]; then
+    aplica "$img"
+    atual="$img"
+  fi
+  sleep "$INTERVALO"
+done

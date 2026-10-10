@@ -17,6 +17,38 @@ Distro Linux com tema Springfield, baseada em Debian 13 (trixie), feita a partir
 - **Só no WSL**: cria o usuário no primeiro uso (padrão `homer`), atalho e ícone no Iniciar, esquema de
   cores no Windows Terminal
 
+## Laboratório Springfield
+
+Casos de resposta a incidente da Usina, com evidências de verdade para investigar no terminal
+(logs, e-mail, processos, histórico de grupos). Tudo é sintético: IPs de documentação, domínios `.test`
+e nenhum binário malicioso.
+
+```bash
+lab
+```
+
+| Comando | O que faz |
+| --- | --- |
+| `lab` | lista os casos e o progresso |
+| `lab iniciar 1` | copia as evidências do caso para `~/springfield/casos/` e mostra o contexto |
+| `lab dica 1` | mostra a próxima dica |
+| `lab responder 1 "resposta"` | confere a resposta (maiúsculas, aspas e espaços não importam) |
+| `lab zerar` | apaga o progresso |
+
+As respostas ficam no `casos.json` só como hash. Para criar ou mudar casos, edite
+`scripts/gen-lab.py` e rode `python3 scripts/gen-lab.py`.
+
+## Céu noturno
+
+Das 18h às 6h o papel de parede vira a versão noturna, com lua e estrelas piscando. O boot é sempre
+noturno, com as estrelas animadas.
+
+| Comando | O que faz |
+| --- | --- |
+| `noturno` | mostra a configuração |
+| `noturno on` / `off` / `auto` | noite sempre, dia sempre, ou pelo relógio |
+| `noturno pisca off` | estrelas paradas (máquina fraca) |
+
 ## Instalar no WSL
 
 Dois cliques no `dohsec-os.wsl`, ou:
@@ -58,6 +90,8 @@ A primeira ISO baixa uns 2 GB e leva de 30 a 60 minutos; as seguintes reaproveit
 - `config/bootloaders/` - menu de boot da ISO (isolinux e GRUB)
 - `config/wsl/` - só do WSL: pacotes, primeiro uso, ícone, perfil do Terminal
 - `scripts/gen-xfwm4-theme.py` - gera as bordas de janela do tema Springfield (rodar após mudar a paleta)
+- `scripts/gen-ceu-noturno.py` - gera o papel de parede noturno
+- `scripts/gen-lab.py` - gera os casos do Laboratório Springfield
 - `build.sh` - ponto de entrada (`iso` ou `wsl`)
 - `scripts/build-wsl.sh` - monta o rootfs do WSL
 - `scripts/debian-builder.sh` - monta o chroot Debian quando o host não é Debian

@@ -1,0 +1,31 @@
+Return-Path: <cobranca@burns-faturas.test>
+Received: from mail.burns-faturas.test (mail.burns-faturas.test [203.0.113.150])
+	by mx.usina-springfield.test with ESMTP id 4QxDoh
+	for <lenny@usina-springfield.test>; Sat, 14 Mar 2026 09:12:44 -0300
+Received-SPF: fail (usina-springfield.test: domain of cobranca@burns-faturas.test does not designate 203.0.113.150 as permitted sender)
+Authentication-Results: mx.usina-springfield.test; spf=fail smtp.mailfrom=burns-faturas.test; dkim=none; dmarc=fail header.from=usina-springfield.test
+From: "Financeiro Usina" <financeiro@usina-springfield.test>
+Reply-To: <financeiro.urgente@burns-faturas.test>
+To: lenny@usina-springfield.test
+Subject: URGENTE: fatura vencida - corte de energia hoje
+Date: Sat, 14 Mar 2026 09:12:40 -0300
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="donut"
+
+--donut
+Content-Type: text/plain; charset=utf-8
+
+Lenny,
+
+Segue a fatura em atraso. Se nao for paga ate as 12h a usina tera a energia cortada.
+Abra o anexo e confirme o pagamento.
+
+Financeiro
+
+--donut
+Content-Type: application/octet-stream; name="invoice_real.pdf.exe"
+Content-Disposition: attachment; filename="invoice_real.pdf.exe"
+Content-Transfer-Encoding: base64
+
+QXJxdWl2byBkZSB0cmVpbmFtZW50byBkbyBMYWJvcmF0b3JpbyBTcHJpbmdmaWVsZC4gTmFvIGUgZXhlY3V0YXZlbC4=
+--donut--

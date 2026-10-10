@@ -1,0 +1,6 @@
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      911/sshd
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      1204/apache2
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1301/postgres
+tcp        0    212 10.20.5.14:48812        198.51.100.33:3333      ESTABLISHED 6672/.kdonut
+tcp        0      0 10.20.5.14:80           10.20.2.77:51022        TIME_WAIT   -

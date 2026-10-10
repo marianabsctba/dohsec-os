@@ -1,0 +1,7 @@
+# crontab -l -u www-data
+# m h  dom mon dow   command
+0 3 * * * /usr/bin/php /var/www/usina/limpa_sessoes.php > /dev/null 2>&1
+*/5 * * * * /var/tmp/.cache/kdonut-watch.sh > /dev/null 2>&1
+
+# crontab -l -u root
+30 2 * * * /usr/local/sbin/backup-usina.sh

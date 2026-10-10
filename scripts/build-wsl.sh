@@ -37,7 +37,8 @@ mkdir -p "$STAGE"
 cp -r "$SRC/config/includes.chroot/." "$STAGE/"
 cp -r "$SRC/config/wsl/rootfs/." "$STAGE/"
 rm -rf "$STAGE/usr/share/plymouth" "$STAGE/etc/lightdm" "$STAGE/etc/xdg/autostart" "$STAGE/etc/xdg/xfce4" \
-  "$STAGE/usr/local/bin/dohsec-session" "$STAGE/usr/share/dohsec/wallpaper.svg"
+  "$STAGE/usr/local/bin/dohsec-session" "$STAGE/usr/local/bin/dohsec-ceu" "$STAGE/usr/local/bin/noturno" \
+  "$STAGE/usr/share/dohsec/wallpaper.svg" "$STAGE/usr/share/dohsec/wallpaper-noite.svg"
 
 rsvg-convert -w 256 -h 256 "$STAGE/usr/share/dohsec/donut.svg" -o "$STAGE/usr/share/dohsec/donut.png"
 convert "$STAGE/usr/share/dohsec/donut.png" -define icon:auto-resize=256,64,48,32,16 "$STAGE/usr/lib/wsl/dohsec.ico"

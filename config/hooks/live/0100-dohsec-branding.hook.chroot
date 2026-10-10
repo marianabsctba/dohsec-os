@@ -2,17 +2,38 @@
 # Aplica a identidade do D'OH!Sec OS dentro do chroot
 set -e
 
-# Identidade (os-release, issue) vem pronta em includes.chroot
+# Identidade: os-release vem em includes.chroot, mas algum pacote pode trocar o link
+# /etc/os-release por um arquivo comum; garante o link de volta
+ln -sf ../usr/lib/os-release /etc/os-release
 
-# SVG -> PNG (papel de parede, donut do boot)
-rsvg-convert -w 1920 -h 1080 /usr/share/dohsec/wallpaper.svg -o /usr/share/dohsec/wallpaper.png
-rsvg-convert -w 256 -h 256 /usr/share/dohsec/donut.svg -o /usr/share/dohsec/donut.png
-rsvg-convert -w 200 -h 200 /usr/share/dohsec/donut.svg -o /usr/share/plymouth/themes/dohsec/donut.png
+# SVG -> PNG (papel de parede, donut, imagens do boot)
+D=/usr/share/dohsec
+P=/usr/share/plymouth/themes/dohsec
+rsvg-convert -w 1920 -h 1080 $D/wallpaper.svg -o $D/wallpaper.png
+rsvg-convert -w 256 -h 256 $D/donut.svg -o $D/donut.png
+rsvg-convert -w 200 -h 200 $D/donut.svg -o $P/donut.png
+rsvg-convert -w 1920 -h 1080 $P/ceu.svg -o $P/ceu.png
+rsvg-convert -w 24 -h 24 $P/estrela.svg -o $P/estrela.png
 
-# Papel de parede padrao do Debian aponta para o nosso
+# Ceu noturno: 4 quadros com as 3 camadas de estrelas em brilhos diferentes
+n=0
+for brilhos in "1 0.35 0.7" "0.7 1 0.35" "0.35 0.7 1" "0.7 0.35 1"; do
+  set -- $brilhos
+  sed -e "s/@A@/$1/" -e "s/@B@/$2/" -e "s/@C@/$3/" $D/wallpaper-noite.svg > /tmp/noite.svg
+  rsvg-convert -w 1920 -h 1080 /tmp/noite.svg -o $D/noite-$n.png
+  n=$((n + 1))
+done
+rm -f /tmp/noite.svg
+
+# Papel de parede padrao do Debian e do XFCE apontam para o nosso
 update-alternatives --install /usr/share/images/desktop-base/desktop-background \
-  desktop-background /usr/share/dohsec/wallpaper.png 100
-update-alternatives --set desktop-background /usr/share/dohsec/wallpaper.png
+  desktop-background $D/wallpaper.png 100
+update-alternatives --set desktop-background $D/wallpaper.png
+XFCE_BG=/usr/share/backgrounds/xfce/xfce-shapes.svg
+if [ -e "$XFCE_BG" ] && ! dpkg-divert --list "$XFCE_BG" | grep -q .; then
+  dpkg-divert --local --rename --add "$XFCE_BG"
+fi
+ln -sf $D/wallpaper.svg "$XFCE_BG"
 
 # Pastas amarelas no Papirus (troca os links das pastas azuis padrao, como o papirus-folders faz)
 for theme in /usr/share/icons/Papirus /usr/share/icons/Papirus-Dark /usr/share/icons/Papirus-Light; do
@@ -22,7 +43,9 @@ for theme in /usr/share/icons/Papirus /usr/share/icons/Papirus-Dark /usr/share/i
     case "$target" in
       *-blue*)
         yellow=$(echo "$target" | sed 's/-blue/-yellow/')
-        [ -e "$(dirname "$link")/$yellow" ] && ln -sf "$yellow" "$link"
+        if [ -e "$(dirname "$link")/$yellow" ]; then
+          ln -sf "$yellow" "$link"
+        fi
         ;;
     esac
   done
@@ -37,4 +60,5 @@ if ! grep -q '/etc/dohsec/bashrc' /etc/bash.bashrc; then
   printf '\n[ -f /etc/dohsec/bashrc ] && . /etc/dohsec/bashrc\n' >> /etc/bash.bashrc
 fi
 
-chmod 755 /usr/local/bin/doh /usr/local/bin/donut /usr/local/bin/dohsec-session
+chmod 755 /usr/local/bin/doh /usr/local/bin/donut /usr/local/bin/dohsec-session \
+  /usr/local/bin/dohsec-ceu /usr/local/bin/noturno /usr/local/bin/lab

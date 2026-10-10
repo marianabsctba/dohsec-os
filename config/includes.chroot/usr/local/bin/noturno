@@ -1,0 +1,29 @@
+#!/bin/bash
+# noturno - troca o ceu do D'OH!Sec OS entre dia e noite
+#   noturno on|off|auto     noite sempre, dia sempre, ou pelo relogio (18h as 6h)
+#   noturno pisca on|off    estrelas piscando ou paradas
+#   noturno                 mostra a configuracao atual
+
+CONF="$HOME/.config/dohsec/ceu.conf"
+modo=auto
+pisca=on
+[ -f "$CONF" ] && . "$CONF"
+
+salva() {
+  mkdir -p "$(dirname "$CONF")"
+  printf 'modo=%s\npisca=%s\n' "$modo" "$pisca" > "$CONF"
+}
+
+case "${1:-}" in
+  on|off|auto) modo="$1"; salva ;;
+  pisca)
+    case "${2:-}" in
+      on|off) pisca="$2"; salva ;;
+      *) echo "uso: noturno pisca on|off" >&2; exit 2 ;;
+    esac
+    ;;
+  "") ;;
+  *) echo "uso: noturno [on|off|auto] | noturno pisca on|off" >&2; exit 2 ;;
+esac
+
+echo "ceu: $modo, estrelas piscando: $pisca"

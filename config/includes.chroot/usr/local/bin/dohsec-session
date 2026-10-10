@@ -1,12 +1,8 @@
 #!/bin/sh
-# Roda no login: aplica o papel de parede em todos os monitores e abre a D'OH!Sec Academy
+# Roda no login: liga o ceu (dia/noite) e abre a D'OH!Sec Academy
 
-WALL=/usr/share/dohsec/wallpaper.png
-
-# Espera o xfdesktop criar as propriedades de cada monitor
+# Espera o xfdesktop subir antes de mexer no papel de parede
 sleep 3
-for prop in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep '/last-image$'); do
-  xfconf-query -c xfce4-desktop -p "$prop" -s "$WALL"
-done
+dohsec-ceu &
 
 exec firefox-esr --new-window file:///usr/share/dohsec/academy/index.html

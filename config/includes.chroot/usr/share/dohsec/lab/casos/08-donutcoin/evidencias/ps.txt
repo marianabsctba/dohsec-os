@@ -1,0 +1,10 @@
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1 167432 11924 ?        Ss   mar14   0:04 /sbin/init
+root         412  0.0  0.2  48212 18320 ?        Ss   mar14   0:01 /lib/systemd/systemd-journald
+root         803  0.0  0.0   8564  3120 ?        Ss   mar14   0:00 /usr/sbin/cron -f
+root         911  0.0  0.1  15432  9120 ?        Ss   mar14   0:00 sshd: /usr/sbin/sshd -D
+www-data    1204  0.3  1.2 214332 98120 ?        S    mar14   1:12 /usr/sbin/apache2 -k start
+www-data    1205  0.2  1.1 214332 91220 ?        S    mar14   1:03 /usr/sbin/apache2 -k start
+www-data    6672 97.8  4.1 892344 331220 ?       Sl   02:13 703:41 /tmp/.X11-unix/.kdonut -o pool.donutcoin.test:3333 -u springfield -p x --donate-level 0
+postgres    1301  0.0  0.8 220112 66110 ?        Ss   mar14   0:09 /usr/lib/postgresql/15/bin/postgres
+root        7012  0.0  0.0  10072  3344 pts/0    R+   14:02   0:00 ps aux

@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1a3a"/>
+      <stop offset="1" stop-color="#1d3b78"/>
+    </linearGradient>
+    <radialGradient id="brilho-lua">
+      <stop offset="0" stop-color="#fff6d7" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#fff6d7" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="crescente">
+      <circle cx="1600" cy="200" r="90" fill="#fff"/>
+      <circle cx="1645" cy="170" r="82" fill="#000"/>
+    </mask>
+    <g id="nuvem" fill="#2a4a8a" opacity="0.55">
+      <ellipse cx="0" cy="0" rx="120" ry="55"/>
+      <ellipse cx="-90" cy="20" rx="80" ry="45"/>
+      <ellipse cx="95" cy="22" rx="85" ry="42"/>
+      <ellipse cx="20" cy="-35" rx="75" ry="50"/>
+    </g>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#ceu)"/>
+  <g fill="#fff6d7" opacity="@A@">
+    <path transform="translate(1346 539) scale(1.39)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1365" cy="150" r="2.0"/>
+    <circle cx="282" cy="365" r="1.6"/>
+    <circle cx="190" cy="61" r="2.4"/>
+    <circle cx="1343" cy="393" r="2.1"/>
+    <circle cx="1359" cy="195" r="2.2"/>
+    <circle cx="244" cy="31" r="2.1"/>
+    <path transform="translate(706 192) scale(0.98)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1736" cy="959" r="1.4"/>
+    <circle cx="1857" cy="282" r="1.5"/>
+    <circle cx="1559" cy="652" r="1.6"/>
+    <circle cx="505" cy="642" r="1.6"/>
+    <circle cx="1701" cy="812" r="2.1"/>
+    <circle cx="1626" cy="443" r="1.2"/>
+    <path transform="translate(1006 153) scale(1.03)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1311" cy="539" r="2.4"/>
+    <circle cx="1141" cy="153" r="1.4"/>
+    <circle cx="613" cy="489" r="1.3"/>
+    <circle cx="195" cy="474" r="2.5"/>
+    <circle cx="60" cy="435" r="1.6"/>
+    <circle cx="644" cy="536" r="1.9"/>
+    <path transform="translate(1809 464) scale(1.49)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1553" cy="753" r="2.5"/>
+    <circle cx="1322" cy="154" r="1.2"/>
+    <circle cx="562" cy="418" r="2.3"/>
+    <circle cx="1682" cy="466" r="1.4"/>
+    <circle cx="509" cy="604" r="1.5"/>
+    <circle cx="39" cy="960" r="1.6"/>
+    <path transform="translate(1345 29) scale(1.01)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="731" cy="200" r="1.7"/>
+    <circle cx="335" cy="496" r="1.6"/>
+    <circle cx="247" cy="395" r="1.7"/>
+    <circle cx="403" cy="565" r="2.4"/>
+    <circle cx="120" cy="619" r="1.4"/>
+    <circle cx="1574" cy="584" r="2.6"/>
+    <path transform="translate(714 220) scale(1.42)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1781" cy="353" r="1.4"/>
+    <circle cx="209" cy="827" r="2.2"/>
+    <circle cx="44" cy="124" r="1.9"/>
+    <circle cx="558" cy="236" r="2.1"/>
+    <circle cx="1691" cy="498" r="1.3"/>
+    <circle cx="400" cy="320" r="2.4"/>
+    <path transform="translate(970 138) scale(1.40)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="109" cy="544" r="2.1"/>
+    <circle cx="528" cy="1000" r="2.4"/>
+    <circle cx="193" cy="825" r="1.6"/>
+    <circle cx="328" cy="44" r="1.5"/>
+    <circle cx="251" cy="354" r="1.9"/>
+    <circle cx="955" cy="110" r="1.3"/>
+    <path transform="translate(1264 230) scale(1.34)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+  </g>
+  <g fill="#fff6d7" opacity="@B@">
+    <circle cx="1381" cy="281" r="2.1"/>
+    <circle cx="1482" cy="895" r="2.1"/>
+    <path transform="translate(68 419) scale(0.92)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="441" cy="378" r="2.2"/>
+    <circle cx="433" cy="27" r="1.6"/>
+    <circle cx="1588" cy="793" r="1.6"/>
+    <circle cx="1450" cy="305" r="2.5"/>
+    <circle cx="1758" cy="61" r="1.6"/>
+    <circle cx="1830" cy="703" r="2.1"/>
+    <path transform="translate(1786 341) scale(0.92)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1407" cy="361" r="2.2"/>
+    <circle cx="1839" cy="370" r="2.0"/>
+    <circle cx="1358" cy="446" r="1.7"/>
+    <circle cx="29" cy="595" r="1.9"/>
+    <circle cx="1829" cy="555" r="1.6"/>
+    <circle cx="193" cy="276" r="2.5"/>
+    <path transform="translate(404 293) scale(1.02)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="479" cy="22" r="1.3"/>
+    <circle cx="1896" cy="1005" r="1.7"/>
+    <circle cx="1642" cy="422" r="2.4"/>
+    <circle cx="626" cy="465" r="2.2"/>
+    <circle cx="227" cy="167" r="1.9"/>
+    <circle cx="263" cy="244" r="1.4"/>
+    <path transform="translate(1430 617) scale(0.90)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="448" cy="368" r="1.5"/>
+    <circle cx="657" cy="179" r="2.5"/>
+    <circle cx="193" cy="883" r="1.8"/>
+    <circle cx="1877" cy="442" r="1.4"/>
+    <circle cx="198" cy="453" r="1.4"/>
+    <circle cx="1612" cy="780" r="2.2"/>
+    <path transform="translate(195 33) scale(1.25)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="83" cy="371" r="2.5"/>
+    <circle cx="118" cy="505" r="2.1"/>
+    <circle cx="1415" cy="293" r="2.3"/>
+    <circle cx="1714" cy="520" r="2.6"/>
+    <circle cx="1884" cy="377" r="2.0"/>
+    <circle cx="1379" cy="251" r="1.4"/>
+    <path transform="translate(1425 593) scale(1.10)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1463" cy="615" r="2.3"/>
+    <circle cx="238" cy="710" r="1.3"/>
+    <circle cx="1484" cy="900" r="2.2"/>
+    <circle cx="1523" cy="420" r="1.2"/>
+    <circle cx="116" cy="491" r="1.9"/>
+    <circle cx="864" cy="182" r="2.2"/>
+    <path transform="translate(1343 586) scale(1.28)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="356" cy="809" r="2.2"/>
+    <circle cx="115" cy="354" r="1.6"/>
+    <circle cx="1249" cy="192" r="2.3"/>
+    <circle cx="315" cy="923" r="2.1"/>
+    <circle cx="566" cy="185" r="1.8"/>
+  </g>
+  <g fill="#fff6d7" opacity="@C@">
+    <circle cx="596" cy="142" r="1.3"/>
+    <circle cx="1740" cy="300" r="1.4"/>
+    <circle cx="817" cy="120" r="1.7"/>
+    <circle cx="429" cy="646" r="2.1"/>
+    <path transform="translate(374 234) scale(0.95)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="291" cy="391" r="2.4"/>
+    <circle cx="117" cy="181" r="1.2"/>
+    <circle cx="570" cy="213" r="1.2"/>
+    <circle cx="506" cy="108" r="2.0"/>
+    <circle cx="469" cy="740" r="2.1"/>
+    <circle cx="1720" cy="822" r="2.3"/>
+    <path transform="translate(290 874) scale(1.31)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="618" cy="634" r="1.8"/>
+    <circle cx="125" cy="700" r="1.7"/>
+    <circle cx="445" cy="298" r="2.2"/>
+    <circle cx="244" cy="544" r="1.9"/>
+    <circle cx="513" cy="703" r="1.4"/>
+    <circle cx="764" cy="271" r="1.9"/>
+    <path transform="translate(63 1019) scale(0.84)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="1669" cy="619" r="2.4"/>
+    <circle cx="1286" cy="453" r="1.8"/>
+    <circle cx="467" cy="837" r="1.3"/>
+    <circle cx="137" cy="597" r="2.0"/>
+    <circle cx="112" cy="565" r="1.3"/>
+    <circle cx="1652" cy="640" r="2.4"/>
+    <path transform="translate(143 885) scale(1.40)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="236" cy="291" r="2.5"/>
+    <circle cx="847" cy="122" r="1.5"/>
+    <circle cx="497" cy="493" r="1.2"/>
+    <circle cx="39" cy="40" r="2.1"/>
+    <circle cx="568" cy="100" r="2.1"/>
+    <circle cx="258" cy="981" r="2.1"/>
+    <path transform="translate(1501 1019) scale(0.95)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="247" cy="762" r="1.7"/>
+    <circle cx="1752" cy="1018" r="1.9"/>
+    <circle cx="1188" cy="301" r="2.5"/>
+    <circle cx="1787" cy="799" r="1.4"/>
+    <circle cx="540" cy="938" r="2.3"/>
+    <circle cx="242" cy="745" r="1.6"/>
+    <path transform="translate(1802 346) scale(1.57)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="350" cy="388" r="2.2"/>
+    <circle cx="232" cy="867" r="2.0"/>
+    <circle cx="467" cy="908" r="2.3"/>
+    <circle cx="1656" cy="835" r="1.3"/>
+    <circle cx="952" cy="198" r="1.9"/>
+    <circle cx="1086" cy="59" r="1.9"/>
+    <path transform="translate(1275 319) scale(1.40)" d="M0-10C1-3 3-1 10 0 3 1 1 3 0 10-1 3-3 1-10 0-3-1-1-3 0-10z"/>
+    <circle cx="36" cy="376" r="1.7"/>
+    <circle cx="275" cy="244" r="2.0"/>
+    <circle cx="590" cy="575" r="1.5"/>
+  </g>
+
+  <!-- Lua -->
+  <circle cx="1600" cy="200" r="170" fill="url(#brilho-lua)"/>
+  <circle cx="1600" cy="200" r="90" fill="#ffe680" mask="url(#crescente)"/>
+
+  <use href="#nuvem" x="300" y="260"/>
+  <use href="#nuvem" x="1350" y="880"/>
+  <use href="#nuvem" x="420" y="930"/>
+
+  <!-- Donut -->
+  <g transform="translate(960 500)">
+    <circle r="270" fill="#ff5fb7" opacity="0.12"/>
+    <circle r="250" fill="#d9a066"/>
+    <path fill="#ff5fb7" d="M0-235c80 0 150 40 190 105 25 30 10 50 30 80 20 35-5 70 5 105-35 70-125 115-225 115-90 0-170-40-210-105-15-35 15-60-5-95-20-35 10-70 5-100C-170-195-90-235 0-235z"/>
+    <circle r="85" fill="url(#ceu)"/>
+    <g stroke-width="14" stroke-linecap="round">
+      <line x1="-150" y1="-110" x2="-120" y2="-130" stroke="#ffd84d"/>
+      <line x1="-60" y1="-180" x2="-25" y2="-170" stroke="#3bb273"/>
+      <line x1="60" y1="-170" x2="90" y2="-150" stroke="#2f7df6"/>
+      <line x1="150" y1="-80" x2="165" y2="-45" stroke="#fff6d7"/>
+      <line x1="170" y1="40" x2="150" y2="75" stroke="#ffd84d"/>
+      <line x1="90" y1="150" x2="55" y2="165" stroke="#e84d5b"/>
+      <line x1="-30" y1="175" x2="-65" y2="160" stroke="#3bb273"/>
+      <line x1="-140" y1="110" x2="-165" y2="80" stroke="#2f7df6"/>
+      <line x1="-180" y1="-10" x2="-170" y2="25" stroke="#e84d5b"/>
+      <line x1="-115" y1="-30" x2="-95" y2="-60" stroke="#fff6d7"/>
+      <line x1="110" y1="-60" x2="125" y2="-25" stroke="#ff9b30"/>
+      <line x1="100" y1="90" x2="70" y2="105" stroke="#fff6d7"/>
+    </g>
+  </g>
+
+  <text x="960" y="900" text-anchor="middle" font-family="DejaVu Sans" font-weight="bold"
+        font-size="96" fill="#ffd84d" stroke="#171717" stroke-width="5" paint-order="stroke">D'OH!Sec OS</text>
+  <text x="960" y="960" text-anchor="middle" font-family="DejaVu Sans" font-size="32"
+        fill="#fff6d7">seguranca com cobertura de granulado</text>
+</svg>

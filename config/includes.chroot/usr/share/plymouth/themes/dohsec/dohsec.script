@@ -1,30 +1,82 @@
-// Boot do D'OH!Sec OS: ceu amarelo, donut girando e as mensagens do sistema
+// Boot do D'OH!Sec OS: ceu noturno com lua, estrelas piscando e o donut girando.
+// So construcoes basicas: o interpretador do Plymouth falha calado em sintaxe que nao conhece.
 
-Window.SetBackgroundTopColor(1.00, 0.85, 0.30);
-Window.SetBackgroundBottomColor(1.00, 0.61, 0.19);
+W = Window.GetWidth();
+H = Window.GetHeight();
+X0 = Window.GetX();
+Y0 = Window.GetY();
+cx = X0 + W / 2;
+cy = Y0 + H / 2;
 
-cx = Window.GetX() + Window.GetWidth() / 2;
-cy = Window.GetY() + Window.GetHeight() / 2;
+// Fundo em imagem (degrade do Window.SetBackground* sai com chuvisco em alguns videos),
+// escalado sem distorcer e centralizado
+ceu.original = Image("ceu.png");
+escala = W / ceu.original.GetWidth();
+if (H / ceu.original.GetHeight() > escala)
+  escala = H / ceu.original.GetHeight();
+ceu.image = ceu.original.Scale(ceu.original.GetWidth() * escala, ceu.original.GetHeight() * escala);
+ceu.sprite = Sprite(ceu.image);
+ceu.sprite.SetPosition(cx - ceu.image.GetWidth() / 2, cy - ceu.image.GetHeight() / 2, -10);
+
+// Sorteio proprio (Park-Miller): o Math.Random do Plymouth devolve numeros perto de zero
+semente = 1989;
+fun sorteia() {
+  semente = semente * 16807;
+  semente = semente - Math.Int(semente / 2147483647) * 2147483647;
+  return semente / 2147483647;
+}
+
+// Estrelas: posicao, tamanho e ritmo sorteados, longe do donut
+estrela_img = Image("estrela.png");
+N = 60;
+i = 0;
+tentativas = 0;
+while (i < N) {
+  tentativas = tentativas + 1;
+  if (tentativas > 1000)
+    N = i;
+  x = sorteia() * W;
+  y = sorteia() * H;
+  dx = x - W / 2;
+  dy = y - H / 2;
+  if (dx * dx + dy * dy > 260 * 260) {
+    tamanho = Math.Int(6 + sorteia() * 14);
+    estrelas[i] = Sprite(estrela_img.Scale(tamanho, tamanho));
+    estrelas[i].SetPosition(X0 + x, Y0 + y, -5);
+    fase[i] = sorteia() * 6.28;
+    ritmo[i] = 0.03 + sorteia() * 0.06;
+    i = i + 1;
+  }
+}
+N = i;
 
 donut.image = Image("donut.png");
 donut.sprite = Sprite(donut.image);
 donut.sprite.SetPosition(cx - donut.image.GetWidth() / 2, cy - donut.image.GetHeight() / 2 - 40, 1);
 
-title.image = Image.Text("D'OH!Sec OS", 0.09, 0.09, 0.09, 1, "Sans Bold 32");
+title.image = Image.Text("D'OH!Sec OS", 1.00, 0.85, 0.30, 1, "Sans Bold 32");
 title.sprite = Sprite(title.image);
 title.sprite.SetPosition(cx - title.image.GetWidth() / 2, cy + donut.image.GetHeight() / 2, 2);
 
 msg.sprite = Sprite();
 angle = 0;
+t = 0;
 
 fun refresh_cb() {
-  angle += 0.06;
+  angle = angle + 0.06;
   donut.sprite.SetImage(donut.image.Rotate(angle));
+
+  t = t + 1;
+  j = 0;
+  while (j < N) {
+    estrelas[j].SetOpacity(0.55 + 0.45 * Math.Sin(t * ritmo[j] + fase[j]));
+    j = j + 1;
+  }
 }
 Plymouth.SetRefreshFunction(refresh_cb);
 
 fun message_cb(text) {
-  msg.image = Image.Text(text, 0.09, 0.09, 0.09, 1, "Sans 14");
+  msg.image = Image.Text(text, 1.00, 0.96, 0.84, 1, "Sans 14");
   msg.sprite.SetImage(msg.image);
   msg.sprite.SetPosition(cx - msg.image.GetWidth() / 2, cy + donut.image.GetHeight() / 2 + 60, 2);
 }
