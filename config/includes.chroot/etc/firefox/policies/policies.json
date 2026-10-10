@@ -1,0 +1,19 @@
+{
+  "policies": {
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "DontCheckDefaultBrowser": true,
+    "OverrideFirstRunPage": "",
+    "OverridePostUpdatePage": "",
+    "Homepage": {
+      "URL": "file:///usr/share/dohsec/academy/index.html",
+      "StartPage": "homepage"
+    },
+    "UserMessaging": {
+      "SkipOnboarding": true,
+      "ExtensionRecommendations": false,
+      "FeatureRecommendations": false,
+      "MoreFromMozilla": false
+    }
+  }
+}

@@ -26,7 +26,7 @@ EOF
 printf "  ${P}\"%s\"${N}\n\n" "${frases[RANDOM % ${#frases[@]}]}"
 
 . /etc/os-release
-mem=$(free -h | awk '/^Mem:/ {print $3 " / " $2}')
+mem=$(LC_ALL=C free -h | awk '/^Mem:/ {print $3 " / " $2}')
 printf "  ${B}sistema${N}  %s\n" "$PRETTY_NAME"
 printf "  ${B}kernel${N}   %s\n" "$(uname -r)"
 printf "  ${B}host${N}     %s\n" "$(hostname)"

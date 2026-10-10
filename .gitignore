@@ -9,3 +9,4 @@ config/bootstrap
 config/chroot
 config/common
 config/source
+*.wsl

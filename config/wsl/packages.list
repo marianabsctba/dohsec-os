@@ -1,0 +1,23 @@
+# Pacotes da versao WSL (sem kernel, boot e desktop: o Windows cuida disso)
+sudo
+locales
+tzdata
+procps
+hostname
+bash-completion
+less
+nano
+curl
+wget
+ca-certificates
+iproute2
+iputils-ping
+python3
+dbus
+xdg-utils
+
+# D'OH!Sec Academy (abre no Windows via WSLg)
+firefox-esr
+firefox-esr-l10n-pt-br
+fonts-dejavu
+fonts-noto-color-emoji

@@ -2,24 +2,12 @@
 # Aplica a identidade do D'OH!Sec OS dentro do chroot
 set -e
 
-# Identidade do sistema (VERSION_CODENAME fica trixie para nao quebrar ferramentas do apt)
-cat > /usr/lib/os-release <<'EOF'
-PRETTY_NAME="D'OH!Sec OS 2.0 (Springfield)"
-NAME="D'OH!Sec OS"
-VERSION_ID="2.0"
-VERSION="2.0 (Springfield)"
-VERSION_CODENAME=trixie
-ID=dohsec
-ID_LIKE=debian
-HOME_URL="https://github.com/marianabsctba/Desafio_Homer"
-EOF
-
-printf "D'OH!Sec OS 2.0 \\\\n \\\\l\n\n" > /etc/issue
-printf "D'OH!Sec OS 2.0\n" > /etc/issue.net
+# Identidade (os-release, issue) vem pronta em includes.chroot
 
 # SVG -> PNG (papel de parede, donut do boot)
 rsvg-convert -w 1920 -h 1080 /usr/share/dohsec/wallpaper.svg -o /usr/share/dohsec/wallpaper.png
-rsvg-convert -w 200 -h 200 /usr/share/plymouth/themes/dohsec/donut.svg -o /usr/share/plymouth/themes/dohsec/donut.png
+rsvg-convert -w 256 -h 256 /usr/share/dohsec/donut.svg -o /usr/share/dohsec/donut.png
+rsvg-convert -w 200 -h 200 /usr/share/dohsec/donut.svg -o /usr/share/plymouth/themes/dohsec/donut.png
 
 # Papel de parede padrao do Debian aponta para o nosso
 update-alternatives --install /usr/share/images/desktop-base/desktop-background \

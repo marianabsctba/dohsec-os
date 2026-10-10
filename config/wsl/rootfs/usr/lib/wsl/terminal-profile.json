@@ -1,0 +1,33 @@
+{
+  "profiles": [
+    {
+      "colorScheme": "D'OH!Sec",
+      "cursorShape": "filledBox"
+    }
+  ],
+  "schemes": [
+    {
+      "name": "D'OH!Sec",
+      "background": "#1B1708",
+      "foreground": "#FFF6D7",
+      "cursorColor": "#FF5FB7",
+      "selectionBackground": "#5B3518",
+      "black": "#171717",
+      "red": "#E84D5B",
+      "green": "#3BB273",
+      "yellow": "#FFD84D",
+      "blue": "#2F7DF6",
+      "purple": "#FF5FB7",
+      "cyan": "#5FC8F6",
+      "white": "#FFF6D7",
+      "brightBlack": "#5B3518",
+      "brightRed": "#FF6F7C",
+      "brightGreen": "#5FD394",
+      "brightYellow": "#FFE680",
+      "brightBlue": "#6FA6FF",
+      "brightPurple": "#FF8FCB",
+      "brightCyan": "#8CDCFF",
+      "brightWhite": "#FFFFFF"
+    }
+  ]
+}

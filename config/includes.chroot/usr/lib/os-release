@@ -1,0 +1,8 @@
+PRETTY_NAME="D'OH!Sec OS 2.0 (Springfield)"
+NAME="D'OH!Sec OS"
+VERSION_ID="2.0"
+VERSION="2.0 (Springfield)"
+VERSION_CODENAME=trixie
+ID=dohsec
+ID_LIKE=debian
+HOME_URL="https://github.com/marianabsctba/dohsec-os"
