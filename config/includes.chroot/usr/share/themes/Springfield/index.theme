@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=Springfield
+Comment=Tema do D'OH!Sec OS: amarelo, ceu azul e cobertura rosa
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=Springfield
+MetacityTheme=Springfield
+IconTheme=Papirus

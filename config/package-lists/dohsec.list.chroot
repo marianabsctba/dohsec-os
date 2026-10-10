@@ -7,6 +7,10 @@ lightdm-gtk-greeter
 desktop-base
 network-manager-gnome
 
+# Visual
+papirus-icon-theme
+fonts-comic-neue
+
 # Navegador que roda a D'OH!Sec Academy
 firefox-esr
 firefox-esr-l10n-pt-br

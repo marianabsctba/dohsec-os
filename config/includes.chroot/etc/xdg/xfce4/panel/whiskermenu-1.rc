@@ -1,0 +1,4 @@
+button-icon=/usr/share/dohsec/donut.png
+button-title=D'OH!
+show-button-title=true
+show-button-icon=true

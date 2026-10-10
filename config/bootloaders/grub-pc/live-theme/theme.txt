@@ -1,0 +1,49 @@
+desktop-image: "../splash.png"
+title-text: ""
+message-font: "Unifont Regular 16"
+terminal-font: "Unifont Regular 16"
+
+#help bar at the bottom
++ label {
+        top = 100%-50
+        left = 0
+        width = 100%
+        height = 20
+        text = "ENTER inicia, E edita a linha de boot"
+        align = "center"
+        color = "#fff6d7"
+	font = "Unifont Regular 16"
+}
+
+#boot menu
++ boot_menu {
+        left = 10%
+        width = 80%
+        top = 42%
+        height = 58%-110
+        item_color = "#fff6d7"
+	item_font = "Unifont Regular 16"
+        selected_item_color= "#ffd84d"
+	selected_item_font = "Unifont Regular 16"
+        item_height = 20
+        item_padding = 4
+        item_spacing = 4
+	icon_width = 0
+	icon_heigh = 0
+	item_icon_space = 0
+}
+
+#progress bar
++ progress_bar {
+        id = "__timeout__"
+        left = 15%
+        top = 100%-80
+        height = 16
+        width = 70%
+        font = "Unifont Regular 16"
+        text_color = "#171717"
+        fg_color = "#ff5fb7"
+        bg_color = "#fff6d7"
+        border_color = "#ffd84d"
+        text = "Iniciando em %d segundos"
+}

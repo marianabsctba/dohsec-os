@@ -11,8 +11,9 @@ Distro Linux com tema Springfield, baseada em Debian 13 (trixie), feita a partir
 - **D'OH!Sec Academy**: o simulador do esboço, no Firefox (`academy` no terminal ou pelo menu Iniciar)
 - **Terminal**: prompt `D'oh$`, banner com frase aleatória (`doh`), donut 3D (`donut`) e "D'oh!" para comando inexistente
 - **Sistema**: host `springfield`, pt-BR, fuso de São Paulo
-- **Só na ISO**: boot com donut girando (Plymouth), XFCE com papel de parede próprio, usuário live `homer`
-  e a Academy abrindo sozinha no login
+- **Só na ISO**: menu de boot próprio, boot com donut girando (Plymouth), XFCE com tema Springfield
+  (janelas amarelas, painel marrom com menu de donut, ícones Papirus com pastas amarelas, terminal com a
+  paleta), usuário live `homer` e a Academy abrindo sozinha no login
 - **Só no WSL**: cria o usuário no primeiro uso (padrão `homer`), atalho e ícone no Iniciar, esquema de
   cores no Windows Terminal
 
@@ -54,15 +55,16 @@ A primeira ISO baixa uns 2 GB e leva de 30 a 60 minutos; as seguintes reaproveit
 
 - `config/includes.chroot/` - arquivos comuns aos dois formatos: app, arte, identidade, comandos
 - `config/package-lists/`, `config/hooks/live/`, `auto/config` - só da ISO (live-build)
+- `config/bootloaders/` - menu de boot da ISO (isolinux e GRUB)
 - `config/wsl/` - só do WSL: pacotes, primeiro uso, ícone, perfil do Terminal
+- `scripts/gen-xfwm4-theme.py` - gera as bordas de janela do tema Springfield (rodar após mudar a paleta)
 - `build.sh` - ponto de entrada (`iso` ou `wsl`)
 - `scripts/build-wsl.sh` - monta o rootfs do WSL
 - `scripts/debian-builder.sh` - monta o chroot Debian quando o host não é Debian
 
 ## Próximos passos
 
-- Menu de boot da ISO com tema próprio e tempo limite
 - Instalador (Calamares) para instalar no disco
 - Imagem de disco pronta para VM (`.vhdx`, `.qcow2`) e para nuvem
-- Tema GTK e ícones próprios
+- Cursor e sons próprios
 - Fontes do app embutidas (hoje vêm do Google Fonts e caem no fallback offline)

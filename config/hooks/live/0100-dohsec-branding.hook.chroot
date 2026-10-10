@@ -14,6 +14,21 @@ update-alternatives --install /usr/share/images/desktop-base/desktop-background 
   desktop-background /usr/share/dohsec/wallpaper.png 100
 update-alternatives --set desktop-background /usr/share/dohsec/wallpaper.png
 
+# Pastas amarelas no Papirus (troca os links das pastas azuis padrao, como o papirus-folders faz)
+for theme in /usr/share/icons/Papirus /usr/share/icons/Papirus-Dark /usr/share/icons/Papirus-Light; do
+  [ -d "$theme" ] || continue
+  find "$theme" -path '*/places/*' -type l | while read -r link; do
+    target=$(readlink "$link")
+    case "$target" in
+      *-blue*)
+        yellow=$(echo "$target" | sed 's/-blue/-yellow/')
+        [ -e "$(dirname "$link")/$yellow" ] && ln -sf "$yellow" "$link"
+        ;;
+    esac
+  done
+  gtk-update-icon-cache -q -f "$theme" || true
+done
+
 # Tema de boot (o initramfs e regerado pelo live-build no fim do chroot)
 plymouth-set-default-theme dohsec
 

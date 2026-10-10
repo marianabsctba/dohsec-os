@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channel name="xfce4-terminal" version="1.0">
+  <property name="font-use-system" type="bool" value="false"/>
+  <property name="font-name" type="string" value="DejaVu Sans Mono 11"/>
+  <property name="color-use-theme" type="bool" value="false"/>
+  <property name="color-foreground" type="string" value="#FFF6D7"/>
+  <property name="color-background" type="string" value="#1B1708"/>
+  <property name="color-cursor" type="string" value="#FF5FB7"/>
+  <property name="color-cursor-use-default" type="bool" value="false"/>
+  <property name="color-selection-background" type="string" value="#5B3518"/>
+  <property name="color-palette" type="string" value="#171717;#E84D5B;#3BB273;#FFD84D;#2F7DF6;#FF5FB7;#5FC8F6;#FFF6D7;#5B3518;#FF6F7C;#5FD394;#FFE680;#6FA6FF;#FF8FCB;#8CDCFF;#FFFFFF"/>
+  <property name="misc-default-geometry" type="string" value="100x30"/>
+  <property name="misc-menubar-default" type="bool" value="false"/>
+</channel>

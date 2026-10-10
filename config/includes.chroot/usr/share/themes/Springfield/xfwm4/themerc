@@ -1,0 +1,11 @@
+active_text_color=#171717
+inactive_text_color=#7a5a3a
+title_alignment=center
+full_width_title=true
+button_offset=4
+button_spacing=0
+title_vertical_offset_active=1
+title_vertical_offset_inactive=1
+title_shadow_active=false
+title_shadow_inactive=false
+shadow_delta_height=2

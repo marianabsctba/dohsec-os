@@ -1,0 +1,12 @@
+label live-@FLAVOUR@
+	menu label ^D'OH!Sec OS
+	menu default
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@
+
+label live-@FLAVOUR@-failsafe
+	menu label D'OH!Sec OS (modo seguro)
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE_FAILSAFE@
