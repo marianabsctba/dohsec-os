@@ -881,3 +881,123 @@ def s_auditd(rnd, cid):
 
 ESPECIALISTA = [("metadados-exif", s_exif), ("escondido-na-imagem", s_binwalk), ("integridade-aide", s_aide),
                 ("firewall-ufw", s_ufw), ("linha-do-tempo", s_timeline), ("auditoria-auditd", s_auditd)]
+
+
+# ===========================================================================
+# Teste final do Sr. Burns: um incidente grande em 3 etapas, com as mesmas evidencias
+# ===========================================================================
+def _apagao(rnd):
+    email = """Return-Path: <bonus@burns-bonus.test>
+Received: from mail.burns-bonus.test (203.0.113.250)
+	by mx.usina-springfield.test; Fri, 13 Mar 2026 09:30:02 -0300
+Authentication-Results: mx.usina-springfield.test; spf=fail smtp.mailfrom=burns-bonus.test
+From: "Sr. Burns" <burns@usina-springfield.test>
+To: equipe@usina-springfield.test
+Subject: Bonus de produtividade - confirme ate as 10h
+Date: Fri, 13 Mar 2026 09:30:00 -0300
+
+Excelente equipe,
+
+Liberei um bonus. Confirme seus dados em http://burns-bonus.test/login ate as 10h
+ou o bonus sera doado ao fundo de soltar os caes.
+
+C. M. Burns
+"""
+    proxy = []
+    t = datetime(2026, 3, 13, 8, 0, 0)
+    sites = ["intranet.usina-springfield.test", "mail.usina-springfield.test", "cdn.donuts.test", "noticias.test"]
+    for _ in range(600):
+        t += timedelta(seconds=rnd.randint(2, 40))
+        u = rnd.choice(FUNCIONARIOS)
+        proxy.append(f"{t:%Y-%m-%dT%H:%M:%S} usuario={u} GET http://{rnd.choice(sites)}/ 200")
+    proxy.insert(170, "2026-03-13T09:41:07 usuario=smithers GET http://burns-bonus.test/login 200")
+    proxy.insert(171, "2026-03-13T09:41:52 usuario=smithers POST http://burns-bonus.test/login 302")
+    proxy.sort()
+    pacotes = []
+    t = datetime(2026, 3, 13, 9, 50, 0)
+    for _ in range(300):
+        t += timedelta(seconds=rnd.uniform(0.1, 2))
+        pacotes.append((t, pacote_udp(f"10.20.1.{rnd.choice([4, 5, 6, 9])}", "10.20.0.2",
+                                      rnd.randint(30000, 60000), 53, b"rotina")))
+    for _ in range(120):
+        t += timedelta(seconds=rnd.uniform(0.1, 1))
+        pacotes.append((t, pacote_udp("10.20.1.5", "203.0.113.250", 41000, 8443, bytes(900))))
+    pacotes.sort(key=lambda p: p[0])
+    dhcp = "10.20.1.4 homer-pc\n10.20.1.5 smithers-pc\n10.20.1.6 lenny-pc\n10.20.1.9 carl-pc\n"
+    servicos = """UNIT FILE                     STATE   PRESET
+cron.service                  enabled enabled
+ssh.service                   enabled enabled
+nginx.service                 enabled enabled
+sensores.service              enabled enabled
+usina-atualiza.service        enabled enabled
+resfriamento.service          enabled enabled
+"""
+    unidade = """# /etc/systemd/system/usina-atualiza.service  (criado em 2026-03-13 10:02 por smithers via sudo)
+[Unit]
+Description=Atualizador da Usina
+
+[Service]
+ExecStart=/opt/.donut/agente --servidor 203.0.113.250:8443
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+"""
+    pacotes_instalados = "Servicos instalados pelo pacote oficial da usina:\ncron ssh nginx sensores resfriamento\n"
+    return {
+        "evidencias/email.eml": email,
+        "evidencias/proxy.log": "\n".join(proxy) + "\n",
+        "evidencias/rede.pcap": pcap(pacotes),
+        "evidencias/dhcp.txt": dhcp,
+        "evidencias/servicos.txt": servicos,
+        "evidencias/servicos-oficiais.txt": pacotes_instalados,
+        "evidencias/usina-atualiza.service": unidade,
+    }
+
+
+_CONTEXTO_APAGAO = """O Sr. Burns quer saber se voce merece ser Assistente dele. Prova: na sexta-feira a
+usina teve um apagao e ninguem sabe por que. Foram coletadas as evidencias abaixo.
+Voce vai usar tudo o que aprendeu: cabecalhos de e-mail, logs, captura de rede e servicos.
+O teste tem 3 etapas, uma pergunta em cada."""
+
+
+def f_golpe(rnd, cid):
+    return caso(cid, "Teste do Sr. Burns 1/3: quem caiu no golpe?", "final", "chefe",
+                _CONTEXTO_APAGAO,
+                "Um e-mail falso do 'Sr. Burns' chegou para a equipe. Qual funcionario entrou no link e enviou os dados?",
+                "smithers",
+                ["Leia o e-mail: qual site ele manda acessar?",
+                 "Procure esse site no proxy.log: grep burns-bonus evidencias/proxy.log",
+                 "Quem fez o POST (enviou o formulario)?"],
+                ["Phishing com remetente falso (o SPF falhou) e urgencia: a receita classica.",
+                 "O proxy.log liga o e-mail ao clique e ao envio dos dados.",
+                 "Ate o assistente do chefe cai em golpe: treinamento e MFA salvam."], _apagao(rnd))
+
+
+def f_vazamento(rnd, cid):
+    return caso(cid, "Teste do Sr. Burns 2/3: para onde foram os dados?", "final", "chefe",
+                _CONTEXTO_APAGAO,
+                "Depois do golpe, a maquina do funcionario enviou muitos dados para fora. Para qual IP externo?",
+                "203.0.113.250",
+                ["Descubra o IP da maquina do funcionario em dhcp.txt.",
+                 "Veja as conversas: tshark -r evidencias/rede.pcap -q -z conv,ip",
+                 "Qual destino fora da rede 10.x recebeu muitos bytes dessa maquina?"],
+                ["dhcp.txt liga IP a maquina; o tshark liga a maquina ao destino.",
+                 "O mesmo IP aparece no Received do e-mail: o atacante e um so.",
+                 "Bloquear o IP no firewall corta o vazamento enquanto voce investiga."], _apagao(rnd))
+
+
+def f_persistencia(rnd, cid):
+    return caso(cid, "Teste do Sr. Burns 3/3: como ele ficou la dentro?", "final", "chefe",
+                _CONTEXTO_APAGAO,
+                "O atacante criou um servico para continuar no servidor mesmo depois de reiniciar. Qual servico?",
+                "usina-atualiza.service",
+                ["Compare servicos.txt com servicos-oficiais.txt.",
+                 "Qual servico nao faz parte do pacote oficial?",
+                 "Leia a unidade dele: para onde o ExecStart conecta?"],
+                ["Servico com Restart=always e persistencia classica no Linux.",
+                 "Comparar com a lista oficial (baseline) mostra o intruso.",
+                 "Remediacao: systemctl disable --now, apagar o binario, trocar senhas e revisar o sudo."], _apagao(rnd))
+
+
+FINAL = [("teste-burns-golpe", f_golpe), ("teste-burns-vazamento", f_vazamento), ("teste-burns-persistencia", f_persistencia)]

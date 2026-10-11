@@ -1,0 +1,2 @@
+Servicos instalados pelo pacote oficial da usina:
+cron ssh nginx sensores resfriamento

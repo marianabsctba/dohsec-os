@@ -1,0 +1,7 @@
+UNIT FILE                     STATE   PRESET
+cron.service                  enabled enabled
+ssh.service                   enabled enabled
+nginx.service                 enabled enabled
+sensores.service              enabled enabled
+usina-atualiza.service        enabled enabled
+resfriamento.service          enabled enabled

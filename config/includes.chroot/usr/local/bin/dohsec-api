@@ -209,6 +209,17 @@ def api_arquivo(q, corpo):
             "cortado": p.stat().st_size > LIMITE_ARQUIVO}
 
 
+FERRAMENTAS_GRAFICAS = {"wireshark": ["wireshark"]}
+
+
+def api_abrir(q, corpo):
+    cmd = FERRAMENTAS_GRAFICAS.get(str(corpo.get("programa", "")))
+    if not cmd:
+        return {"ok": False, "erro": "Ferramenta desconhecida."}
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    return {"ok": True}
+
+
 def api_energia(q, corpo):
     acao = corpo.get("acao")
     if acao == "desligar":
@@ -230,9 +241,45 @@ def api_lab(q, corpo):
         itens.append({"n": i, "id": c["id"], "titulo": c["titulo"], "trilha": c.get("trilha"),
                       "nivel": c["nivel"], "pergunta": c["pergunta"], "total_dicas": len(c["dicas"]),
                       "dicas": c["dicas"][:e.get("dicas", 0)],
+                      "liberado": lab.trilha_liberada(casos, prog, c.get("trilha")),
                       "iniciado": e.get("iniciado", False), "resolvido": e.get("resolvido", False),
                       "aprendizado": c.get("aprendizado", []) if e.get("resolvido") else []})
-    return {"casos": itens, "trilhas": [{"id": t, "nome": n, "sub": s} for t, n, s in lab.TRILHAS]}
+    trilhas = [{"id": t, "nome": n, "sub": s, "liberada": lab.trilha_liberada(casos, prog, t)}
+               for t, n, s in lab.TRILHAS]
+    return {"casos": itens, "trilhas": trilhas, "carreira": carreira(lab, casos, prog)}
+
+
+def carreira(lab, casos, prog):
+    perfil = lab.perfil(prog)
+    cargo = lab.cargo_atual(casos, prog)
+    etapas = []
+    for i, (t, nome, sub) in enumerate(lab.TRILHAS):
+        itens = [c for c in casos if c.get("trilha") == t]
+        feitos = sum(1 for c in itens if lab.resolvido(prog, c))
+        etapas.append({"trilha": t, "nome": nome, "sub": sub, "total": len(itens), "feitos": feitos,
+                       "liberada": lab.trilha_liberada(casos, prog, t),
+                       "recompensa": ("promove a " + lab.CARGOS[i + 1]) if i + 1 < len(lab.CARGOS)
+                       else ("libera o Teste final do Sr. Burns" if t != "final" else "promove a " + lab.CARGO_FINAL),
+                       "promove_a": lab.CARGOS[i + 1] if i + 1 < len(lab.CARGOS) else lab.CARGO_FINAL})
+    return {"nome": perfil.get("nome", ""), "cargo": cargo, "icone": lab.ICONES.get(cargo, ""),
+            "cargos": lab.CARGOS + [lab.CARGO_FINAL], "icones": lab.ICONES,
+            "promocoes": perfil.get("promocoes", []), "etapas": etapas,
+            "total": len(casos), "feitos": sum(1 for c in casos if lab.resolvido(prog, c))}
+
+
+def api_carreira(q, corpo):
+    lab = carrega_lab()
+    return carreira(lab, lab.carrega_casos(), lab.carrega_progresso())
+
+
+def api_carreira_nome(q, corpo):
+    lab = carrega_lab()
+    prog = lab.carrega_progresso()
+    nome = str(corpo.get("nome", "")).strip()[:34]
+    if nome:
+        lab.perfil(prog)["nome"] = nome
+        lab.salva_progresso(prog)
+    return {"nome": lab.perfil(prog)["nome"]}
 
 
 def api_lab_iniciar(q, corpo):
@@ -240,6 +287,8 @@ def api_lab_iniciar(q, corpo):
     casos = lab.carrega_casos()
     prog = lab.carrega_progresso()
     n, c = lab.acha_caso(casos, str(corpo.get("n")))
+    if lab.bloqueio(casos, prog, c):
+        return {"bloqueado": True, "erro": lab.bloqueio(casos, prog, c)}
     destino = lab.TRABALHO / c["id"]
     if not destino.exists():
         shutil.copytree(lab.BASE / "casos" / c["id"], destino)
@@ -253,6 +302,8 @@ def api_lab_dica(q, corpo):
     casos = lab.carrega_casos()
     prog = lab.carrega_progresso()
     n, c = lab.acha_caso(casos, str(corpo.get("n")))
+    if lab.bloqueio(casos, prog, c):
+        return {"bloqueado": True, "erro": lab.bloqueio(casos, prog, c)}
     e = prog.setdefault(c["id"], {})
     e["dicas"] = min(e.get("dicas", 0) + 1, len(c["dicas"]))
     lab.salva_progresso(prog)
@@ -264,25 +315,29 @@ def api_lab_responder(q, corpo):
     casos = lab.carrega_casos()
     prog = lab.carrega_progresso()
     n, c = lab.acha_caso(casos, str(corpo.get("n")))
+    if lab.bloqueio(casos, prog, c):
+        return {"bloqueado": True, "erro": lab.bloqueio(casos, prog, c)}
     e = prog.setdefault(c["id"], {})
     e["tentativas"] = e.get("tentativas", 0) + 1
     certo = hashlib.sha256(lab.normaliza(str(corpo.get("resposta", ""))).encode()).hexdigest() == c["resposta"]
-    if certo:
-        e["resolvido"] = True
+    promocao = lab.registra_acerto(casos, prog, c) if certo else None
     lab.salva_progresso(prog)
-    return {"certo": certo, "aprendizado": c.get("aprendizado", []) if certo else []}
+    return {"certo": certo, "aprendizado": c.get("aprendizado", []) if certo else [],
+            "promocao": promocao, "memorando": lab.MEMORANDOS.get(promocao, "") if promocao else "",
+            "icone": lab.ICONES.get(promocao, "") if promocao else ""}
 
 
 ROTAS_GET = {
     "/api/sistema": api_sistema, "/api/processos": api_processos, "/api/rede": api_rede,
     "/api/logs": api_logs, "/api/siem": api_siem, "/api/permissoes": api_permissoes,
     "/api/updates": api_updates, "/api/arquivos": api_arquivos, "/api/arquivo": api_arquivo,
-    "/api/lab": api_lab,
+    "/api/lab": api_lab, "/api/carreira": api_carreira,
 }
 ROTAS_POST = {
     "/api/processos/encerrar": api_encerrar, "/api/energia": api_energia,
     "/api/lab/iniciar": api_lab_iniciar, "/api/lab/dica": api_lab_dica,
-    "/api/lab/responder": api_lab_responder,
+    "/api/lab/responder": api_lab_responder, "/api/carreira/nome": api_carreira_nome,
+    "/api/abrir": api_abrir,
 }
 
 

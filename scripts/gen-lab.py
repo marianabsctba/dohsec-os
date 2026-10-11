@@ -512,6 +512,8 @@ def ordem():
         *extra.ANALISTA,
         # Nivel 3: Especialista
         *extra.ESPECIALISTA,
+        # Teste final do Sr. Burns
+        *extra.FINAL,
     ]
 
 

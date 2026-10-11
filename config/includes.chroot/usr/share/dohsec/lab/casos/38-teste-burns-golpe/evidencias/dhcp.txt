@@ -1,0 +1,4 @@
+10.20.1.4 homer-pc
+10.20.1.5 smithers-pc
+10.20.1.6 lenny-pc
+10.20.1.9 carl-pc

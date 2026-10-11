@@ -223,36 +223,106 @@
       pre(d.texto));
   }
 
-  // ---------------------------------------------------------------- Laboratorio
+  // ---------------------------------------------------------------- Carreira na Usina
+  // Estagiario -> Operador da Usina -> Supervisor de Seguranca -> Chefe de Seguranca ->
+  // (Teste final do Sr. Burns) -> Assistente do Sr. Burns. Etapas liberam em ordem.
+  let carreira = null;
+
+  async function atualizaCarreira() {
+    carreira = await api('/api/carreira');
+    pintaCargo();
+    return carreira;
+  }
+
+  function barra(feitos, total) {
+    const pct = total ? Math.round(100 * feitos / total) : 0;
+    return '<div class="dohsec-progresso"><div style="width:' + pct + '%"></div></div>';
+  }
+
+  function cartaoCaso(c) {
+    const estado = !c.liberado ? '🔒' : (c.resolvido ? '✅' : (c.iniciado ? '🔎' : '🆕'));
+    return '<div class="dohsec-caso' + (c.resolvido ? ' dohsec-ok' : '') + (c.liberado ? '' : ' dohsec-trancado') + '">' +
+      '<b>' + estado + ' ' + c.n + '. ' + esc(c.titulo) + '</b> <span class="muted-mini">' + esc(c.nivel) + '</span>' +
+      (c.liberado ? '<div class="dohsec-barra"><button class="xp-btn dohsec-mini" data-dohsec-caso="' + c.n + '">' +
+        (c.resolvido ? 'Rever' : (c.iniciado ? 'Continuar' : 'Investigar')) + '</button></div>' : '') + '</div>';
+  }
+
+  // Objetivos -> Minha carreira
+  async function minhaCarreira() {
+    await nomePendente;
+    let k = await atualizaCarreira();
+    const nick = document.getElementById('nick');
+    if (!k.nome && nick && nick.value.trim()) {
+      await salvaNome();
+      k = await atualizaCarreira();
+    }
+    const proxima = k.etapas.find(e => e.liberada && e.feitos < e.total);
+    const degraus = k.etapas.map(e => {
+      const st = e.feitos === e.total && e.total ? '✅' : (e.liberada ? '▶️' : '🔒');
+      return '<div class="dohsec-degrau' + (e.liberada ? '' : ' dohsec-trancado') + '">' +
+        '<b>' + st + ' ' + esc(e.nome) + '</b> <span class="muted-mini">' + esc(e.sub) + '</span>' +
+        '<span class="dohsec-conta">' + e.feitos + '/' + e.total + '</span>' + barra(e.feitos, e.total) +
+        '<span class="muted-mini">Concluir ' + esc(e.recompensa) + '</span></div>';
+    }).join('');
+    const historico = k.promocoes.length
+      ? '<ul>' + k.promocoes.map(p => '<li>' + esc(p.data) + ': ' + esc(k.icones[p.cargo] || '') + ' ' + esc(p.cargo) + '</li>').join('') + '</ul>'
+      : '<p class="muted-mini">Nenhuma promocao ainda. Todo mundo comeca no cafezinho.</p>';
+    janela('goals', 'Minha carreira', '🎯',
+      '<div class="dohsec-ficha"><span class="dohsec-ficha-icone">' + esc(k.icone) + '</span><div>' +
+      '<div class="muted-mini">Ficha funcional - Usina Nuclear de Springfield</div>' +
+      '<h3>' + esc(k.nome || 'Funcionario sem nome') + '</h3>' +
+      '<div>Cargo atual: <b>' + esc(k.cargo) + '</b></div>' +
+      '<div class="muted-mini">' + k.feitos + '/' + k.total + ' casos concluidos</div></div></div>' +
+      (proxima ? '<div class="os-good"><b>Proximo passo:</b> concluir <b>' + esc(proxima.nome) + '</b> (' +
+        proxima.feitos + '/' + proxima.total + '): ' + esc(proxima.recompensa) + '. ' +
+        '<button class="xp-btn dohsec-mini" data-dohsec-app="case">Abrir a Mesa do Incidente</button></div>'
+        : '<div class="os-good"><b>Voce chegou ao topo:</b> Assistente do Sr. Burns. Eeexcelente.</div>') +
+      '<h4>Plano de carreira</h4>' + degraus +
+      '<h4>Historico de promocoes</h4>' + historico,
+      { w: 'min(760px,94vw)', h: 'min(660px,84vh)' });
+  }
+
+  // Mesa do Incidente -> casos da etapa atual
+  async function mesa() {
+    const d = await api('/api/lab');
+    const k = d.carreira;
+    const etapa = k.etapas.find(e => e.liberada && e.feitos < e.total) || k.etapas[k.etapas.length - 1];
+    const casos = d.casos.filter(c => c.trilha === etapa.trilha);
+    janela('case', 'Mesa do Incidente', '🚨',
+      '<h3>🚨 Mesa do Incidente: ' + esc(etapa.nome) + '</h3>' +
+      '<p class="dohsec-dica">Casos da sua etapa atual (' + etapa.feitos + '/' + etapa.total + '). ' +
+      'Concluindo todos: ' + esc(etapa.recompensa) + '. As evidencias sao arquivos de verdade: ' +
+      'investigue no Terminal com as Ferramentas.</p>' + barra(etapa.feitos, etapa.total) +
+      casos.map(cartaoCaso).join(''),
+      { w: 'min(760px,94vw)', h: 'min(640px,82vh)' });
+  }
+
+  // Laboratorio -> todas as etapas, com cadeado nas que faltam
   async function laboratorio() {
     const d = await api('/api/lab');
-    const feitos = d.casos.filter(c => c.resolvido).length;
-    let html = '<h3>🧪 Laboratório Springfield</h3><p class="dohsec-dica">' + feitos + '/' + d.casos.length +
-      ' concluídos. Comece pela Trilha do Estagiário e vá subindo. Tudo aqui é real: as evidências ' +
-      'ficam em <code>~/springfield/casos</code> e você investiga no Terminal.</p>';
+    let html = '<h3>🧪 Laboratorio Springfield</h3><p class="dohsec-dica">' + d.carreira.feitos + '/' + d.casos.length +
+      ' concluidos. Cargo atual: <b>' + esc(d.carreira.cargo) + '</b>. As etapas liberam em ordem.</p>';
     d.trilhas.forEach(t => {
       const itens = d.casos.filter(c => c.trilha === t.id);
       if (!itens.length) return;
-      html += '<h4>' + esc(t.nome) + ' <span class="muted-mini">' + esc(t.sub) + ' (' +
+      html += '<h4>' + (t.liberada ? '' : '🔒 ') + esc(t.nome) + ' <span class="muted-mini">' + esc(t.sub) + ' (' +
         itens.filter(c => c.resolvido).length + '/' + itens.length + ')</span></h4>';
-      html += itens.map(c => '<div class="dohsec-caso' + (c.resolvido ? ' dohsec-ok' : '') + '">' +
-        '<b>' + c.n + '. ' + esc(c.titulo) + '</b> <span class="muted-mini">' + esc(c.nivel) + '</span> ' +
-        (c.resolvido ? '✅' : (c.iniciado ? '🔎' : '')) +
-        '<div class="dohsec-barra"><button class="xp-btn dohsec-mini" data-dohsec-caso="' + c.n + '">Abrir</button></div></div>'
-      ).join('');
+      html += itens.map(cartaoCaso).join('');
     });
-    janela('lab', 'Laboratório', '🧪', html, { w: 'min(760px,94vw)', h: 'min(640px,82vh)' });
+    janela('lab', 'Laboratorio', '🧪', html, { w: 'min(760px,94vw)', h: 'min(640px,82vh)' });
   }
 
   async function abreCaso(n) {
     const r = await api('/api/lab/iniciar', { n: Number(n) });
+    if (r.bloqueado) return aviso('🔒 Ainda nao', r.erro);
     const d = await api('/api/lab');
     const c = d.casos.find(x => x.n === Number(n));
     janela('caso_' + n, c.titulo, '🔎',
       '<div class="dohsec-barra">' +
       '<button class="xp-btn" data-dohsec-investigar="' + esc(r.pasta) + '">💻 Investigar no Terminal</button> ' +
-      '<button class="xp-btn" data-dohsec-dir="' + esc(r.pasta) + '">🗂️ Ver arquivos</button></div>' +
-      pre(r.leiame.replace(/`/g, '')) +
+      '<button class="xp-btn" data-dohsec-dir="' + esc(r.pasta) + '">🗂️ Ver arquivos</button> ' +
+      '<button class="xp-btn" data-dohsec-app="tools">🧰 Ferramentas</button></div>' +
+      markdown(r.leiame) +
       '<h4>Sua resposta</h4><div class="cli-row"><input id="dohsecResp_' + n + '" placeholder="digite a resposta">' +
       '<button class="xp-btn" data-dohsec-responder="' + n + '">Responder</button>' +
       '<button class="xp-btn" data-dohsec-dica="' + n + '">Dica</button></div>' +
@@ -262,6 +332,34 @@
       { w: 'min(860px,94vw)', h: 'min(680px,84vh)' });
   }
 
+  function markdown(texto) {
+    const inline = s => esc(s).replace(/\\\|/g, '|')
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>');
+    const linhas = texto.split('\n');
+    let html = '', i = 0;
+    while (i < linhas.length) {
+      const l = linhas[i];
+      if (l.startsWith('|')) {
+        const linhasTabela = [];
+        while (i < linhas.length && linhas[i].startsWith('|')) {
+          const cel = linhas[i].trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map(c => c.trim());
+          if (!cel.every(c => /^-+$/.test(c))) linhasTabela.push(cel);
+          i++;
+        }
+        html += '<table class="dohsec-tabela">' + linhasTabela.map((r, n) => '<tr>' +
+          r.map(c => (n ? '<td>' : '<th>') + inline(c) + (n ? '</td>' : '</th>')).join('') + '</tr>').join('') + '</table>';
+        continue;
+      }
+      if (l.startsWith('# ')) html += '<h3>' + inline(l.slice(2)) + '</h3>';
+      else if (l.startsWith('## ')) html += '<h4>' + inline(l.slice(3)) + '</h4>';
+      else if (l.startsWith('- ')) html += '<div class="dohsec-item">• ' + inline(l.slice(2)) + '</div>';
+      else if (l.trim()) html += '<p>' + inline(l) + '</p>';
+      i++;
+    }
+    return '<div class="dohsec-leiame">' + html + '</div>';
+  }
+
   function aprendizado(itens) {
     return '<div class="os-good"><b>✅ Resolvido! O que aprendemos</b><ul>' +
       itens.map(i => '<li>' + esc(i) + '</li>').join('') + '</ul></div>';
@@ -269,6 +367,7 @@
 
   async function dica(n) {
     const d = await api('/api/lab/dica', { n: Number(n) });
+    if (d.bloqueado) return aviso('🔒 Ainda nao', d.erro);
     const out = document.getElementById('dohsecCasoOut_' + n);
     if (out) out.innerHTML = '<p class="dohsec-dica">💡 ' + d.dicas.map(esc).join('<br>💡 ') + '</p>';
   }
@@ -276,14 +375,165 @@
   async function responder(n) {
     const campo = document.getElementById('dohsecResp_' + n);
     const r = await api('/api/lab/responder', { n: Number(n), resposta: campo ? campo.value : '' });
+    if (r.bloqueado) return aviso('🔒 Ainda nao', r.erro);
     const out = document.getElementById('dohsecCasoOut_' + n);
-    if (r.certo) {
-      aviso('Mmm... resolvido!', 'Caso ' + n + ' concluído');
-      if (out) out.innerHTML = aprendizado(r.aprendizado);
-      if (existe('lab')) laboratorio();
-    } else {
-      aviso("D'oh!", 'Não é isso. Tente de novo ou peça uma dica.');
+    if (!r.certo) return aviso("D'oh!", 'Nao e isso. Tente de novo ou peca uma dica.');
+    aviso('Mmm... resolvido!', 'Caso ' + n + ' concluido');
+    if (out) out.innerHTML = aprendizado(r.aprendizado);
+    await atualizaCarreira();
+    for (const id of ['goals', 'case', 'lab']) {
+      if (existe(id)) await window.DOHSEC_REAL[id]();
     }
+    if (r.promocao) promocao(r);
+  }
+
+  function promocao(r) {
+    janela('promocao', 'Memorando interno', '📨',
+      '<div class="dohsec-memo"><div class="muted-mini">DE: Waylon Smithers | PARA: ' +
+      esc((carreira && carreira.nome) || 'Funcionario') + ' | ASSUNTO: Promocao</div>' +
+      '<div class="dohsec-memo-cargo">' + esc(r.icone) + ' ' + esc(r.promocao) + '</div>' +
+      '<p>' + esc(r.memorando) + '</p>' +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-app="certificate">🏆 Ver certificado</button>' +
+      '<button class="xp-btn" data-dohsec-app="goals">🎯 Minha carreira</button></div></div>',
+      { w: 'min(560px,94vw)', h: 'min(380px,70vh)' });
+  }
+
+  // Certificado do cargo atual (desenhado em canvas, salvo como PNG)
+  async function certificado() {
+    const k = await atualizaCarreira();
+    janela('certificate', 'Certificado', '🏆',
+      '<canvas id="dohsecCert" width="1200" height="800" class="dohsec-cert"></canvas>' +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-salvar-cert="1">💾 Salvar PNG</button></div>',
+      { w: 'min(860px,94vw)', h: 'min(680px,86vh)' });
+    desenhaCertificado(k);
+  }
+
+  function desenhaCertificado(k) {
+    const cv = document.getElementById('dohsecCert');
+    if (!cv) return;
+    const g = cv.getContext('2d');
+    g.fillStyle = '#fff6d7'; g.fillRect(0, 0, 1200, 800);
+    g.strokeStyle = '#5b3518'; g.lineWidth = 18; g.strokeRect(24, 24, 1152, 752);
+    g.strokeStyle = '#ffd84d'; g.lineWidth = 6; g.strokeRect(48, 48, 1104, 704);
+    g.textAlign = 'center'; g.fillStyle = '#171717';
+    g.font = 'bold 30px "Share Tech Mono", monospace';
+    g.fillText('USINA NUCLEAR DE SPRINGFIELD - BE SAFE INC.', 600, 130);
+    g.font = 'bold 64px "DejaVu Sans", sans-serif';
+    g.fillText('Certificado de Cargo', 600, 230);
+    g.font = '28px "DejaVu Sans", sans-serif';
+    g.fillText('Certificamos que', 600, 310);
+    g.font = 'bold 52px "DejaVu Sans", sans-serif'; g.fillStyle = '#2f7df6';
+    g.fillText(k.nome || 'Funcionario sem nome', 600, 390);
+    g.font = '28px "DejaVu Sans", sans-serif'; g.fillStyle = '#171717';
+    g.fillText('ocupa o cargo de', 600, 450);
+    g.font = 'bold 50px "DejaVu Sans", sans-serif'; g.fillStyle = '#ff5fb7';
+    g.fillText((k.icone || '') + ' ' + k.cargo, 600, 530);
+    g.font = '24px "DejaVu Sans", sans-serif'; g.fillStyle = '#5b3518';
+    g.fillText(k.feitos + ' de ' + k.total + ' casos resolvidos com ferramentas reais do Debian', 600, 600);
+    const ultima = k.promocoes.length ? k.promocoes[k.promocoes.length - 1].data : new Date().toISOString().slice(0, 10);
+    g.fillText('Emitido em ' + ultima + '  -  Ass.: C. M. Burns (por W. Smithers)', 600, 680);
+  }
+
+  function salvaCertificado() {
+    const cv = document.getElementById('dohsecCert');
+    if (!cv) return;
+    const a = document.createElement('a');
+    a.href = cv.toDataURL('image/png');
+    a.download = 'certificado-dohsec.png';
+    a.click();
+  }
+
+  // Ferramentas reais por etapa
+  const FERRAMENTAS = [
+    ['Estagiario', [['ls / cd / pwd', 'navegar pelas pastas'], ['cat / less', 'ler arquivos'], ['grep', 'procurar texto'],
+      ['wc / cut / sort / uniq', 'contar e filtrar'], ['find', 'achar arquivos'], ['tar', 'empacotar e extrair'], ['man', 'manual de tudo']]],
+    ['Operador da Usina', [['id / whoami', 'quem sou eu'], ['chmod / ls -l', 'permissoes'], ['sha256sum', 'conferir hash'],
+      ['file / xxd', 'tipo real de um arquivo'], ['strings', 'texto escondido em binarios'], ['systemctl / journalctl', 'servicos e logs'],
+      ['ss / ip', 'rede e portas'], ['which / type', 'qual programa roda']]],
+    ['Supervisor de Seguranca', [['jq', 'filtrar JSON'], ['tshark', 'analisar capturas de rede'], ['wireshark', 'capturas de rede (grafico)', 'wireshark'],
+      ['tcpdump', 'capturar trafego'], ['yara', 'regras de deteccao'], ['awk', 'colunas de logs']]],
+    ['Chefe de Seguranca', [['exiftool', 'metadados'], ['binwalk', 'arquivos dentro de arquivos'], ['sleuthkit (fls, icat)', 'forense de disco'],
+      ['foremost', 'recuperar arquivos'], ['aide', 'integridade'], ['ufw / nft', 'firewall'], ['ausearch', 'auditoria (auditd)'],
+      ['lynis', 'auditoria de endurecimento'], ['suricata', 'IDS']]],
+  ];
+
+  function ferramentas() {
+    janela('tools', 'Ferramentas', '🧰',
+      '<h3>🧰 Ferramentas reais</h3><p class="dohsec-dica">Tudo instalado de verdade (Debian). Use no Terminal; ' +
+      'as graficas abrem em janela propria. Dica: <code>man NOME</code> mostra o manual de qualquer uma.</p>' +
+      FERRAMENTAS.map(([cargo, lista]) => '<h4>' + esc(cargo) + '</h4><table class="dohsec-tabela"><tbody>' +
+        lista.map(([nome, oque, gui]) => '<tr><td class="dohsec-mono"><b>' + esc(nome) + '</b></td><td>' + esc(oque) +
+          '</td><td>' + (gui ? '<button class="xp-btn dohsec-mini" data-dohsec-abrir="' + gui + '">Abrir</button>' : '') +
+          '</td></tr>').join('') + '</tbody></table>').join('') +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-app="terminal">💻 Abrir o Terminal</button></div>',
+      { w: 'min(760px,94vw)', h: 'min(640px,82vh)' });
+  }
+
+  async function abrePrograma(nome) {
+    const r = await api('/api/abrir', { programa: nome });
+    aviso(r.ok ? 'Abrindo' : 'Nao deu', r.ok ? nome + ' vai abrir em uma janela' : r.erro);
+  }
+
+  // Cargo no menu Iniciar e na barra das janelas, no lugar da trilha simulada do esboco
+  const TRILHAS_ESBOCO = ['SOC / Blue Team', 'SysAdmin Linux Seguro', 'Windows / AD', 'DFIR / Resposta', 'Red Team / Pentest Ético'];
+  function pintaCargo() {
+    if (!carreira) return;
+    const rotulo = carreira.icone + ' ' + carreira.cargo;
+    document.querySelectorAll('#startmenu .muted-mini, .win-statusbar span').forEach(el => {
+      const texto = el.textContent.trim();
+      if (el.dataset.dohsecCargo || TRILHAS_ESBOCO.includes(texto)) {
+        el.dataset.dohsecCargo = '1';
+        if (texto !== rotulo) el.textContent = rotulo;
+      }
+    });
+  }
+
+  // Relogio real na bandeja (o do esboco e enfeite)
+  function relogio() {
+    const el = document.getElementById('clock');
+    if (!el) return;
+    const d = new Date();
+    const dois = n => String(n).padStart(2, '0');
+    el.innerHTML = dois(d.getHours()) + ':' + dois(d.getMinutes()) + '<br>' +
+      dois(d.getDate()) + '/' + dois(d.getMonth() + 1) + '/' + d.getFullYear();
+  }
+
+  // Login: a ficha substitui a escolha de trilha simulada
+  async function login() {
+    const k = await atualizaCarreira().catch(() => null);
+    if (!k) return;
+    const nick = document.getElementById('nick');
+    if (nick && k.nome) nick.value = k.nome;
+    const chips = document.getElementById('chips');
+    if (chips && chips.parentElement && !document.getElementById('dohsecFichaLogin')) {
+      chips.parentElement.style.display = 'none';
+      const ficha = document.createElement('div');
+      ficha.id = 'dohsecFichaLogin';
+      ficha.className = 'dohsec-ficha-login';
+      ficha.innerHTML = '<div style="font-weight:900;font-size:13px;margin-bottom:6px">Sua ficha na Usina</div>' +
+        '<div class="dohsec-ficha"><span class="dohsec-ficha-icone">' + esc(k.icone) + '</span><div><b>' + esc(k.cargo) +
+        '</b><div class="muted-mini">' + k.feitos + '/' + k.total + ' casos concluidos</div></div></div>';
+      chips.parentElement.parentElement.insertBefore(ficha, chips.parentElement);
+    }
+    const missao = document.querySelector('#login .mission');
+    if (missao && !missao.dataset.dohsec) {
+      missao.dataset.dohsec = '1';
+      missao.innerHTML = '<b style="font-size:14px">🎯 Carreira na Usina</b>' +
+        '<ol style="font-size:13px;line-height:1.7;margin:10px 0;padding-left:20px">' +
+        '<li>🍩 <b>Estagiario</b>: aprenda o terminal</li><li>🔧 <b>Operador da Usina</b>: o sistema por dentro</li>' +
+        '<li>🛡️ <b>Supervisor de Seguranca</b>: logs, trafego e deteccao</li>' +
+        '<li>🔬 <b>Chefe de Seguranca</b>: forense e endurecimento</li>' +
+        '<li>👔 <b>Teste final do Sr. Burns</b> para virar <b>Assistente do Sr. Burns</b></li></ol>' +
+        '<p class="small" style="background:#fff8dc;border:1px solid #ddc;border-radius:4px;padding:8px;margin:0">' +
+        'Tudo aqui e de verdade: Linux, Terminal e ferramentas reais. Seu progresso fica salvo.</p>';
+    }
+  }
+
+  let nomePendente = Promise.resolve();
+  async function salvaNome() {
+    const nick = document.getElementById('nick');
+    if (nick && nick.value.trim()) await api('/api/carreira/nome', { nome: nick.value.trim() }).catch(() => {});
+    atualizaCarreira().catch(() => {});
   }
 
   // ---------------------------------------------------------------- Energia
@@ -314,14 +564,25 @@
     updates: updates,
     files: () => arquivos(''),
     lab: laboratorio,
+    goals: minhaCarreira,
+    case: mesa,
+    certificate: certificado,
+    tools: ferramentas,
   };
 
   // Apps novos no desktop e no menu Iniciar (o front monta os icones no login)
-  [['files', 'Arquivos', '🗂️'], ['lab', 'Laboratório', '🧪']].forEach(a => {
+  [['files', 'Arquivos', '🗂️'], ['tools', 'Ferramentas', '🧰'], ['lab', 'Laboratório', '🧪']].forEach(a => {
     if (!OS.apps.find(x => x[0] === a[0])) OS.apps.splice(2, 0, a);
   });
+  const objetivos = OS.apps.find(x => x[0] === 'goals');
+  if (objetivos) objetivos[1] = 'Minha carreira';
   const menu = document.getElementById('startmenu');
-  if (menu) new MutationObserver(menuEnergia).observe(menu, { childList: true, subtree: true });
+  if (menu) new MutationObserver(() => { menuEnergia(); pintaCargo(); }).observe(menu, { childList: true, subtree: true });
+  const wins = document.getElementById('wins');
+  if (wins) new MutationObserver(pintaCargo).observe(wins, { childList: true });
+  relogio();
+  setInterval(relogio, 20000);
+  login();
 
   // Cliques dos apps reais (em fase de captura, como o front faz)
   const acoes = [
@@ -339,6 +600,8 @@
     ['data-dohsec-dica', v => dica(v)],
     ['data-dohsec-responder', v => responder(v)],
     ['data-dohsec-energia', v => energia(v)],
+    ['data-dohsec-abrir', v => abrePrograma(v)],
+    ['data-dohsec-salvar-cert', () => salvaCertificado()],
   ];
   document.addEventListener('click', e => {
     for (const [attr, fn] of acoes) {
@@ -350,6 +613,10 @@
         return;
       }
     }
+  }, true);
+  // Na janela (antes do documento): o nome precisa sair antes de o front abrir a carreira
+  window.addEventListener('pointerdown', e => {
+    if (e.target.closest && e.target.closest('#enter')) nomePendente = salvaNome();
   }, true);
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter' || !e.target || !e.target.id) return;

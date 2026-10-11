@@ -17,6 +17,25 @@ Distro Linux com tema Springfield, baseada em Debian 13 (trixie), feita a partir
 - **Só no WSL**: cria o usuário no primeiro uso (padrão `homer`), atalho e ícone no Iniciar, esquema de
   cores no Windows Terminal
 
+## Carreira na Usina
+
+O D'OH!Sec OS é o front do esboço rodando como sistema operacional de verdade (Debian por baixo).
+Você entra como **Estagiário** e vai sendo promovido(a) resolvendo casos reais:
+
+| Cargo | Etapa | Casos |
+| --- | --- | --- |
+| 🍩 Estagiário | o terminal | 8 |
+| 🔧 Operador da Usina | o sistema por dentro | 11 |
+| 🛡️ Supervisor de Segurança | logs, tráfego e detecção | 12 |
+| 🔬 Chefe de Segurança | forense e endurecimento | 6 |
+| 👔 Assistente do Sr. Burns | Teste final do Sr. Burns | 3 |
+
+As etapas liberam em ordem. Cada promoção chega por memorando do Smithers e gera um certificado do
+cargo. No front: **Minha carreira** (ficha e plano), **Mesa do Incidente** (casos da etapa atual),
+**Laboratório** (todas as etapas), **Ferramentas** (o que usar em cada etapa) e **Certificado**.
+Os apps do sistema também são reais: Terminal (bash), Arquivos, Processos, Rede, Logs, Mini SIEM,
+Permissões, Updates, Reiniciar e Desligar.
+
 ## Laboratório Springfield
 
 Casos de resposta a incidente da Usina, com evidências de verdade para investigar no terminal
@@ -29,7 +48,7 @@ lab
 
 | Comando | O que faz |
 | --- | --- |
-| `lab` | lista os casos e o progresso |
+| `lab` | lista os casos, o progresso e o cargo atual |
 | `lab iniciar 1` | copia as evidências do caso para `~/springfield/casos/` e mostra o contexto |
 | `lab dica 1` | mostra a próxima dica |
 | `lab responder 1 "resposta"` | confere a resposta (maiúsculas, aspas e espaços não importam) |

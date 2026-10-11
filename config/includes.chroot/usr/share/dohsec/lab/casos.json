@@ -649,5 +649,59 @@
       "nc (netcat) conectando a IP externo e sinal classico de shell reversa.",
       "ausearch e aureport resumem os logs do auditd."
     ]
+  },
+  {
+    "id": "38-teste-burns-golpe",
+    "titulo": "Teste do Sr. Burns 1/3: quem caiu no golpe?",
+    "trilha": "final",
+    "nivel": "chefe",
+    "pergunta": "Um e-mail falso do 'Sr. Burns' chegou para a equipe. Qual funcionario entrou no link e enviou os dados?",
+    "resposta": "96874feedc3c209d13d1c2a9f49ce85cff4ce89c8e057c066bbb729be525eeb0",
+    "dicas": [
+      "Leia o e-mail: qual site ele manda acessar?",
+      "Procure esse site no proxy.log: grep burns-bonus evidencias/proxy.log",
+      "Quem fez o POST (enviou o formulario)?"
+    ],
+    "aprendizado": [
+      "Phishing com remetente falso (o SPF falhou) e urgencia: a receita classica.",
+      "O proxy.log liga o e-mail ao clique e ao envio dos dados.",
+      "Ate o assistente do chefe cai em golpe: treinamento e MFA salvam."
+    ]
+  },
+  {
+    "id": "39-teste-burns-vazamento",
+    "titulo": "Teste do Sr. Burns 2/3: para onde foram os dados?",
+    "trilha": "final",
+    "nivel": "chefe",
+    "pergunta": "Depois do golpe, a maquina do funcionario enviou muitos dados para fora. Para qual IP externo?",
+    "resposta": "e3299a765ddf6ad382feefff38bd5ab2f62663bec6e7be74ccee7670e77d9138",
+    "dicas": [
+      "Descubra o IP da maquina do funcionario em dhcp.txt.",
+      "Veja as conversas: tshark -r evidencias/rede.pcap -q -z conv,ip",
+      "Qual destino fora da rede 10.x recebeu muitos bytes dessa maquina?"
+    ],
+    "aprendizado": [
+      "dhcp.txt liga IP a maquina; o tshark liga a maquina ao destino.",
+      "O mesmo IP aparece no Received do e-mail: o atacante e um so.",
+      "Bloquear o IP no firewall corta o vazamento enquanto voce investiga."
+    ]
+  },
+  {
+    "id": "40-teste-burns-persistencia",
+    "titulo": "Teste do Sr. Burns 3/3: como ele ficou la dentro?",
+    "trilha": "final",
+    "nivel": "chefe",
+    "pergunta": "O atacante criou um servico para continuar no servidor mesmo depois de reiniciar. Qual servico?",
+    "resposta": "ff2f41db2bcf5a3d9dee1e074b7b048229bbe60dc1784c21f279b5d5e1ab5eb4",
+    "dicas": [
+      "Compare servicos.txt com servicos-oficiais.txt.",
+      "Qual servico nao faz parte do pacote oficial?",
+      "Leia a unidade dele: para onde o ExecStart conecta?"
+    ],
+    "aprendizado": [
+      "Servico com Restart=always e persistencia classica no Linux.",
+      "Comparar com a lista oficial (baseline) mostra o intruso.",
+      "Remediacao: systemctl disable --now, apagar o binario, trocar senhas e revisar o sudo."
+    ]
   }
 ]

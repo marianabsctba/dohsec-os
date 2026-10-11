@@ -23,12 +23,77 @@ PROGRESSO = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")) 
 AMARELO, ROSA, AZUL, VERDE, VERMELHO, CINZA, NEGRITO, FIM = (
     "\033[1;33m", "\033[38;5;205m", "\033[1;34m", "\033[1;32m", "\033[1;31m", "\033[2m", "\033[1m", "\033[0m")
 
+# Carreira na Usina: cada trilha e um cargo; concluir a trilha promove para o proximo.
+# As trilhas liberam em ordem. O Teste final do Sr. Burns promove a Assistente do Sr. Burns.
 TRILHAS = [
-    ("estagiario", "Nivel 0 - Estagiario", "o terminal"),
-    ("operador", "Nivel 1 - Operador", "o sistema por dentro"),
-    ("analista", "Nivel 2 - Analista SOC", "logs, trafego e deteccao"),
-    ("especialista", "Nivel 3 - Especialista", "forense e endurecimento"),
+    ("estagiario", "Estagiario", "o terminal"),
+    ("operador", "Operador da Usina", "o sistema por dentro"),
+    ("analista", "Supervisor de Seguranca", "logs, trafego e deteccao"),
+    ("especialista", "Chefe de Seguranca", "forense e endurecimento"),
+    ("final", "Teste final do Sr. Burns", "a prova para virar Assistente do Sr. Burns"),
 ]
+CARGOS = ["Estagiario", "Operador da Usina", "Supervisor de Seguranca", "Chefe de Seguranca"]
+CARGO_FINAL = "Assistente do Sr. Burns"
+ICONES = {"Estagiario": "🍩", "Operador da Usina": "🔧", "Supervisor de Seguranca": "🛡️",
+          "Chefe de Seguranca": "🔬", CARGO_FINAL: "👔"}
+MEMORANDOS = {
+    "Operador da Usina": "O Sr. Burns notou voce... vagamente. Parabens: agora voce e Operador(a) da Usina. "
+                         "Nao encoste em nada brilhante.",
+    "Supervisor de Seguranca": "Excelente. O Sr. Burns quer saber quem anda mexendo nos logs dele. "
+                               "Voce agora e Supervisor(a) de Seguranca.",
+    "Chefe de Seguranca": "Os incidentes ficaram serios e voce tambem. Promovido(a) a Chefe de Seguranca. "
+                          "O Teste final do Sr. Burns te espera no fim do corredor.",
+    CARGO_FINAL: "Eeexcelente... A partir de hoje voce e Assistente do Sr. Burns. "
+                 "Solte os caes. Digo, os certificados.",
+}
+
+
+def trilhas_concluidas(casos, prog):
+    """Quantas trilhas seguidas, a partir da primeira, estao 100% resolvidas."""
+    n = 0
+    for trilha, _, _ in TRILHAS:
+        itens = [c for c in casos if c.get("trilha") == trilha]
+        if itens and all(resolvido(prog, c) for c in itens):
+            n += 1
+        else:
+            break
+    return n
+
+
+def cargo_atual(casos, prog):
+    n = trilhas_concluidas(casos, prog)
+    if n >= len(TRILHAS):
+        return CARGO_FINAL
+    return CARGOS[min(n, len(CARGOS) - 1)]
+
+
+def trilha_liberada(casos, prog, trilha):
+    ordem = [t for t, _, _ in TRILHAS]
+    return ordem.index(trilha) <= trilhas_concluidas(casos, prog) if trilha in ordem else True
+
+
+def bloqueio(casos, prog, c):
+    """Mensagem de bloqueio do caso, ou None se ele ja esta liberado."""
+    if trilha_liberada(casos, prog, c.get("trilha")):
+        return None
+    nome = dict((t, n) for t, n, _ in TRILHAS).get(c.get("trilha"), c.get("trilha"))
+    return f"Esse caso e da etapa '{nome}'. Conclua a etapa atual para ser promovido(a) e liberar."
+
+
+def perfil(prog):
+    return prog.setdefault("_perfil", {"nome": "", "promocoes": []})
+
+
+def registra_acerto(casos, prog, c):
+    """Marca o caso como resolvido. Devolve o novo cargo se houve promocao, senao None."""
+    antes = cargo_atual(casos, prog)
+    prog.setdefault(c["id"], {})["resolvido"] = True
+    depois = cargo_atual(casos, prog)
+    if depois == antes:
+        return None
+    from datetime import date
+    perfil(prog)["promocoes"].append({"cargo": depois, "data": date.today().isoformat()})
+    return depois
 
 
 def carrega_casos():
@@ -64,7 +129,7 @@ def acha_caso(casos, chave):
 
 def proximo(casos, prog):
     for i, c in enumerate(casos, 1):
-        if not resolvido(prog, c):
+        if not resolvido(prog, c) and trilha_liberada(casos, prog, c.get("trilha")):
             return i
     return None
 
@@ -110,13 +175,16 @@ def limpa(texto):
 
 def listar(casos, prog):
     total = sum(1 for c in casos if resolvido(prog, c))
-    print(f"\n{AMARELO}  Laboratorio Springfield{FIM}  {CINZA}{total}/{len(casos)} concluidos{FIM}")
+    cargo = cargo_atual(casos, prog)
+    print(f"\n{AMARELO}  Carreira na Usina{FIM}  {CINZA}{total}/{len(casos)} concluidos{FIM}")
+    print(f"  Cargo atual: {ICONES.get(cargo, '')} {NEGRITO}{cargo}{FIM}")
     for trilha, nome, sub in TRILHAS:
         itens = [(i, c) for i, c in enumerate(casos, 1) if c.get("trilha") == trilha]
         if not itens:
             continue
         feitos = sum(1 for _, c in itens if resolvido(prog, c))
-        print(f"\n  {ROSA}{nome}{FIM} {CINZA}- {sub} ({feitos}/{len(itens)}){FIM}")
+        cadeado = "" if trilha_liberada(casos, prog, trilha) else " 🔒"
+        print(f"\n  {ROSA}{nome}{FIM}{cadeado} {CINZA}- {sub} ({feitos}/{len(itens)}){FIM}")
         for i, c in itens:
             estado = prog.get(c["id"], {})
             if estado.get("resolvido"):
@@ -135,6 +203,8 @@ def listar(casos, prog):
 
 def iniciar(casos, prog, chave):
     n, c = acha_caso(casos, chave)
+    if bloqueio(casos, prog, c):
+        sys.exit("🔒 " + bloqueio(casos, prog, c))
     destino = TRABALHO / c["id"]
     if not destino.exists():
         shutil.copytree(BASE / "casos" / c["id"], destino)
@@ -148,6 +218,8 @@ def iniciar(casos, prog, chave):
 
 def dica(casos, prog, chave):
     n, c = acha_caso(casos, chave)
+    if bloqueio(casos, prog, c):
+        sys.exit("🔒 " + bloqueio(casos, prog, c))
     estado = prog.setdefault(c["id"], {})
     usadas = estado.get("dicas", 0)
     if usadas >= len(c["dicas"]):
@@ -167,6 +239,8 @@ def mostra_aprendizado(c):
 
 def responder(casos, prog, chave, resposta):
     n, c = acha_caso(casos, chave)
+    if bloqueio(casos, prog, c):
+        sys.exit("🔒 " + bloqueio(casos, prog, c))
     estado = prog.setdefault(c["id"], {})
     estado["tentativas"] = estado.get("tentativas", 0) + 1
     if hashlib.sha256(normaliza(resposta).encode()).hexdigest() != c["resposta"]:
@@ -174,16 +248,15 @@ def responder(casos, prog, chave, resposta):
         print(f"{VERMELHO}D'oh!{FIM} Nao e isso. Tente de novo ou peca uma dica: {AMARELO}lab dica {n}{FIM}")
         sys.exit(1)
 
-    estado["resolvido"] = True
+    promocao = registra_acerto(casos, prog, c)
     salva_progresso(prog)
     print(f"\n{VERDE}  Mmm... resolvido!{FIM} {c['titulo']}")
     print(f"  {CINZA}tentativas: {estado['tentativas']}, dicas usadas: {estado.get('dicas', 0)}{FIM}")
     mostra_aprendizado(c)
 
-    trilha = c.get("trilha")
-    if all(resolvido(prog, x) for x in casos if x.get("trilha") == trilha):
-        nome = dict((t, nome) for t, nome, _ in TRILHAS).get(trilha, trilha)
-        print(f"\n{AMARELO}  {nome} concluida!{FIM}")
+    if promocao:
+        print(f"\n{AMARELO}  ** PROMOCAO ** {ICONES.get(promocao, '')} {promocao}{FIM}")
+        print(f"  {ROSA}Memorando do Smithers:{FIM} {MEMORANDOS.get(promocao, '')}")
     n = proximo(casos, prog)
     if n:
         print(f"\n  Proximo passo: {AMARELO}lab iniciar {n}{FIM}\n")
