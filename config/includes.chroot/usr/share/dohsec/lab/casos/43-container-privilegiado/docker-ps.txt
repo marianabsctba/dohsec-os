@@ -1,0 +1,6 @@
+CONTAINER ID   IMAGE                               STATUS       NAMES
+c89d5a0704ac   postgres:16                         Up 3 days    reator-db
+0e69f90207e4   redis:7                             Up 3 days    fila-turnos
+bc292e7c9579   nginx:1.27                          Up 3 days    usina-site
+75e9f042c084   docker.io/donutstats/agent:latest   Up 3 days    donut-metrics
+af8e67954e0b   python:3.12-slim                    Up 3 days    cardapio-api

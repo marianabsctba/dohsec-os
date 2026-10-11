@@ -19,7 +19,8 @@ tar -C "$RAIZ/config/includes.chroot" -czf "$PACOTE" \
   usr/local/bin usr/share/dohsec etc/dohsec etc/firefox
 "$VMRUN" "${G[@]}" CopyFileFromHostToGuest "$VMX" "$(cygpath -w "$PACOTE")" /tmp/dohsec-atualizacao.tar.gz
 "$VMRUN" "${G[@]}" runProgramInGuest "$VMX" /usr/bin/bash -c \
-  "sudo tar -C / --no-same-owner -xzf /tmp/dohsec-atualizacao.tar.gz && \
+  "sudo rm -rf /usr/share/dohsec/lab/casos && \
+   sudo tar -C / --no-same-owner -xzf /tmp/dohsec-atualizacao.tar.gz && \
    sudo chmod 755 /usr/local/bin/* && rm -f /tmp/dohsec-atualizacao.tar.gz && \
    { [ -f /etc/dohsec/senha-padrao ] || LC_ALL=C chage -l homer 2>/dev/null | head -1 | cut -d: -f2- | sed 's/^ *//' | sudo tee /etc/dohsec/senha-padrao >/dev/null; }"
 rm -f "$PACOTE"

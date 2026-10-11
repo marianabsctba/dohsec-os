@@ -1,0 +1,2 @@
+Politica de senhas da Usina: senha forte, unica e trocada se houver suspeita.
+Senha nunca vai em script, e-mail ou planilha.

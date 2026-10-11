@@ -1,0 +1,19 @@
+# sudo -l de cada usuario (usina-srv01), exportado pela auditoria
+
+Usuario carl pode executar os seguintes comandos em usina-srv01:
+    (root) NOPASSWD: /usr/bin/systemctl restart reator-monitor
+
+Usuario lenny pode executar os seguintes comandos em usina-srv01:
+    (root) /usr/bin/tail -n 100 /var/log/reator.log
+
+Usuario marge pode executar os seguintes comandos em usina-srv01:
+    (root) NOPASSWD: sudoedit /etc/usina/cardapio.conf
+
+Usuario homer pode executar os seguintes comandos em usina-srv01:
+    (root) NOPASSWD: /usr/bin/vim /etc/usina/reator.conf
+
+Usuario smithers pode executar os seguintes comandos em usina-srv01:
+    (ALL : ALL) ALL
+
+Usuario frank.grimes pode executar os seguintes comandos em usina-srv01:
+    (root) /usr/bin/journalctl -u reator-monitor

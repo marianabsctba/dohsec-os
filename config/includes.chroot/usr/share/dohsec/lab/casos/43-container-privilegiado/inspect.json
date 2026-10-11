@@ -1,0 +1,107 @@
+[
+  {
+    "Id": "c89d5a0704acc4d1c90dd122014d8acda7ada6db257c886a4afc66228957d6dd",
+    "Name": "/reator-db",
+    "Config": {
+      "Image": "postgres:16",
+      "User": "app"
+    },
+    "HostConfig": {
+      "Privileged": false,
+      "Binds": [
+        "reator-dados:/var/lib/postgresql/data"
+      ],
+      "NetworkMode": "bridge",
+      "CapAdd": null,
+      "PortBindings": {}
+    },
+    "State": {
+      "Status": "running"
+    }
+  },
+  {
+    "Id": "0e69f90207e493defc7bd9d767662fdb9b2af21185a62416488d2a3edd961226",
+    "Name": "/fila-turnos",
+    "Config": {
+      "Image": "redis:7",
+      "User": "app"
+    },
+    "HostConfig": {
+      "Privileged": false,
+      "Binds": [],
+      "NetworkMode": "bridge",
+      "CapAdd": null,
+      "PortBindings": {}
+    },
+    "State": {
+      "Status": "running"
+    }
+  },
+  {
+    "Id": "bc292e7c9579e3b5da8a145c83bf172224f7ebdd5ea75e284ff7dee7b64d288f",
+    "Name": "/usina-site",
+    "Config": {
+      "Image": "nginx:1.27",
+      "User": "app"
+    },
+    "HostConfig": {
+      "Privileged": false,
+      "Binds": [
+        "/srv/site:/usr/share/nginx/html:ro"
+      ],
+      "NetworkMode": "bridge",
+      "CapAdd": null,
+      "PortBindings": {
+        "80/tcp": [
+          {
+            "HostPort": "8080"
+          }
+        ]
+      }
+    },
+    "State": {
+      "Status": "running"
+    }
+  },
+  {
+    "Id": "75e9f042c084a83013a6720538d5eea903cd46d56fe528332a10b0c0374a9465",
+    "Name": "/donut-metrics",
+    "Config": {
+      "Image": "docker.io/donutstats/agent:latest",
+      "User": ""
+    },
+    "HostConfig": {
+      "Privileged": true,
+      "Binds": [
+        "/:/host",
+        "/var/run/docker.sock:/var/run/docker.sock"
+      ],
+      "NetworkMode": "host",
+      "CapAdd": null,
+      "PortBindings": {}
+    },
+    "State": {
+      "Status": "running"
+    }
+  },
+  {
+    "Id": "af8e67954e0bc496bfc9c85bb6151e4b4f34244ac9184d10beb23b1d8bec3033",
+    "Name": "/cardapio-api",
+    "Config": {
+      "Image": "python:3.12-slim",
+      "User": "app"
+    },
+    "HostConfig": {
+      "Privileged": false,
+      "Binds": [
+        "/srv/cardapio:/app:ro"
+      ],
+      "NetworkMode": "bridge",
+      "CapAdd": null,
+      "PortBindings": {}
+    },
+    "State": {
+      "Status": "running"
+    }
+  }
+]

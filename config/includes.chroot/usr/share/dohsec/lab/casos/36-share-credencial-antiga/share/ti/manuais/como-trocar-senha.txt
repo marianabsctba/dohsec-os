@@ -1,0 +1,2 @@
+Para trocar sua senha, aperte Ctrl+Alt+Del e escolha 'Alterar senha'.
+A senha deve ter 12 caracteres ou mais. Nunca anote sua senha em papel!

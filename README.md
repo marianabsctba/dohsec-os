@@ -25,16 +25,18 @@ Você entra como **Estagiário** e vai sendo promovido(a) resolvendo casos reais
 | Cargo | Etapa | Casos |
 | --- | --- | --- |
 | 🍩 Estagiário | o terminal | 8 |
-| 🔧 Operador da Usina | o sistema por dentro | 11 |
-| 🛡️ Supervisor de Segurança | logs, tráfego e detecção | 12 |
-| 🔬 Chefe de Segurança | forense e endurecimento | 6 |
+| 🔧 Operador da Usina | o sistema por dentro | 13 |
+| 🛡️ Supervisor de Segurança | logs, tráfego e detecção | 15 |
+| 🔬 Chefe de Segurança | forense e endurecimento | 9 |
 | 👔 Assistente do Sr. Burns | Teste final do Sr. Burns | 3 |
 
 As etapas liberam em ordem. Cada promoção chega por memorando do Smithers e gera um certificado do
 cargo. No front: **Minha carreira** (ficha e plano), **Mesa do Incidente** (casos da etapa atual),
 **Laboratório** (todas as etapas), **Ferramentas** (o que usar em cada etapa) e **Certificado**.
 Os apps do sistema também são reais: Terminal (bash), Arquivos, Processos, Rede, Logs, Mini SIEM,
-Permissões, Updates, Reiniciar e Desligar.
+Permissões, Updates, Reiniciar e Desligar. E os exclusivos do D'OH!Sec: Painel do Sr. Burns,
+Inspetor de Arquivos, Captura de Rede, Relatórios de Incidente e Conquistas. No terminal,
+`oque TERMO` explica um termo, `cola TEMA` mostra os comandos, `relatorio` e `conquistas` também.
 
 ## Laboratório Springfield
 
@@ -110,8 +112,8 @@ A primeira ISO baixa uns 2 GB e leva de 30 a 60 minutos; as seguintes reaproveit
 - `config/wsl/` - só do WSL: pacotes, primeiro uso, ícone, perfil do Terminal
 - `scripts/gen-xfwm4-theme.py` - gera as bordas de janela do tema Springfield (rodar após mudar a paleta)
 - `scripts/gen-ceu-noturno.py` - gera o papel de parede noturno
-- `scripts/gen-lab.py` - gera os casos do Laboratório Springfield
-- `build.sh` - ponto de entrada (`iso` ou `wsl`)
+- `scripts/gen-lab.py` - gera os casos do Laboratório Springfield (`lab_casos.py` e `lab_esboco.py`)
+- `build.sh` - ponto de entrada (`iso`, `wsl` ou `disco`)
 - `scripts/build-wsl.sh` - monta o rootfs do WSL
 - `scripts/debian-builder.sh` - monta o chroot Debian quando o host não é Debian
 

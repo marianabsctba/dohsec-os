@@ -333,7 +333,45 @@
     ]
   },
   {
-    "id": "20-forca-bruta",
+    "id": "20-ssh-root-exposto",
+    "titulo": "SSH exposto com root login",
+    "trilha": "operador",
+    "nivel": "medio",
+    "pergunta": "Qual linha do sshd_config permite entrar direto como root? (escreva a linha como esta no arquivo)",
+    "resposta": "6b1be2da85cf1c024106a834a8f83eddb119e1b11a2fd8d7241f98e96c4a19ee",
+    "dicas": [
+      "As opcoes do SSH ficam no sshd_config. Linhas com # sao comentarios.",
+      "Procure por Root: grep -i root sshd_config",
+      "Responda a linha inteira, por exemplo: Opcao valor"
+    ],
+    "aprendizado": [
+      "PermitRootLogin yes deixa o root entrar pelo SSH: o certo e 'no'.",
+      "PasswordAuthentication yes aceita senha; com chave (publickey) e bem mais seguro.",
+      "ListenAddress 0.0.0.0 escuta em todas as redes: confira com ss -tlnp o que esta exposto.",
+      "Depois de mudar: sudo sshd -t (testa) e sudo systemctl reload ssh."
+    ]
+  },
+  {
+    "id": "21-sudo-vim-nopasswd",
+    "titulo": "sudo -l com vim NOPASSWD",
+    "trilha": "operador",
+    "nivel": "medio",
+    "pergunta": "Qual usuario, alem do smithers, na pratica pode virar root sem senha?",
+    "resposta": "2aaab795b3836904f82efc6ca2285d927aed75206214e1da383418eb90c9052f",
+    "dicas": [
+      "Procure regras com NOPASSWD.",
+      "systemctl restart de UM servico e sudoedit sao restritos. Um editor rodando como root nao e.",
+      "O vim roda inteiro como root e consegue abrir um terminal."
+    ],
+    "aprendizado": [
+      "Editores, paginadores e interpretadores (vim, less, python) rodando como root viram root completo.",
+      "Para deixar editar um arquivo, use sudoedit: a pessoa edita como ela mesma e so o arquivo muda.",
+      "Revise o sudo -l de cada conta: NOPASSWD em programa 'poderoso' e furo grave.",
+      "Existe um catalogo publico desses programas (GTFOBins) que times de defesa usam para revisar regras."
+    ]
+  },
+  {
+    "id": "22-forca-bruta",
     "titulo": "Brute force em conta de servico",
     "trilha": "analista",
     "aprendizado": [
@@ -352,7 +390,7 @@
     ]
   },
   {
-    "id": "21-powershell-financeiro",
+    "id": "23-powershell-financeiro",
     "titulo": "PowerShell encoded no Financeiro",
     "trilha": "analista",
     "aprendizado": [
@@ -371,7 +409,7 @@
     ]
   },
   {
-    "id": "22-donutcoin",
+    "id": "24-donutcoin",
     "titulo": "Servidor minerando donutcoin",
     "trilha": "analista",
     "aprendizado": [
@@ -390,7 +428,7 @@
     ]
   },
   {
-    "id": "23-pdf-exe",
+    "id": "25-pdf-exe",
     "titulo": "invoice_real.pdf.exe executado",
     "trilha": "analista",
     "aprendizado": [
@@ -409,7 +447,7 @@
     ]
   },
   {
-    "id": "24-everyone-privilegiado",
+    "id": "26-everyone-privilegiado",
     "titulo": "Everyone em grupo privilegiado",
     "trilha": "analista",
     "aprendizado": [
@@ -427,7 +465,7 @@
     ]
   },
   {
-    "id": "25-eventos-com-jq",
+    "id": "27-eventos-com-jq",
     "titulo": "Eventos em JSON com jq",
     "trilha": "analista",
     "nivel": "medio",
@@ -444,7 +482,7 @@
     ]
   },
   {
-    "id": "26-vazamento-por-dns",
+    "id": "28-vazamento-por-dns",
     "titulo": "Vazamento por DNS",
     "trilha": "analista",
     "nivel": "avancado",
@@ -462,7 +500,7 @@
     ]
   },
   {
-    "id": "27-conversa-suspeita",
+    "id": "29-conversa-suspeita",
     "titulo": "Quem mais fala com o servidor suspeito?",
     "trilha": "analista",
     "nivel": "medio",
@@ -479,7 +517,7 @@
     ]
   },
   {
-    "id": "28-regras-yara",
+    "id": "30-regras-yara",
     "titulo": "Cacando com regras YARA",
     "trilha": "analista",
     "nivel": "medio",
@@ -496,7 +534,7 @@
     ]
   },
   {
-    "id": "29-sql-injection",
+    "id": "31-sql-injection",
     "titulo": "Tentativa de SQL injection",
     "trilha": "analista",
     "nivel": "medio",
@@ -513,7 +551,7 @@
     ]
   },
   {
-    "id": "30-maior-download",
+    "id": "32-maior-download",
     "titulo": "O maior download do dia",
     "trilha": "analista",
     "nivel": "medio",
@@ -530,7 +568,7 @@
     ]
   },
   {
-    "id": "31-alertas-suricata",
+    "id": "33-alertas-suricata",
     "titulo": "Alertas do Suricata",
     "trilha": "analista",
     "nivel": "avancado",
@@ -548,7 +586,64 @@
     ]
   },
   {
-    "id": "32-metadados-exif",
+    "id": "34-quem-esta-varrendo",
+    "titulo": "Quem esta varrendo a usina?",
+    "trilha": "analista",
+    "nivel": "medio",
+    "pergunta": "Qual IP fez a varredura de portas?",
+    "resposta": "bfeb4c6192985efa05e7fa0740ac45708a515e569e7edaec7fc060ff72b44a0c",
+    "dicas": [
+      "Cada linha tem SRC= (quem mandou) e DPT= (porta de destino).",
+      "Conte por IP quantas portas DIFERENTES ele tentou: grep -o 'SRC=[^ ]*' e grep -o 'DPT=[0-9]*'.",
+      "Uma receita: awk '{for(i=1;i<=NF;i++) if($i~/^(SRC|DPT)=/) printf $i\" \"; print \"\"}' ufw.log | sort -u | cut -d' ' -f1 | uniq -c | sort -rn | head"
+    ],
+    "aprendizado": [
+      "Varredura = muitas portas diferentes do mesmo IP em pouco tempo. Robos comuns repetem poucas portas.",
+      "sort -u antes do uniq -c conta valores diferentes (portas distintas), nao tentativas.",
+      "Resposta: bloquear o IP, conferir se alguma porta respondeu e se houve acesso depois.",
+      "Varredura costuma vir antes de um ataque: e um aviso, nao so barulho."
+    ]
+  },
+  {
+    "id": "35-rdp-fornecedor",
+    "titulo": "RDP publico com fornecedor admin",
+    "trilha": "analista",
+    "nivel": "medio",
+    "pergunta": "Qual conta entrou por RDP vindo direto da internet (de fora da VPN)?",
+    "resposta": "4433fa81adb22e72dce1012eeb828e8447d4111384840c2c0ac6e3e149c8ac07",
+    "dicas": [
+      "Filtre logons remotos: grep ',10,' logons.csv",
+      "Logons pela VPN vem de 10.99.x.x. Procure um IP que nao comece com 10.",
+      "grep ',10,' logons.csv | grep -v ',10\\.'"
+    ],
+    "aprendizado": [
+      "LogonType 10 = RDP; LogonType 3 = acesso pela rede (compartilhamento, por exemplo).",
+      "RDP aberto para a internet e uma das portas de entrada mais usadas em incidentes.",
+      "Acesso 'temporario' precisa de data para acabar: revise regras de firewall periodicamente.",
+      "Resposta: fechar a regra 12, desabilitar a conta e investigar o que ela fez no USINA-JUMP02."
+    ]
+  },
+  {
+    "id": "36-share-credencial-antiga",
+    "titulo": "Share com credencial antiga",
+    "trilha": "analista",
+    "nivel": "facil",
+    "pergunta": "Em qual arquivo ha uma senha de verdade escrita? (so o nome do arquivo)",
+    "resposta": "9ef4a300a7683da5061873952b14a6e86db5e932c6a3e69345d29e409496cd80",
+    "dicas": [
+      "Procure em todas as pastas de uma vez: grep -ri senha share/",
+      "Senhas em scripts do Windows costumam aparecer depois de /user: ou password=.",
+      "grep -ri '/user:' share/"
+    ],
+    "aprendizado": [
+      "grep -ri procura em todas as subpastas, ignorando maiusculas.",
+      "Script antigo com senha e muito comum: alguem 'resolve rapido' e esquece la.",
+      "Resposta: trocar a senha da conta svc_impressao na hora e apagar o script.",
+      "Prevencao: cofre de senhas, contas de servico gerenciadas e varredura periodica dos shares."
+    ]
+  },
+  {
+    "id": "37-metadados-exif",
     "titulo": "Metadados com exiftool",
     "trilha": "especialista",
     "nivel": "medio",
@@ -565,7 +660,7 @@
     ]
   },
   {
-    "id": "33-escondido-na-imagem",
+    "id": "38-escondido-na-imagem",
     "titulo": "Arquivo escondido dentro da imagem",
     "trilha": "especialista",
     "nivel": "avancado",
@@ -583,7 +678,7 @@
     ]
   },
   {
-    "id": "34-integridade-aide",
+    "id": "39-integridade-aide",
     "titulo": "Integridade com AIDE",
     "trilha": "especialista",
     "nivel": "medio",
@@ -600,7 +695,7 @@
     ]
   },
   {
-    "id": "35-firewall-ufw",
+    "id": "40-firewall-ufw",
     "titulo": "Firewall com ufw",
     "trilha": "especialista",
     "nivel": "medio",
@@ -617,7 +712,7 @@
     ]
   },
   {
-    "id": "36-linha-do-tempo",
+    "id": "41-linha-do-tempo",
     "titulo": "Montando a linha do tempo",
     "trilha": "especialista",
     "nivel": "avancado",
@@ -634,7 +729,7 @@
     ]
   },
   {
-    "id": "37-auditoria-auditd",
+    "id": "42-auditoria-auditd",
     "titulo": "Auditoria com auditd",
     "trilha": "especialista",
     "nivel": "avancado",
@@ -651,7 +746,64 @@
     ]
   },
   {
-    "id": "38-teste-burns-golpe",
+    "id": "43-container-privilegiado",
+    "titulo": "Container privilegiado suspeito",
+    "trilha": "especialista",
+    "nivel": "medio",
+    "pergunta": "Qual container roda privilegiado? (o nome, sem a barra /)",
+    "resposta": "57fa6dc49cc4351ed87739101f1958eb414193fe3d57db710e2645aed54b1eaa",
+    "dicas": [
+      "O docker inspect e um JSON: use o jq.",
+      "Veja o campo HostConfig.Privileged de cada um: jq '.[] | {Name, p: .HostConfig.Privileged}' inspect.json",
+      "jq -r '.[] | select(.HostConfig.Privileged) | .Name' inspect.json"
+    ],
+    "aprendizado": [
+      "Privileged: true desliga o isolamento do container.",
+      "Montar / ou o docker.sock dentro do container tambem entrega o servidor inteiro.",
+      "Imagem :latest de origem desconhecida e outro sinal de alerta: fixe versoes e use imagens confiaveis.",
+      "Resposta: parar o container, descobrir quem subiu e procurar o que ele mudou no servidor."
+    ]
+  },
+  {
+    "id": "44-psexesvc-lateral",
+    "titulo": "Movimentacao lateral com PSEXESVC",
+    "trilha": "especialista",
+    "nivel": "dificil",
+    "pergunta": "Em qual maquina o PSEXESVC apareceu PRIMEIRO? (o nome do computador)",
+    "resposta": "4db0f00ca9b45e57db5976f60d434d8e5c064d05828330d74a47e5b595f0e9df",
+    "dicas": [
+      "Filtre o servico: grep PSEXESVC servicos.csv",
+      "A primeira coluna e a data no formato ISO: da para ordenar com sort.",
+      "grep PSEXESVC servicos.csv | sort | head -1"
+    ],
+    "aprendizado": [
+      "Evento 7045 (servico novo) e otimo para cacar movimentacao lateral e persistencia.",
+      "Datas ISO (2026-03-14T10:02) ordenam certo com sort: junte fontes e ordene.",
+      "A primeira maquina costuma ser onde o invasor entrou: e ali que a investigacao comeca.",
+      "Resposta: isolar as 3 maquinas, trocar as senhas da conta usada e bloquear SMB entre estacoes."
+    ]
+  },
+  {
+    "id": "45-credencial-em-memoria",
+    "titulo": "Credencial em memoria suspeita",
+    "trilha": "especialista",
+    "nivel": "dificil",
+    "pergunta": "Qual programa fora do normal acessou o lsass.exe? (caminho completo)",
+    "resposta": "440039f9404b7608af2cfd7e2181ba956858615d28a9231281b5c4e1953e7775",
+    "dicas": [
+      "Filtre os acessos ao lsass: grep -i lsass sysmon-10.csv",
+      "Veja so quem acessou (4a coluna), contando: grep -i lsass sysmon-10.csv | cut -d, -f4 | sort | uniq -c",
+      "Programa do sistema mora em C:\\Windows\\system32. Qual aparece so uma vez, numa pasta publica de usuario?"
+    ],
+    "aprendizado": [
+      "Acesso ao lsass por programa desconhecido e sinal classico de roubo de credenciais.",
+      "Pastas como C:\\Users\\Public sao gravaveis por todos: lugar comum para ferramentas de ataque.",
+      "Resposta: isolar a maquina, trocar as senhas de quem logou nela e procurar onde mais o programa aparece.",
+      "Prevencao: protecao do LSA (RunAsPPL), Credential Guard e alertas de evento 10 do Sysmon."
+    ]
+  },
+  {
+    "id": "46-teste-burns-golpe",
     "titulo": "Teste do Sr. Burns 1/3: quem caiu no golpe?",
     "trilha": "final",
     "nivel": "chefe",
@@ -669,7 +821,7 @@
     ]
   },
   {
-    "id": "39-teste-burns-vazamento",
+    "id": "47-teste-burns-vazamento",
     "titulo": "Teste do Sr. Burns 2/3: para onde foram os dados?",
     "trilha": "final",
     "nivel": "chefe",
@@ -687,7 +839,7 @@
     ]
   },
   {
-    "id": "40-teste-burns-persistencia",
+    "id": "48-teste-burns-persistencia",
     "titulo": "Teste do Sr. Burns 3/3: como ele ficou la dentro?",
     "trilha": "final",
     "nivel": "chefe",

@@ -36,12 +36,12 @@ MEDALHAS = [
     ("primeiro-caso", "🍩", "Primeiro caso", "Resolveu o primeiro caso da usina.", "Resolva qualquer caso.", "Laboratório"),
     ("de-primeira", "🎯", "De primeira", "Acertou um caso na primeira tentativa.", "Responda certo sem errar antes.", "Laboratório"),
     ("sem-cola", "🧠", "Sem cola", "Resolveu 5 casos sem pedir dica.", "5 casos sem usar lab dica.", "Laboratório"),
-    ("cacador-de-cron", "⏰", "Caçador de cron", "Achou a tarefa agendada escondida.", "Resolva o caso 'Lendo o cron'.", "Laboratório"),
+    ("cacador-de-cron", "⏰", "Caçador de cron", "Aprendeu a ler o agendador (cron).", "Resolva o caso 'Lendo o cron'.", "Laboratório"),
     ("matou-o-kdonut", "⛏️", "Matou o kdonut", "Achou o que ressuscitava o minerador de donutcoin.", "Resolva o caso do donutcoin.", "Laboratório"),
     ("maratonista", "🏃", "Maratonista", "Resolveu 10 casos.", "Resolva 10 casos.", "Laboratório"),
     ("meio-caminho", "🌗", "Meio caminho", "Resolveu 20 casos.", "Resolva 20 casos.", "Laboratório"),
     ("assistente", "👔", "Eeexcelente", "Passou no Teste final do Sr. Burns.", "Vire Assistente do Sr. Burns.", "Laboratório"),
-    ("usina-segura", "☢️", "Usina segura", "Resolveu todos os casos.", "Resolva os 40 casos.", "Laboratório"),
+    ("usina-segura", "☢️", "Usina segura", "Resolveu todos os casos.", "Resolva todos os casos do laboratório.", "Laboratório"),
     ("primeiro-relatorio", "📝", "Papelada em dia", "Exportou um Relatório de Incidente.", "Exporte um relatório.", "Relatórios"),
     ("diario-em-dia", "📓", "Diário em dia", "Fez 10 anotações no diário do analista.", "Anote 10 pistas nos relatórios.", "Relatórios"),
     ("grampo", "🎙️", "Ouvido na rede", "Gravou uma captura de rede.", "Use o app Captura de Rede.", "Apps"),
@@ -129,9 +129,9 @@ def merecidas(dados):
         ok.add("de-primeira")
     if sum(1 for c in feitos if not prog[c["id"]].get("dicas")) >= 5:
         ok.add("sem-cola")
-    if any(i.startswith("16-") for i in ids):
+    if any(i.endswith("-lendo-o-cron") for i in ids):
         ok.add("cacador-de-cron")
-    if any(i.startswith("22-") for i in ids):
+    if any(i.endswith("-donutcoin") for i in ids):
         ok.add("matou-o-kdonut")
     if len(feitos) >= 10:
         ok.add("maratonista")
