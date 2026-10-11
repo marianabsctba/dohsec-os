@@ -16,7 +16,7 @@ PACOTE="$(mktemp -d)/dohsec-atualizacao.tar.gz"
 
 # So o que roda em tempo de execucao (o resto vem da imagem e nao muda)
 tar -C "$RAIZ/config/includes.chroot" -czf "$PACOTE" \
-  usr/local/bin usr/share/dohsec etc/dohsec etc/firefox
+  usr/local/bin usr/share/dohsec etc/dohsec etc/firefox usr/share/themes/Springfield etc/xdg/xfce4/xfconf
 "$VMRUN" "${G[@]}" CopyFileFromHostToGuest "$VMX" "$(cygpath -w "$PACOTE")" /tmp/dohsec-atualizacao.tar.gz
 "$VMRUN" "${G[@]}" runProgramInGuest "$VMX" /usr/bin/bash -c \
   "sudo rm -rf /usr/share/dohsec/lab/casos && \

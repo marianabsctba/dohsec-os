@@ -918,6 +918,68 @@
     } catch (e) { /* tenta de novo no proximo ciclo */ } finally { conferindo = false; }
   }
 
+  // ---------------------------------------------------------------- Janelas como num SO de verdade
+  // Janelas de fora do front (Wireshark, terminal do Ctrl+Alt+T) ganham botao na barra de tarefas:
+  // clicar traz para a frente, clicar de novo na ativa minimiza.
+  let janelaDeForaAtiva = false;
+  async function sincronizaJanelas() {
+    const barraTarefas = document.getElementById('tasks');
+    if (!barraTarefas) return;
+    let d;
+    try { d = await api('/api/janelas'); } catch (e) { return; }
+    janelaDeForaAtiva = d.janelas.some(j => j.ativa);
+    const vistos = new Set();
+    d.janelas.forEach(j => {
+      const id = 'xwin_' + j.id;
+      vistos.add(id);
+      let b = document.getElementById(id);
+      if (!b) {
+        b = document.createElement('button');
+        b.id = id;
+        b.className = 'task-btn dohsec-xwin';
+        b.setAttribute('data-dohsec-xwin', j.id);
+        barraTarefas.appendChild(b);
+      }
+      const texto = j.icone + ' ' + j.titulo;
+      if (b.textContent !== texto) b.textContent = texto;
+      b.title = j.titulo;
+      b.classList.toggle('active', j.ativa);
+      b.classList.toggle('dohsec-oculta', j.oculta);
+    });
+    barraTarefas.querySelectorAll('.dohsec-xwin').forEach(b => { if (!vistos.has(b.id)) b.remove(); });
+  }
+
+  async function alternaJanela(wid) {
+    // O clique na barra ja tira o foco da janela; vale o estado de antes do clique
+    const b = document.getElementById('xwin_' + wid);
+    const minimizar = !!b && b.classList.contains('active') && !b.classList.contains('dohsec-oculta');
+    await api('/api/janelas/alternar', { id: wid, minimizar });
+    setTimeout(sincronizaJanelas, 300);
+  }
+
+  // Botao da tarefa do front: se a janela ja esta na frente, minimiza (o esboco so trazia para a frente)
+  window.addEventListener('pointerdown', e => {
+    const b = e.target.closest && e.target.closest('.task-btn');
+    if (!b || !b.id.startsWith('task_') || janelaDeForaAtiva) return;
+    const w = document.getElementById('win_' + b.id.slice(5));
+    if (w && w.classList.contains('active-window') && w.style.display !== 'none') {
+      e.preventDefault();
+      e.stopPropagation();
+      w.style.display = 'none';
+      w.classList.remove('active-window');
+      b.classList.remove('active');
+    }
+  }, true);
+
+  // Duplo clique na barra de titulo maximiza e restaura
+  document.addEventListener('dblclick', e => {
+    const barra = e.target.closest && e.target.closest('#wins .titlebar');
+    if (!barra || e.target.closest('.win-btn')) return;
+    const w = barra.closest('.window');
+    w.classList.toggle('maximized');
+    OS.focusWin(w);
+  }, true);
+
   // ---------------------------------------------------------------- Energia
   async function energia(acao) {
     const frase = acao === 'desligar' ? 'Desligar o D\'OH!Sec OS?' : 'Reiniciar o D\'OH!Sec OS?';
@@ -979,6 +1041,7 @@
   relogio();
   setInterval(relogio, 20000);
   setInterval(confereConquistas, 15000);
+  setInterval(sincronizaJanelas, 2000);
   login();
 
   // Cliques dos apps reais (em fase de captura, como o front faz)
@@ -1010,6 +1073,7 @@
     ['data-dohsec-relsalvar', v => salvaRelatorio(v)],
     ['data-dohsec-relver', v => verRelatorio(v)],
     ['data-dohsec-relexportar', v => exportaRelatorio(v)],
+    ['data-dohsec-xwin', v => alternaJanela(v)],
     ['data-dohsec-resposta', v => { if (respostaPendente) respostaPendente(v === 'sim'); }],
   ];
   document.addEventListener('click', e => {

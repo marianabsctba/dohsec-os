@@ -781,6 +781,53 @@ def api_conquistas(q, corpo):
     return carrega_conquistas().avalia(marcar_avisadas=q.get("avisar", [""])[0] == "1")
 
 
+# ---------------------------------------------------------------- Janelas de fora do front
+# Wireshark, terminal do Ctrl+Alt+T e afins sao janelas do X (xfwm4). Elas aparecem na barra de
+# tarefas do front, que minimiza e restaura de verdade pelo wmctrl.
+ICONES_JANELA = {"wireshark": "🦈", "xfce4-terminal": "💻", "terminal": "💻"}
+
+
+def _janela_ativa():
+    saida = roda(["xprop", "-root", "_NET_ACTIVE_WINDOW"])
+    try:
+        return int(saida.rsplit("#", 1)[1].split(",")[0].strip(), 16)
+    except (IndexError, ValueError):
+        return 0
+
+
+def _oculta(wid):
+    return "_NET_WM_STATE_HIDDEN" in roda(["xprop", "-id", wid, "_NET_WM_STATE"])
+
+
+def api_janelas(q, corpo):
+    ativa = _janela_ativa()
+    janelas = []
+    for linha in roda(["wmctrl", "-lx"]).splitlines():
+        partes = linha.split(None, 4)
+        if len(partes) < 4 or partes[1] == "-1" or "firefox" in partes[2].lower():
+            continue
+        wid, classe = partes[0], partes[2]
+        titulo = partes[4] if len(partes) > 4 else classe
+        nome = classe.split(".")[0].lower()
+        oculta = _oculta(wid)
+        janelas.append({"id": wid, "titulo": titulo, "icone": ICONES_JANELA.get(nome, "🪟"),
+                        "oculta": oculta, "ativa": int(wid, 16) == ativa and not oculta})
+    return {"janelas": janelas}
+
+
+def api_janelas_alternar(q, corpo):
+    """Clique no botao da barra: minimiza a janela que estava ativa, ou traz para a frente."""
+    import re
+    wid = str(corpo.get("id", ""))
+    if not re.fullmatch(r"0x[0-9a-fA-F]{1,8}", wid):
+        return {"ok": False, "erro": "janela invalida"}
+    if corpo.get("minimizar") and not _oculta(wid):
+        roda(["wmctrl", "-i", "-r", wid, "-b", "add,hidden"])
+    else:
+        roda(["wmctrl", "-i", "-a", wid])
+    return {"ok": True}
+
+
 ROTAS_GET = {
     "/api/sistema": api_sistema, "/api/processos": api_processos, "/api/rede": api_rede,
     "/api/logs": api_logs, "/api/siem": api_siem, "/api/permissoes": api_permissoes,
@@ -788,6 +835,7 @@ ROTAS_GET = {
     "/api/lab": api_lab, "/api/carreira": api_carreira, "/api/burns": api_burns, "/api/inspecionar": api_inspecionar,
     "/api/capturas": api_capturas, "/api/captura/analisar": api_analisar_captura,
     "/api/relatorios": api_relatorios, "/api/relatorio": api_relatorio, "/api/conquistas": api_conquistas,
+    "/api/janelas": api_janelas,
 }
 ROTAS_POST = {
     "/api/processos/encerrar": api_encerrar, "/api/energia": api_energia,
@@ -795,7 +843,7 @@ ROTAS_POST = {
     "/api/lab/responder": api_lab_responder, "/api/carreira/nome": api_carreira_nome,
     "/api/abrir": api_abrir, "/api/captura": api_captura, "/api/burns/corrigir": api_burns_corrigir,
     "/api/relatorio/salvar": api_relatorio_salvar, "/api/relatorio/anotar": api_relatorio_anotar,
-    "/api/relatorio/exportar": api_relatorio_exportar,
+    "/api/relatorio/exportar": api_relatorio_exportar, "/api/janelas/alternar": api_janelas_alternar,
 }
 
 

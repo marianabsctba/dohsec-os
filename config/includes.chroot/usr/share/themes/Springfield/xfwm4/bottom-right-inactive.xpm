@@ -1,9 +1,10 @@
 /* XPM */
 static char * bottom_right_inactive_xpm[] = {
-"4 4 1 1",
-"a c #a07850",
-"aaaa",
-"aaaa",
+"4 4 2 1",
+"a c #111111",
+"b c #ece9d8",
+"bbaa",
+"bbaa",
 "aaaa",
 "aaaa"
 };

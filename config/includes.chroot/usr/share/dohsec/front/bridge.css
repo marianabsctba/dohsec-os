@@ -376,3 +376,8 @@
   filter: grayscale(1);
   opacity: 0.6;
 }
+/* Janelas de fora do front na barra de tarefas (minimizadas ficam apagadas) */
+.task-btn.dohsec-oculta {
+  opacity: 0.6;
+  font-style: italic;
+}

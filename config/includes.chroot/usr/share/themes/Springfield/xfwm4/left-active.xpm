@@ -1,6 +1,7 @@
 /* XPM */
 static char * left_active_xpm[] = {
-"4 1 1 1",
-"a c #5b3518",
-"aaaa"
+"4 1 2 1",
+"a c #111111",
+"b c #ece9d8",
+"aabb"
 };
