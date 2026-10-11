@@ -5,6 +5,9 @@ Nasceu do esboço [Desafio_Homer](https://github.com/marianabsctba/Desafio_Homer
 virou o próprio sistema operacional, com terminal, apps e ferramentas de verdade, e uma carreira que
 vai de **Estagiário** a **Assistente do Sr. Burns** resolvendo 48 casos de resposta a incidente.
 
+> Projeto de fã com caráter acadêmico e sem fins lucrativos. *Os Simpsons* pertencem a Matt Groening e à
+> 20th Television / Disney. Veja [Créditos e aviso legal](#créditos-e-aviso-legal).
+
 ![Área de trabalho do D'OH!Sec OS](docs/prints/03-desktop.png)
 
 ## Formatos
@@ -199,6 +202,23 @@ Não rode o build com uma VM ligada na mesma máquina: os dois juntos podem esgo
 - `scripts/atualiza-vm.sh` - leva o código novo para a VM sem recriar o disco
 - `build.sh` - ponto de entrada (`iso`, `wsl` ou `disco`)
 - `docs/prints/` - os prints deste README
+
+## Créditos e aviso legal
+
+O D'OH!Sec OS é um projeto de fã com **caráter acadêmico**: foi feito para ensinar Linux e
+cibersegurança, sem fins lucrativos, e não é vendido nem usado comercialmente.
+
+*Os Simpsons*, Homer Simpson, Sr. Burns, Smithers, a Usina Nuclear de Springfield e demais personagens,
+nomes e imagens são criação de **Matt Groening** e pertencem à **20th Television / The Walt Disney
+Company**. Este projeto não tem ligação, patrocínio ou aprovação deles. As referências servem só de tema
+para o treinamento.
+
+O sistema é baseado no **Debian** e usa software livre, cada um com a sua licença. As fontes VT323 e
+Share Tech Mono são distribuídas sob a SIL Open Font License, que acompanha os arquivos em
+`usr/share/fonts/truetype/dohsec/`.
+
+Se algum detentor de direitos quiser que um conteúdo seja removido, abra uma issue no repositório que
+ele será retirado.
 
 ## Próximos passos
 
