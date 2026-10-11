@@ -221,14 +221,21 @@ def api_abrir(q, corpo):
 
 
 def api_energia(q, corpo):
-    acao = corpo.get("acao")
-    if acao == "desligar":
-        subprocess.Popen(["systemctl", "poweroff"])
-    elif acao == "reiniciar":
-        subprocess.Popen(["systemctl", "reboot"])
-    else:
+    verbo = {"desligar": "poweroff", "reiniciar": "reboot"}.get(corpo.get("acao"))
+    if not verbo:
         return {"ok": False, "erro": "acao invalida"}
-    return {"ok": True}
+    # Primeiro como o usuario (o logind deixa quem esta na sessao ativa); se negar, com sudo
+    erro = ""
+    for cmd in (["systemctl", verbo], ["sudo", "-n", "systemctl", verbo]):
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
+        except (OSError, subprocess.TimeoutExpired) as e:
+            erro = str(e)
+            continue
+        if r.returncode == 0:
+            return {"ok": True}
+        erro = (r.stderr or r.stdout).strip()
+    return {"ok": False, "erro": "O sistema nao deixou: " + erro}
 
 
 def api_lab(q, corpo):

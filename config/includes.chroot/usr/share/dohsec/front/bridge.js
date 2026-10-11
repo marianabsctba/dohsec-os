@@ -247,6 +247,24 @@
         (c.resolvido ? 'Rever' : (c.iniciado ? 'Continuar' : 'Investigar')) + '</button></div>' : '') + '</div>';
   }
 
+  function campoNome(k, onde) {
+    return '<div class="cli-row dohsec-nome"><label><b>Seu nome no certificado:</b></label>' +
+      '<input id="dohsecNome_' + onde + '" maxlength="34" value="' + esc(k.nome || '') + '" placeholder="digite seu nome">' +
+      '<button class="xp-btn dohsec-mini" data-dohsec-nome="' + onde + '">Salvar</button></div>';
+  }
+
+  async function gravaNome(onde) {
+    const campo = document.getElementById('dohsecNome_' + onde);
+    const nome = campo ? campo.value.trim() : '';
+    if (!nome) return aviso('Nome', 'Digite seu nome primeiro.');
+    await api('/api/carreira/nome', { nome });
+    const nick = document.getElementById('nick');
+    if (nick) nick.value = nome;
+    aviso('Nome salvo', nome);
+    if (existe('goals')) await minhaCarreira();
+    if (existe('certificate')) await certificado();
+  }
+
   // Objetivos -> Minha carreira
   async function minhaCarreira() {
     await nomePendente;
@@ -273,6 +291,7 @@
       '<h3>' + esc(k.nome || 'Funcionario sem nome') + '</h3>' +
       '<div>Cargo atual: <b>' + esc(k.cargo) + '</b></div>' +
       '<div class="muted-mini">' + k.feitos + '/' + k.total + ' casos concluidos</div></div></div>' +
+      campoNome(k, 'carreira') +
       (proxima ? '<div class="os-good"><b>Proximo passo:</b> concluir <b>' + esc(proxima.nome) + '</b> (' +
         proxima.feitos + '/' + proxima.total + '): ' + esc(proxima.recompensa) + '. ' +
         '<button class="xp-btn dohsec-mini" data-dohsec-app="case">Abrir a Mesa do Incidente</button></div>'
@@ -402,6 +421,7 @@
   async function certificado() {
     const k = await atualizaCarreira();
     janela('certificate', 'Certificado', '🏆',
+      campoNome(k, 'certificado') +
       '<canvas id="dohsecCert" width="1200" height="800" class="dohsec-cert"></canvas>' +
       '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-salvar-cert="1">💾 Salvar PNG</button></div>',
       { w: 'min(860px,94vw)', h: 'min(680px,86vh)' });
@@ -455,6 +475,10 @@
     ['Chefe de Seguranca', [['exiftool', 'metadados'], ['binwalk', 'arquivos dentro de arquivos'], ['sleuthkit (fls, icat)', 'forense de disco'],
       ['foremost', 'recuperar arquivos'], ['aide', 'integridade'], ['ufw / nft', 'firewall'], ['ausearch', 'auditoria (auditd)'],
       ['lynis', 'auditoria de endurecimento'], ['suricata', 'IDS']]],
+    ['Assistente do Sr. Burns (Teste final)', [['grep / less', 'cabecalhos do e-mail e o proxy.log'],
+      ['tshark -q -z conv,ip', 'quem mandou dados para fora'], ['wireshark', 'a mesma captura no grafico', 'wireshark'],
+      ['comm / diff', 'comparar servicos com a lista oficial'], ['systemctl list-unit-files', 'servicos instalados'],
+      ['systemctl disable --now', 'remover persistencia (na vida real)'], ['ufw deny', 'bloquear o IP do atacante']]],
   ];
 
   function ferramentas() {
@@ -540,7 +564,11 @@
   async function energia(acao) {
     const frase = acao === 'desligar' ? 'Desligar o D\'OH!Sec OS?' : 'Reiniciar o D\'OH!Sec OS?';
     if (!window.confirm(frase)) return;
-    try { await api('/api/energia', { acao }); } catch (e) { aviso('Erro', e.message); }
+    try {
+      const r = await api('/api/energia', { acao });
+      if (r.ok) aviso(acao === 'desligar' ? 'Desligando' : 'Reiniciando', 'Ate ja!');
+      else aviso('Nao deu para ' + acao, r.erro);
+    } catch (e) { aviso('Erro', e.message); }
   }
 
   function menuEnergia() {
@@ -602,6 +630,7 @@
     ['data-dohsec-energia', v => energia(v)],
     ['data-dohsec-abrir', v => abrePrograma(v)],
     ['data-dohsec-salvar-cert', () => salvaCertificado()],
+    ['data-dohsec-nome', v => gravaNome(v)],
   ];
   document.addEventListener('click', e => {
     for (const [attr, fn] of acoes) {
@@ -621,6 +650,8 @@
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter' || !e.target || !e.target.id) return;
     if (e.target.id === 'dohsecSiemQ') { e.preventDefault(); buscaSiem(); }
+    const nomeCampo = e.target.id.match(/^dohsecNome_(\w+)$/);
+    if (nomeCampo) { e.preventDefault(); gravaNome(nomeCampo[1]); }
     const m = e.target.id.match(/^dohsecResp_(\d+)$/);
     if (m) { e.preventDefault(); responder(m[1]); }
   }, true);

@@ -169,3 +169,25 @@
 .dohsec-item {
   margin: 2px 0 2px 8px;
 }
+.dohsec-nome {
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+.dohsec-nome input {
+  flex: 1;
+}
+/* Icones da area de trabalho: enchem a coluna ate onde cabe e abrem outra (nada sai da tela) */
+@media (min-width: 781px) {
+  .icons {
+    top: 14px !important;
+    left: 10px !important;
+    grid-template-columns: none !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: 96px !important;
+    grid-template-rows: repeat(auto-fill, 100px) !important;
+    height: calc(100dvh - 46px - 28px) !important;
+    gap: 6px 10px !important;
+    padding: 0 !important;
+  }
+}
