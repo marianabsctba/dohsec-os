@@ -191,3 +191,58 @@
     padding: 0 !important;
   }
 }
+/* Painel do Sr. Burns */
+.dohsec-burns-topo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.dohsec-nota {
+  width: 86px;
+  height: 86px;
+  border: 6px solid;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: 900;
+  background: #fffdf3;
+}
+.dohsec-humor {
+  font-size: 22px;
+  font-weight: 900;
+}
+.dohsec-check {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-left: 6px solid #3bb273;
+  background: #fffdf3;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 6px 0;
+}
+.dohsec-check.dohsec-alerta {
+  border-left-color: #ff9b30;
+}
+.dohsec-check.dohsec-risco {
+  border-left-color: #e84d5b;
+}
+.dohsec-como {
+  font-size: 12px;
+  margin-top: 4px;
+}
+.dohsec-como code {
+  background: #1b1708;
+  color: #ffd84d;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.dohsec-pergunta {
+  font-size: 15px;
+  font-weight: bold;
+  margin: 8px 0 14px;
+}

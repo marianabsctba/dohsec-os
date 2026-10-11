@@ -209,6 +209,141 @@ def api_arquivo(q, corpo):
             "cortado": p.stat().st_size > LIMITE_ARQUIVO}
 
 
+# ---------------------------------------------------------------------------
+# Painel do Sr. Burns: saude de seguranca da propria maquina
+# ---------------------------------------------------------------------------
+def _sudo(cmd, timeout=20):
+    """Roda com sudo sem pedir senha; se o sudo pedir senha, devolve None."""
+    try:
+        r = subprocess.run(["sudo", "-n"] + cmd, capture_output=True, text=True, timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return None if r.returncode != 0 and "password" in (r.stderr or "").lower() else (r.stdout or "")
+
+
+def _graváveis_na_home():
+    saida = roda(["find", str(Path.home()), "-xdev", "-type", "f", "-perm", "-0002",
+                  "-not", "-path", "*/.cache/*", "-not", "-path", "*/.mozilla/*"], timeout=20)
+    return [l for l in saida.splitlines() if l.startswith("/")][:20]
+
+
+def checa_burns():
+    itens = []
+
+    def item(chave, titulo, ok, peso, detalhe, como, corrigivel=False, nivel="risco"):
+        itens.append({"chave": chave, "titulo": titulo, "ok": ok, "peso": peso, "detalhe": detalhe,
+                      "como": como, "corrigivel": corrigivel and not ok, "nivel": "ok" if ok else nivel})
+
+    ufw = _sudo(["ufw", "status"])
+    if ufw is None:
+        item("firewall", "Firewall", False, 20, "Nao deu para consultar (precisa de sudo).", "sudo ufw status", nivel="alerta")
+    else:
+        ativo = "Status: active" in ufw or "Estado: ativo" in ufw
+        item("firewall", "Firewall (ufw)", ativo, 20,
+             "Ativo: so entra o que voce liberar." if ativo else "Desligado: qualquer porta aberta fica exposta na rede.",
+             "sudo ufw default deny incoming && sudo ufw enable", corrigivel=True)
+
+    pend = [l for l in roda(["apt", "list", "--upgradable"], timeout=30).splitlines() if "/" in l]
+    item("updates", "Atualizacoes", not pend, 15,
+         "Sistema em dia." if not pend else f"{len(pend)} pacote(s) com atualizacao pendente.",
+         "sudo apt update && sudo apt upgrade", nivel="alerta")
+
+    expostas = []
+    for l in roda(["ss", "-tlnH"]).splitlines():
+        partes = l.split()
+        if len(partes) >= 4:
+            local = partes[3]
+            if not (local.startswith("127.") or local.startswith("[::1]") or local.startswith("::1")):
+                expostas.append(local)
+    item("portas", "Portas abertas para a rede", not expostas, 15,
+         "Nada escutando para fora da maquina." if not expostas else "Escutando para a rede: " + ", ".join(expostas),
+         "ss -tlnp  (descubra o programa e desligue o que nao precisa)")
+
+    falhas = [l for l in roda(["journalctl", "--since", "-24h", "--no-pager", "-q",
+                               "-g", "Failed password|authentication failure|FAILED SU"], timeout=20).splitlines() if l.strip()]
+    item("logins", "Logins falhos (24h)", len(falhas) < 5, 10,
+         f"{len(falhas)} tentativa(s) falha(s) nas ultimas 24h.",
+         "journalctl --since -24h -g 'Failed password'", nivel="alerta")
+
+    raiz = [l.split(":")[0] for l in Path("/etc/passwd").read_text().splitlines()
+            if l.count(":") >= 6 and l.split(":")[2] == "0" and l.split(":")[0] != "root"]
+    item("uid0", "Contas com poder de root", not raiz, 15,
+         "So o root tem UID 0." if not raiz else "Contas extras com UID 0: " + ", ".join(raiz),
+         "sudo userdel NOME  (conta com UID 0 e o mesmo que root)")
+
+    sombra = _sudo(["awk", "-F:", '($2=="") {print $1}', "/etc/shadow"])
+    sem_senha = [l for l in (sombra or "").split() if l]
+    item("semsenha", "Contas sem senha", sombra is not None and not sem_senha, 10,
+         "Toda conta tem senha ou esta travada." if not sem_senha else "Sem senha: " + ", ".join(sem_senha),
+         "sudo passwd -l NOME  (trava a conta)")
+
+    marca = Path("/etc/dohsec/senha-padrao")
+    padrao = False
+    if marca.exists():
+        # A marca guarda a data da ultima troca de senha na instalacao (formato fixo, LC_ALL=C)
+        chage = _sudo(["env", "LC_ALL=C", "chage", "-l", os.environ.get("USER", "homer")], timeout=10) or ""
+        atual = chage.splitlines()[0].split(":", 1)[-1].strip() if chage else ""
+        padrao = bool(atual) and atual == marca.read_text().strip()
+    item("senha", "Senha padrao", not padrao, 10,
+         "A senha do usuario ja foi trocada." if not padrao else "Ainda e a senha padrao de instalacao (donut).",
+         "passwd")
+
+    grav = _graváveis_na_home()
+    item("gravaveis", "Arquivos que qualquer um altera", not grav, 5,
+         "Nenhum na sua pasta." if not grav else f"{len(grav)} arquivo(s): " + ", ".join(Path(g).name for g in grav[:5]),
+         "chmod o-w ARQUIVO", corrigivel=True, nivel="alerta")
+
+    auditd = roda(["systemctl", "is-active", "auditd"]).strip() == "active"
+    item("auditd", "Auditoria (auditd)", auditd, 5,
+         "Registrando o que acontece no kernel." if auditd else "Desligada: sem rastro de quem executou o que.",
+         "sudo systemctl enable --now auditd", corrigivel=True, nivel="alerta")
+
+    # /var/lib/aide so o root le: pergunta com sudo
+    try:
+        aide = subprocess.run(["sudo", "-n", "test", "-f", "/var/lib/aide/aide.db"],
+                              capture_output=True, timeout=10).returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        aide = False
+    item("aide", "Base de integridade (AIDE)", aide, 5,
+         "Existe uma 'foto' dos arquivos do sistema." if aide else "Sem base: nao da para saber se algo do sistema mudou.",
+         "sudo aideinit  (demora alguns minutos)", nivel="alerta")
+
+    total = sum(i["peso"] for i in itens)
+    nota = round(100 * sum(i["peso"] for i in itens if i["ok"]) / total) if total else 0
+    if nota >= 90:
+        humor = ("Eeexcelente...", "O Sr. Burns junta as pontas dos dedos, satisfeito.")
+    elif nota >= 70:
+        humor = ("Aceitavel. Smithers, anote.", "Quase la. Mais um esforco e voce ganha um aceno de cabeca.")
+    elif nota >= 40:
+        humor = ("Hmm... nada brilhante.", "O Sr. Burns ja esta procurando o botao do alcapao.")
+    else:
+        humor = ("Soltem os caes!", "A usina esta exposta. Comece pelos itens vermelhos.")
+    return {"nota": nota, "humor": humor[0], "frase": humor[1], "itens": itens}
+
+
+def api_burns(q, corpo):
+    try:
+        return checa_burns()
+    except Exception as e:  # noqa: BLE001 - o painel mostra o erro em vez de sumir
+        return {"nota": 0, "humor": "D'oh!", "frase": "Uma verificacao falhou: " + str(e), "itens": []}
+
+
+def api_burns_corrigir(q, corpo):
+    chave = corpo.get("chave")
+    if chave == "firewall":
+        r = _sudo(["sh", "-c", "ufw default deny incoming && ufw default allow outgoing && ufw --force enable"])
+    elif chave == "auditd":
+        r = _sudo(["systemctl", "enable", "--now", "auditd"])
+    elif chave == "gravaveis":
+        grav = _graváveis_na_home()
+        r = roda(["chmod", "o-w"] + grav) if grav else ""
+    else:
+        return {"ok": False, "erro": "Esse item se corrige no Terminal (o comando esta no painel)."}
+    if r is None:
+        return {"ok": False, "erro": "Precisa de sudo com senha: rode o comando no Terminal."}
+    return {"ok": True, "painel": checa_burns()}
+
+
 FERRAMENTAS_GRAFICAS = {"wireshark": ["wireshark"]}
 
 
@@ -338,13 +473,13 @@ ROTAS_GET = {
     "/api/sistema": api_sistema, "/api/processos": api_processos, "/api/rede": api_rede,
     "/api/logs": api_logs, "/api/siem": api_siem, "/api/permissoes": api_permissoes,
     "/api/updates": api_updates, "/api/arquivos": api_arquivos, "/api/arquivo": api_arquivo,
-    "/api/lab": api_lab, "/api/carreira": api_carreira,
+    "/api/lab": api_lab, "/api/carreira": api_carreira, "/api/burns": api_burns,
 }
 ROTAS_POST = {
     "/api/processos/encerrar": api_encerrar, "/api/energia": api_energia,
     "/api/lab/iniciar": api_lab_iniciar, "/api/lab/dica": api_lab_dica,
     "/api/lab/responder": api_lab_responder, "/api/carreira/nome": api_carreira_nome,
-    "/api/abrir": api_abrir,
+    "/api/abrir": api_abrir, "/api/burns/corrigir": api_burns_corrigir,
 }
 
 

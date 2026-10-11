@@ -92,6 +92,9 @@ for g in sudo adm systemd-journal wireshark audio video plugdev netdev autologin
   getent group "$g" >/dev/null && usermod -aG "$g" homer
 done
 echo 'homer:donut' | chpasswd
+# Marca da senha padrao: o Painel do Sr. Burns avisa enquanto ela nao for trocada
+mkdir -p /etc/dohsec
+LC_ALL=C chage -l homer | head -1 | cut -d: -f2- | sed 's/^ *//' > /etc/dohsec/senha-padrao
 echo 'homer ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/homer
 chmod 440 /etc/sudoers.d/homer
 mkdir -p /etc/lightdm/lightdm.conf.d

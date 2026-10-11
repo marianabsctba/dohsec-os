@@ -144,6 +144,7 @@
       '(<code>journalctl</code>), em <code>/var/log</code> e nas evidências dos casos (<code>~/springfield</code>).</p>' +
       '<div class="cli-row"><input id="dohsecSiemQ" placeholder="ex.: Failed password, sudo, svc_backup">' +
       '<button class="xp-btn" data-dohsec-siem="1">Buscar</button></div><div id="dohsecSiemOut"></div>');
+    setTimeout(() => { const q = document.getElementById('dohsecSiemQ'); if (q) q.focus(); }, 50);
   }
 
   async function buscaSiem() {
@@ -183,7 +184,8 @@
     janela('updates', 'Updates', '🧩',
       '<h3>🧩 Atualizações</h3><p class="dohsec-dica">Lista do último <code>apt update</code>. ' +
       'Para buscar novidades e instalar, use o botão: ele abre o Terminal com o comando.</p>' +
-      pre(d.pendentes) +
+      (d.pendentes.split('\n').filter(l => l.includes('/')).length
+        ? pre(d.pendentes) : '<div class="os-good">✅ Tudo atualizado. Nenhum pacote pendente.</div>') +
       '<button class="xp-btn" data-dohsec-update="1">Atualizar o sistema no Terminal</button>');
   }
 
@@ -560,10 +562,56 @@
     atualizaCarreira().catch(() => {});
   }
 
+  // ---------------------------------------------------------------- Painel do Sr. Burns
+  // Saude de seguranca da propria maquina: nota, humor do Sr. Burns e o que corrigir
+  async function painelBurns() {
+    const d = await api('/api/burns');
+    const cor = d.nota >= 90 ? '#3bb273' : (d.nota >= 70 ? '#2f7df6' : (d.nota >= 40 ? '#ff9b30' : '#e84d5b'));
+    const icone = { ok: '✅', alerta: '⚠️', risco: '🚨' };
+    const itens = d.itens.map(i => '<div class="dohsec-check dohsec-' + i.nivel + '">' +
+      '<div><b>' + icone[i.nivel] + ' ' + esc(i.titulo) + '</b><div class="muted-mini">' + esc(i.detalhe) + '</div>' +
+      (i.ok ? '' : '<div class="dohsec-como">Como corrigir: <code>' + esc(i.como) + '</code></div>') + '</div>' +
+      (i.corrigivel ? '<button class="xp-btn dohsec-mini" data-dohsec-corrigir="' + esc(i.chave) + '">Corrigir</button>' : '') +
+      '</div>').join('');
+    janela('burns', 'Painel do Sr. Burns', '👔',
+      '<div class="dohsec-burns-topo"><div class="dohsec-nota" style="border-color:' + cor + ';color:' + cor + '">' +
+      d.nota + '</div><div><div class="dohsec-humor">"' + esc(d.humor) + '"</div>' +
+      '<div class="muted-mini">' + esc(d.frase) + '</div></div></div>' +
+      '<p class="dohsec-dica">Verificacoes reais desta maquina. Corrija os itens e veja a nota subir.</p>' + itens +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-app="burns">🔄 Verificar de novo</button>' +
+      '<button class="xp-btn" data-dohsec-app="terminal">💻 Abrir o Terminal</button></div>',
+      { w: 'min(780px,94vw)', h: 'min(680px,86vh)' });
+  }
+
+  async function corrigeBurns(chave) {
+    const r = await api('/api/burns/corrigir', { chave });
+    aviso(r.ok ? 'Corrigido' : 'Nao deu', r.ok ? 'O Sr. Burns anotou.' : r.erro);
+    if (r.ok) painelBurns();
+  }
+
+  // Confirmacao no visual do front (sem a caixa padrao do navegador)
+  function confirma(pergunta) {
+    return new Promise(resolve => {
+      janela('confirma', 'Confirmar', '❓',
+        '<p class="dohsec-pergunta">' + esc(pergunta) + '</p><div class="dohsec-barra">' +
+        '<button class="xp-btn" data-dohsec-resposta="sim">Sim</button>' +
+        '<button class="xp-btn" data-dohsec-resposta="nao">Cancelar</button></div>',
+        { w: 'min(420px,90vw)', h: '190px' });
+      respostaPendente = v => {
+        const w = existe('confirma');
+        if (w) w.remove();
+        const tarefa = document.getElementById('task_confirma');
+        if (tarefa) tarefa.remove();
+        resolve(v);
+      };
+    });
+  }
+  let respostaPendente = null;
+
   // ---------------------------------------------------------------- Energia
   async function energia(acao) {
     const frase = acao === 'desligar' ? 'Desligar o D\'OH!Sec OS?' : 'Reiniciar o D\'OH!Sec OS?';
-    if (!window.confirm(frase)) return;
+    if (!(await confirma(frase))) return;
     try {
       const r = await api('/api/energia', { acao });
       if (r.ok) aviso(acao === 'desligar' ? 'Desligando' : 'Reiniciando', 'Ate ja!');
@@ -596,10 +644,12 @@
     case: mesa,
     certificate: certificado,
     tools: ferramentas,
+    burns: painelBurns,
   };
 
   // Apps novos no desktop e no menu Iniciar (o front monta os icones no login)
-  [['files', 'Arquivos', '🗂️'], ['tools', 'Ferramentas', '🧰'], ['lab', 'Laboratório', '🧪']].forEach(a => {
+  [['files', 'Arquivos', '🗂️'], ['tools', 'Ferramentas', '🧰'], ['burns', 'Painel do Sr. Burns', '👔'],
+    ['lab', 'Laboratório', '🧪']].forEach(a => {
     if (!OS.apps.find(x => x[0] === a[0])) OS.apps.splice(2, 0, a);
   });
   const objetivos = OS.apps.find(x => x[0] === 'goals');
@@ -631,6 +681,8 @@
     ['data-dohsec-abrir', v => abrePrograma(v)],
     ['data-dohsec-salvar-cert', () => salvaCertificado()],
     ['data-dohsec-nome', v => gravaNome(v)],
+    ['data-dohsec-corrigir', v => corrigeBurns(v)],
+    ['data-dohsec-resposta', v => { if (respostaPendente) respostaPendente(v === 'sim'); }],
   ];
   document.addEventListener('click', e => {
     for (const [attr, fn] of acoes) {
