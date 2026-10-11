@@ -15,6 +15,14 @@ xbindkeys -f /etc/dohsec/xbindkeysrc >/dev/null 2>&1 &
 
 # Servico local e terminal real, so em 127.0.0.1, com uma chave sorteada a cada sessao.
 # O terminal so aceita conexoes da pagina do front que tenham essa chave.
+# Som: na primeira sessao o volume comeca em 80% (o padrao de 40% deixa os sons do front quase
+# mudos); depois o WirePlumber lembra o volume que a pessoa escolheu
+MARCA_SOM="$HOME/.local/share/dohsec/volume-inicial"
+if [ ! -e "$MARCA_SOM" ] && command -v wpctl >/dev/null; then
+  ( sleep 5; wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.8 && wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 &&
+    mkdir -p "$(dirname "$MARCA_SOM")" && touch "$MARCA_SOM" ) >/dev/null 2>&1 &
+fi
+
 DOHSEC_TOKEN=$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
 export DOHSEC_TOKEN
 dohsec-api >"$LOGS/dohsec-api.log" 2>&1 &

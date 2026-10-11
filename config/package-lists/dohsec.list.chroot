@@ -16,6 +16,13 @@ open-vm-tools-desktop
 spice-vdagent
 hyperv-daemons
 
+# Som: o Firefox no Linux so toca audio com PipeWire (ou PulseAudio); os sons do front saem por ele
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+alsa-utils
+
 # Visual
 papirus-icon-theme
 fonts-comic-neue

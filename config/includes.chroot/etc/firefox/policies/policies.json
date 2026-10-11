@@ -9,7 +9,11 @@
       "URL": "http://127.0.0.1:7700/",
       "StartPage": "homepage"
     },
+    "Permissions": {
+      "Autoplay": { "Default": "allow-audio-video", "Locked": true }
+    },
     "Preferences": {
+      "media.autoplay.block-webaudio": { "Value": false, "Status": "locked" },
       "browser.sessionstore.resume_from_crash": { "Value": false, "Status": "locked" },
       "browser.sessionstore.max_resumed_crashes": { "Value": 0, "Status": "locked" },
       "browser.startup.couldRestoreSession.count": { "Value": -1, "Status": "locked" },

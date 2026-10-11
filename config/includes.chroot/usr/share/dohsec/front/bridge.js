@@ -28,6 +28,19 @@
     if (OS.toast) OS.toast(titulo, msg);
   }
 
+  // Efeitos com o mesmo som do esboco (dohBeep, Web Audio), so com o som ligado no botao da bandeja
+  const SONS = {
+    erro: [[220, 196, 174, 146], 0.045],
+    acerto: [[262, 330, 392, 523], 0.04],
+    conquista: [[392, 523, 659, 784, 659, 784], 0.04],
+    promocao: [[262, 330, 392, 523, 392, 523, 659, 784], 0.05],
+  };
+  function som(tipo) {
+    /* global audioOn, dohBeep */
+    if (typeof audioOn === 'undefined' || !audioOn || typeof dohBeep !== 'function' || !SONS[tipo]) return;
+    dohBeep(SONS[tipo][0], SONS[tipo][1]);
+  }
+
   function existe(id) {
     return document.getElementById('win_' + id);
   }
@@ -404,7 +417,11 @@
     const r = await api('/api/lab/responder', { n: Number(n), resposta: campo ? campo.value : '' });
     if (r.bloqueado) return aviso('🔒 Ainda nao', r.erro);
     const out = document.getElementById('dohsecCasoOut_' + n);
-    if (!r.certo) return aviso("D'oh!", 'Nao e isso. Tente de novo ou peca uma dica.');
+    if (!r.certo) {
+      som('erro');
+      return aviso("D'oh!", 'Nao e isso. Tente de novo ou peca uma dica.');
+    }
+    som(r.promocao ? 'promocao' : 'acerto');
     aviso('Mmm... resolvido!', 'Caso ' + n + ' concluido');
     if (out) out.innerHTML = aprendizado(r.aprendizado);
     await atualizaCarreira();
@@ -894,7 +911,10 @@
     conferindo = true;
     try {
       const m = await api('/api/conquistas?avisar=1');
-      m.novas.forEach((x, i) => setTimeout(() => aviso('🏅 Conquista desbloqueada!', x.icone + ' ' + x.nome), i * 1500));
+      m.novas.forEach((x, i) => setTimeout(() => {
+        som('conquista');
+        aviso('🏅 Conquista desbloqueada!', x.icone + ' ' + x.nome);
+      }, i * 1500));
     } catch (e) { /* tenta de novo no proximo ciclo */ } finally { conferindo = false; }
   }
 
