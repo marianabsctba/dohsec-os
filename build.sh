@@ -33,6 +33,13 @@ fi
 # Copia a config limpa para a pasta de trabalho (o cache de pacotes e mantido)
 mkdir -p "$WORK"
 cd "$WORK"
+# Nada pode estar montado dentro do chroot na hora de limpar: o rm -rf do lb clean
+# atravessaria um /dev montado e apagaria o /dev do proprio sistema
+if [ -d chroot ]; then
+  for m in $(awk -v r="$(pwd)/chroot" 'index($2, r) == 1 {print $2}' /proc/mounts | sort -r); do
+    $SUDO umount -l "$m" || true
+  done
+fi
 $SUDO lb clean 2>/dev/null || true
 $SUDO rm -rf auto config
 cp -r "$SRC/auto" "$SRC/config" .
