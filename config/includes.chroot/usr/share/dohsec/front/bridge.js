@@ -571,7 +571,7 @@
   // Saude de seguranca da propria maquina: nota, humor do Sr. Burns e o que corrigir
   async function painelBurns() {
     const d = await api('/api/burns');
-    const cor = d.nota >= 90 ? '#3bb273' : (d.nota >= 70 ? '#2f7df6' : (d.nota >= 40 ? '#ff9b30' : '#e84d5b'));
+    const cor = d.nota >= 90 ? 'var(--green)' : (d.nota >= 70 ? 'var(--blue)' : (d.nota >= 40 ? 'var(--orange)' : 'var(--red)'));
     const icone = { ok: '✅', alerta: '⚠️', risco: '🚨' };
     const itens = d.itens.map(i => '<div class="dohsec-check dohsec-' + i.nivel + '">' +
       '<div><b>' + icone[i.nivel] + ' ' + esc(i.titulo) + '</b><div class="muted-mini">' + esc(i.detalhe) + '</div>' +

@@ -1,4 +1,8 @@
-/* Estilos dos apps reais do D'OH!Sec OS, no visual do front */
+/* Estilos dos apps reais do D'OH!Sec OS. Cores sempre das variaveis do front (--yellow, --cream,
+   --panel...), para todas as janelas terem exatamente os mesmos tons. */
+:root {
+  --dohsec-borda: #f0dc8c;
+}
 .window[data-id^="terminal"] .content {
   padding: 0 !important;
   overflow: hidden !important;
@@ -13,7 +17,7 @@
 }
 .dohsec-pre {
   background: #1b1708;
-  color: #fff6d7;
+  color: var(--cream);
   font: 12px/1.45 'Share Tech Mono', 'DejaVu Sans Mono', monospace;
   padding: 10px;
   border-radius: 6px;
@@ -29,7 +33,7 @@
 }
 .dohsec-tabela th {
   text-align: left;
-  background: #ffd84d;
+  background: var(--yellow);
   padding: 4px 6px;
   position: sticky;
   top: 0;
@@ -56,7 +60,7 @@
   font-size: 12px !important;
 }
 .dohsec-ativo {
-  background: #2f7df6 !important;
+  background: var(--blue) !important;
   color: #fff !important;
 }
 .dohsec-barra {
@@ -66,18 +70,18 @@
   gap: 6px;
 }
 .dohsec-dica {
-  color: #5b3518;
+  color: var(--brown);
   font-size: 12px;
 }
 .dohsec-caso {
-  border: 2px solid #e8d9a8;
+  border: 2px solid var(--dohsec-borda);
   border-radius: 8px;
   padding: 8px 10px;
   margin: 6px 0;
-  background: #fffdf3;
+  background: var(--panel);
 }
 .dohsec-caso.dohsec-ok {
-  border-color: #3bb273;
+  border-color: var(--green);
 }
 .dohsec-energia {
   border-top: 1px solid rgba(0, 0, 0, .15);
@@ -97,21 +101,21 @@
 }
 .dohsec-progresso {
   height: 10px;
-  background: #e8d9a8;
+  background: var(--dohsec-borda);
   border-radius: 6px;
   overflow: hidden;
   margin: 4px 0 6px;
 }
 .dohsec-progresso div {
   height: 100%;
-  background: linear-gradient(90deg, #3bb273, #ffd84d, #ff5fb7);
+  background: linear-gradient(90deg, var(--green), var(--yellow), var(--pink));
 }
 .dohsec-degrau {
-  border: 2px solid #e8d9a8;
+  border: 2px solid var(--dohsec-borda);
   border-radius: 8px;
   padding: 8px 10px;
   margin: 6px 0;
-  background: #fffdf3;
+  background: var(--panel);
 }
 .dohsec-conta {
   float: right;
@@ -121,8 +125,8 @@
   display: flex;
   gap: 14px;
   align-items: center;
-  background: #fffdf3;
-  border: 2px solid #ffd84d;
+  background: var(--panel);
+  border: 2px solid var(--yellow);
   border-radius: 10px;
   padding: 10px 14px;
   margin-bottom: 10px;
@@ -137,8 +141,8 @@
   margin: 12px 0;
 }
 .dohsec-memo {
-  background: #fffdf3;
-  border-left: 6px solid #ff5fb7;
+  background: var(--panel);
+  border-left: 6px solid var(--pink);
   padding: 12px 16px;
 }
 .dohsec-memo-cargo {
@@ -153,15 +157,15 @@
   box-shadow: 0 4px 18px rgba(0, 0, 0, .25);
 }
 .dohsec-leiame {
-  background: #fffdf3;
-  border: 2px solid #e8d9a8;
+  background: var(--panel);
+  border: 2px solid var(--dohsec-borda);
   border-radius: 8px;
   padding: 4px 16px 10px;
   margin-bottom: 10px;
 }
 .dohsec-leiame code {
   background: #1b1708;
-  color: #ffd84d;
+  color: var(--yellow);
   padding: 1px 5px;
   border-radius: 4px;
   font-family: 'Share Tech Mono', 'DejaVu Sans Mono', monospace;
@@ -208,7 +212,7 @@
   justify-content: center;
   font-size: 34px;
   font-weight: 900;
-  background: #fffdf3;
+  background: var(--panel);
 }
 .dohsec-humor {
   font-size: 22px;
@@ -219,17 +223,17 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  border-left: 6px solid #3bb273;
-  background: #fffdf3;
+  border-left: 6px solid var(--green);
+  background: var(--panel);
   border-radius: 6px;
   padding: 8px 12px;
   margin: 6px 0;
 }
 .dohsec-check.dohsec-alerta {
-  border-left-color: #ff9b30;
+  border-left-color: var(--orange);
 }
 .dohsec-check.dohsec-risco {
-  border-left-color: #e84d5b;
+  border-left-color: var(--red);
 }
 .dohsec-como {
   font-size: 12px;
@@ -237,7 +241,7 @@
 }
 .dohsec-como code {
   background: #1b1708;
-  color: #ffd84d;
+  color: var(--yellow);
   padding: 1px 5px;
   border-radius: 4px;
 }
@@ -255,27 +259,27 @@
   border-radius: 10px;
   margin: 10px 0;
   font-size: 16px;
-  background: #fffdf3;
-  border: 3px solid #3bb273;
+  background: var(--panel);
+  border: 3px solid var(--green);
 }
 .dohsec-veredito span {
   font-size: 36px;
 }
 .dohsec-v-alerta {
-  border-color: #ff9b30;
+  border-color: var(--orange);
 }
 .dohsec-v-risco {
-  border-color: #e84d5b;
+  border-color: var(--red);
 }
 .dohsec-achado {
-  background: #fffdf3;
+  background: var(--panel);
   border-radius: 6px;
   padding: 6px 10px;
   margin: 4px 0;
 }
 .dohsec-laudo th {
   width: 160px;
-  background: #fff6d7 !important;
+  background: var(--cream) !important;
 }
 .dohsec-laudo td {
   white-space: normal !important;
@@ -290,14 +294,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fffdf3;
+  background: var(--panel);
   border-radius: 6px;
   padding: 5px 10px;
   margin: 4px 0;
 }
 .dohsec-gravando {
   font-size: 18px;
-  color: #e84d5b;
+  color: var(--red);
   padding: 10px 0;
 }
 .dohsec-check-label {
