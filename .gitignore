@@ -11,3 +11,4 @@ config/common
 config/source
 *.wsl
 vm/
+*.zip
