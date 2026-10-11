@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""oque - glossario do D'OH!Sec OS, sem jargao.
+
+  oque              lista os termos
+  oque TERMO        explica o termo (aceita sem acento e so o comeco: oque firew)
+"""
+import sys
+import unicodedata
+
+AMARELO, ROSA, AZUL, CINZA, NEGRITO, FIM = ("\033[1;33m", "\033[38;5;205m", "\033[1;34m", "\033[2m",
+                                            "\033[1m", "\033[0m")
+
+# termo: (o que e, exemplo na usina, comando relacionado, veja tambem)
+GLOSSARIO = {
+    "firewall": ("Porteiro da rede: decide quais conexoes podem entrar e sair da maquina.",
+                 "O Painel do Sr. Burns da nota baixa quando o firewall esta desligado.",
+                 "sudo ufw status", ["porta", "hardening"]),
+    "porta": ("Numero que identifica um servico numa maquina (22 = SSH, 443 = HTTPS). Porta aberta e porta de entrada.",
+              "Caso 'Porta que nao deveria estar aberta': a 31337 nao estava no inventario.",
+              "ss -tlnp", ["firewall", "ip"]),
+    "ip": ("Endereco de uma maquina na rede, como 192.168.30.130.",
+           "Na Captura de Rede voce ve quais IPs conversaram com a sua maquina.",
+           "ip -brief address", ["dns", "porta"]),
+    "dns": ("A 'agenda' da internet: transforma nomes (debian.org) em enderecos IP.",
+            "Caso 'Vazamento por DNS': nomes estranhos e longos chamando o mesmo dominio.",
+            "dig debian.org", ["ip", "pcap"]),
+    "pcap": ("Arquivo com uma gravacao do trafego de rede, pacote por pacote.",
+             "A Captura de Rede salva pcaps em ~/Capturas.",
+             "tshark -r arquivo.pcap", ["dns", "wireshark"]),
+    "wireshark": ("Programa para abrir e analisar capturas de rede com detalhe.",
+                  "Botao 'Abrir no Wireshark' no app Captura de Rede.",
+                  "wireshark arquivo.pcap", ["pcap"]),
+    "tls": ("Protocolo que criptografa a conexao (o 'S' do HTTPS). Quem esta no meio ve so para onde voce foi, nao o conteudo.",
+            "Na captura, os sites HTTPS aparecem pelo nome (SNI), mas o conteudo nao.",
+            "curl -vI https://debian.org", ["criptografia"]),
+    "criptografia": ("Embaralhar dados com uma chave para que so quem tem a chave consiga ler.",
+                     "Discos, conexoes HTTPS e senhas guardadas usam criptografia.",
+                     "gpg -c arquivo", ["hash", "tls"]),
+    "hash": ("Impressao digital de um arquivo: mudou um bit, muda o hash inteiro.",
+             "Caso 'Conferindo hash': so um dos downloads batia com o hash oficial.",
+             "sha256sum arquivo", ["integridade"]),
+    "integridade": ("Garantia de que algo nao foi alterado sem permissao.",
+                    "O AIDE compara os arquivos do sistema com uma 'foto' antiga.",
+                    "sudo aideinit", ["hash", "aide"]),
+    "aide": ("Ferramenta que guarda os hashes dos arquivos do sistema e avisa o que mudou.",
+             "Caso 'Integridade com AIDE': um programa do sistema mudou sem atualizacao.",
+             "sudo aide --check", ["integridade"]),
+    "log": ("Registro do que aconteceu no sistema: logins, erros, servicos, comandos com sudo.",
+            "O app Logs/Eventos mostra o journal real da maquina.",
+            "journalctl -n 50", ["siem", "journal"]),
+    "journal": ("O log central do Linux moderno (systemd). Tudo passa por ele.",
+                "Caso 'Qual servico caiu?': o journal mostra o 'Failed'.",
+                "journalctl -u ssh", ["log"]),
+    "siem": ("Sistema que junta os logs de varias maquinas para procurar e correlacionar eventos.",
+             "O app Mini SIEM busca no journal e nas evidencias dos casos.",
+             "journalctl -g 'Failed password'", ["log", "ids"]),
+    "ids": ("Sistema de deteccao de intrusao: observa o trafego e alerta quando ve algo suspeito.",
+            "Caso 'Alertas do Suricata': o eve.json tem os alertas.",
+            "jq . eve.json", ["siem", "yara"]),
+    "yara": ("Linguagem de regras para reconhecer arquivos suspeitos por textos e bytes.",
+             "O Inspetor de Arquivos usa regras YARA do D'OH!Sec.",
+             "yara regras.yar pasta/", ["ids", "ioc"]),
+    "ioc": ("Indicador de comprometimento: pista concreta de um incidente (IP, dominio, hash, nome de arquivo).",
+            "O IP 203.0.113.250 aparece no e-mail e na captura do Teste do Sr. Burns.",
+            "grep -r 203.0.113.250 ~/springfield", ["hash", "siem"]),
+    "phishing": ("Mensagem falsa que se passa por alguem confiavel para conseguir dados ou um clique.",
+                 "Caso 'invoice_real.pdf.exe': o From dizia Financeiro, o Return-Path dizia outra coisa.",
+                 "grep -iE '^(From|Return-Path)' email.eml", ["spf", "mfa"]),
+    "spf": ("Lista publicada no DNS de quais servidores podem mandar e-mail por um dominio. Ajuda a pegar remetente falso.",
+            "O cabecalho Authentication-Results mostra spf=fail no e-mail falso.",
+            "dig txt dominio.com", ["phishing", "dns"]),
+    "mfa": ("Login com mais de um fator: senha + celular ou chave. Senha vazada sozinha nao basta.",
+            "Recomendacao do caso de forca bruta na conta de servico.",
+            "(configurado em cada servico)", ["senha"]),
+    "senha": ("Segredo que prova quem voce e. Boa senha e longa, unica e fica num gerenciador.",
+              "O Painel do Sr. Burns avisa enquanto a senha padrao nao for trocada.",
+              "passwd", ["mfa", "hash"]),
+    "permissao": ("Quem pode ler (r), escrever (w) e executar (x) um arquivo: dono, grupo e outros.",
+                  "Caso 'Lendo permissoes com ls -l': um arquivo de senhas com rw-rw-rw-.",
+                  "ls -l arquivo", ["root", "menor privilegio"]),
+    "root": ("O administrador total do Linux (UID 0). Pode tudo, por isso se usa com cuidado.",
+             "O Painel do Sr. Burns confere se so o root tem UID 0.",
+             "id root", ["sudo", "uid"]),
+    "sudo": ("Rodar um comando como administrador, com registro no log.",
+             "Caso 'O que fizeram com sudo?': o log mostra quem leu /etc/shadow.",
+             "sudo -l", ["root", "log"]),
+    "uid": ("Numero que identifica um usuario. 0 e o root; usuarios comuns comecam em 1000.",
+            "Caso 'Quem sou eu?': o seu UID.",
+            "id", ["root"]),
+    "menor privilegio": ("Cada pessoa e programa so com o acesso que realmente precisa.",
+                         "Caso 'Everyone em grupo privilegiado': todo mundo virou administrador.",
+                         "groups", ["permissao", "root"]),
+    "hardening": ("Endurecer o sistema: desligar o que nao usa, atualizar, fechar portas, ligar firewall e auditoria.",
+                  "O Painel do Sr. Burns e um checklist de hardening.",
+                  "sudo lynis audit system", ["firewall", "patch"]),
+    "patch": ("Atualizacao que corrige falhas. A maioria dos ataques usa falhas que ja tinham correcao.",
+              "App Updates: 'Atualizar o sistema no Terminal'.",
+              "sudo apt update && sudo apt upgrade", ["cve", "hardening"]),
+    "cve": ("Identificador publico de uma falha conhecida (ex.: CVE-2024-3094).",
+            "Ao ler sobre uma falha, procure o CVE e veja se ha patch.",
+            "apt changelog openssh-server", ["patch"]),
+    "cron": ("Agendador de tarefas do Linux: roda comandos em horarios marcados.",
+             "Caso 'Servidor minerando donutcoin': o cron religava o programa.",
+             "crontab -l", ["persistencia", "systemd"]),
+    "systemd": ("O gerenciador de servicos do Linux: liga, desliga e vigia os programas de fundo.",
+                "Teste do Sr. Burns: um servico estranho com Restart=always.",
+                "systemctl list-unit-files", ["cron", "persistencia"]),
+    "persistencia": ("Jeito de um programa voltar sozinho depois de reiniciar (cron, servico, inicializacao).",
+                     "Os casos do donutcoin e do Teste do Sr. Burns ensinam a achar e remover.",
+                     "systemctl list-unit-files --state=enabled", ["cron", "systemd"]),
+    "auditd": ("Auditoria do kernel: registra quem executou o que, mesmo depois de sudo.",
+               "Caso 'Auditoria com auditd': o auid revela o usuario original.",
+               "sudo ausearch -m execve -i", ["log"]),
+    "forense": ("Investigar o que aconteceu a partir das evidencias, sem estragar as evidencias.",
+                "Os casos de Chefe de Seguranca: metadados, arquivos embutidos, linha do tempo.",
+                "exiftool arquivo", ["metadados", "linha do tempo"]),
+    "metadados": ("Dados sobre o arquivo: autor, programa, datas, as vezes localizacao.",
+                  "Caso 'Metadados com exiftool': quem tirou a foto do cracha.",
+                  "exiftool foto.jpg", ["forense"]),
+    "linha do tempo": ("Juntar eventos de varias fontes em ordem de horario para contar a historia do incidente.",
+                       "Caso 'Montando a linha do tempo'.",
+                       "cat *.log | sort", ["forense", "incidente"]),
+    "incidente": ("Evento que ameaca a seguranca: vazamento, invasao, servico derrubado, conta roubada.",
+                  "Cada caso do Laboratorio e um incidente para investigar.",
+                  "lab", ["linha do tempo", "soc"]),
+    "soc": ("Centro de operacoes de seguranca: o time que monitora alertas e responde a incidentes.",
+            "O cargo de Supervisor de Seguranca e o seu SOC na usina.",
+            "lab", ["siem", "incidente"]),
+    "backup": ("Copia dos dados em outro lugar. So vale se for testada e protegida contra apagamento.",
+               "Caso 'Eventos em JSON com jq': alguem apagou os backups.",
+               "tar -czf backup.tar.gz pasta/", ["incidente"]),
+    "base64": ("Jeito de escrever bytes como texto (letras, numeros, + e /). Nao e criptografia: qualquer um decodifica.",
+               "Caso 'PowerShell encoded': o comando estava em base64.",
+               "echo TEXTO | base64 -d", ["criptografia"]),
+    "vpn": ("Tunel criptografado entre voce e uma rede, como se estivesse dentro dela.",
+            "Teste do Sr. Burns: o invasor entrou pela VPN com uma conta roubada.",
+            "ip route", ["tls", "mfa"]),
+}
+
+
+def normaliza(s):
+    return "".join(c for c in unicodedata.normalize("NFD", s.lower().strip()) if unicodedata.category(c) != "Mn")
+
+
+def mostra(termo):
+    o_que, exemplo, comando, veja = GLOSSARIO[termo]
+    print(f"\n{AMARELO}{termo.upper()}{FIM}")
+    print(f"  {o_que}")
+    print(f"\n  {ROSA}Na usina:{FIM} {exemplo}")
+    print(f"  {ROSA}Comando:{FIM}  {AZUL}{comando}{FIM}")
+    print(f"  {CINZA}Veja tambem: " + ", ".join(f"oque {v}" for v in veja) + f"{FIM}\n")
+
+
+def main():
+    pedido = normaliza(" ".join(sys.argv[1:]))
+    if not pedido:
+        print(f"\n{AMARELO}Glossario do D'OH!Sec{FIM}  ({len(GLOSSARIO)} termos)\n")
+        print("  " + ", ".join(sorted(GLOSSARIO)))
+        print(f"\n{CINZA}Ex.: oque firewall   |   oque hash   |   cola (comandos por tema){FIM}\n")
+        return
+    if pedido in GLOSSARIO:
+        return mostra(pedido)
+    parecidos = [t for t in GLOSSARIO if t.startswith(pedido)] or [t for t in GLOSSARIO if pedido in t]
+    if len(parecidos) == 1:
+        return mostra(parecidos[0])
+    if parecidos:
+        print("Voce quis dizer: " + ", ".join(parecidos) + "?")
+        return
+    sys.exit(f"D'oh! Nao conheco '{pedido}'. Rode 'oque' para ver a lista.")
+
+
+if __name__ == "__main__":
+    main()

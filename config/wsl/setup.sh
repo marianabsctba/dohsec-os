@@ -13,4 +13,4 @@ if ! grep -q '/etc/dohsec/bashrc' /etc/bash.bashrc; then
   printf '\n[ -f /etc/dohsec/bashrc ] && . /etc/dohsec/bashrc\n' >> /etc/bash.bashrc
 fi
 
-chmod 755 /usr/local/bin/doh /usr/local/bin/donut /usr/local/bin/lab /usr/lib/wsl/oobe.sh
+chmod 755 /usr/local/bin/doh /usr/local/bin/donut /usr/local/bin/lab /usr/local/bin/oque /usr/local/bin/cola /usr/lib/wsl/oobe.sh

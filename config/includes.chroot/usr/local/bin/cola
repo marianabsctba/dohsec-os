@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""cola - os comandos mais uteis do D'OH!Sec OS, por tema.
+
+  cola            lista os temas
+  cola TEMA       mostra os comandos do tema (ex.: cola rede)
+  cola tudo       mostra todos
+"""
+import sys
+import unicodedata
+
+AMARELO, ROSA, AZUL, CINZA, FIM = "\033[1;33m", "\033[38;5;205m", "\033[1;34m", "\033[2m", "\033[0m"
+
+COLA = {
+    "arquivos": [
+        ("pwd", "onde estou"), ("ls -la", "listar tudo, com detalhes e ocultos"),
+        ("cd PASTA / cd ..", "entrar / voltar"), ("cat ARQ / less ARQ", "ler arquivo (less: q sai)"),
+        ("cp ORIGEM DESTINO", "copiar"), ("mv ORIGEM DESTINO", "mover ou renomear"),
+        ("mkdir PASTA", "criar pasta"), ("find PASTA -name '*.log'", "achar arquivos pelo nome"),
+        ("tree PASTA", "arvore de pastas"), ("tar -xzf ARQ.tar.gz", "extrair pacote"),
+    ],
+    "texto": [
+        ("grep PALAVRA ARQ", "linhas com a palavra"), ("grep -i / -n / -v", "ignorar maiusculas / numero da linha / inverter"),
+        ("grep -r PALAVRA PASTA", "procurar em todos os arquivos"), ("wc -l ARQ", "contar linhas"),
+        ("head -20 / tail -20", "comeco / fim"), ("tail -f ARQ", "acompanhar ao vivo"),
+        ("cut -d, -f2 ARQ.csv", "pegar uma coluna"), ("sort | uniq -c | sort -rn", "quem mais aparece"),
+        ("awk '{print $1}' ARQ", "primeira coluna (separada por espaco)"), ("jq . ARQ.json", "ler JSON"),
+    ],
+    "permissoes": [
+        ("id / whoami", "quem sou eu"), ("ls -l ARQ", "ver permissoes (dono, grupo, outros)"),
+        ("chmod +x ARQ", "tornar executavel"), ("chmod o-w ARQ", "tirar escrita dos outros"),
+        ("chown USUARIO ARQ", "trocar o dono (com sudo)"), ("sudo COMANDO", "rodar como administrador"),
+        ("sudo -l", "o que posso fazer com sudo"), ("passwd", "trocar minha senha"),
+    ],
+    "processos": [
+        ("ps aux", "todos os processos"), ("ps aux --sort=-%cpu | head", "quem mais usa CPU"),
+        ("htop", "monitor interativo (q sai)"), ("kill PID", "encerrar um processo"),
+        ("lsof -p PID", "arquivos que um processo abriu"), ("pstree -p", "arvore pai/filho"),
+    ],
+    "servicos": [
+        ("systemctl status NOME", "estado de um servico"), ("systemctl --failed", "o que falhou"),
+        ("sudo systemctl restart NOME", "reiniciar servico"), ("systemctl list-unit-files", "servicos instalados"),
+        ("crontab -l", "tarefas agendadas do usuario"),
+    ],
+    "logs": [
+        ("journalctl -n 50", "ultimos eventos"), ("journalctl -u NOME", "eventos de um servico"),
+        ("journalctl --since -1h", "ultima hora"), ("journalctl -g 'Failed password'", "procurar nos logs"),
+        ("journalctl -p warning", "so avisos e erros"), ("ls /var/log", "arquivos de log"),
+    ],
+    "rede": [
+        ("ip -brief address", "meus enderecos"), ("ip route", "rotas e gateway"),
+        ("ss -tlnp", "portas escutando"), ("ss -tunap", "conexoes abertas"),
+        ("ping -c 3 HOST", "testar se responde"), ("dig NOME", "consultar DNS"),
+        ("curl -I URL", "cabecalhos de um site"), ("traceroute HOST", "caminho ate o destino"),
+    ],
+    "pacotes": [
+        ("tshark -r ARQ.pcap", "ler uma captura"), ("tshark -r ARQ.pcap -q -z conv,ip", "quem falou com quem"),
+        ("tshark -r ARQ.pcap -Y dns -T fields -e dns.qry.name", "nomes consultados"),
+        ("wireshark ARQ.pcap", "abrir no grafico"), ("sudo tcpdump -i any -c 20", "capturar 20 pacotes"),
+    ],
+    "seguranca": [
+        ("sudo ufw status", "firewall"), ("sudo ufw enable", "ligar o firewall"),
+        ("sha256sum ARQ", "impressao digital (hash)"), ("sudo lynis audit system", "auditoria de endurecimento"),
+        ("sudo aideinit", "base de integridade do AIDE"), ("sudo ausearch -m execve -i", "execucoes registradas (auditd)"),
+        ("yara REGRA.yar PASTA", "testar regras de deteccao"), ("sudo freshclam && clamscan ARQ", "antivirus"),
+    ],
+    "forense": [
+        ("file ARQ", "tipo real do arquivo"), ("strings ARQ | less", "textos escondidos"),
+        ("xxd ARQ | head", "bytes em hexadecimal"), ("exiftool ARQ", "metadados"),
+        ("binwalk ARQ", "arquivos embutidos"), ("fls -r IMAGEM", "listar arquivos de uma imagem de disco"),
+    ],
+}
+
+
+def normaliza(s):
+    return "".join(c for c in unicodedata.normalize("NFD", s.lower()) if unicodedata.category(c) != "Mn")
+
+
+def mostra(tema):
+    print(f"\n{ROSA}{tema}{FIM}")
+    largura = max(len(c) for c, _ in COLA[tema])
+    for comando, explicacao in COLA[tema]:
+        print(f"  {AZUL}{comando.ljust(largura)}{FIM}  {CINZA}{explicacao}{FIM}")
+
+
+def main():
+    pedido = normaliza(" ".join(sys.argv[1:]))
+    if not pedido:
+        print(f"\n{AMARELO}Cola do D'OH!Sec{FIM}  temas: " + ", ".join(COLA) + f"\n{CINZA}Ex.: cola rede   |   cola tudo{FIM}\n")
+        return
+    if pedido == "tudo":
+        for tema in COLA:
+            mostra(tema)
+        print()
+        return
+    achados = [t for t in COLA if t.startswith(pedido)]
+    if not achados:
+        sys.exit(f"D'oh! Tema '{pedido}' nao existe. Temas: " + ", ".join(COLA))
+    for tema in achados:
+        mostra(tema)
+    print()
+
+
+if __name__ == "__main__":
+    main()
