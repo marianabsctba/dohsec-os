@@ -1,5 +1,5 @@
 #!/bin/bash
-# Gera o D'OH!Sec OS: ./build.sh iso (padrao) ou ./build.sh wsl.
+# Gera o D'OH!Sec OS: ./build.sh iso (padrao), ./build.sh wsl ou ./build.sh disco (VMware).
 # Em Debian roda direto; em outro Linux (ex.: WSL Ubuntu) monta um chroot Debian
 # com scripts/debian-builder.sh e roda la dentro.
 # O build roda numa pasta do filesystem Linux: chroot em /mnt/c (NTFS) nao funciona.
@@ -13,8 +13,8 @@ SUDO=
 [ "$(id -u)" -ne 0 ] && SUDO=sudo
 
 case "$TARGET" in
-  iso|wsl) ;;
-  *) echo "uso: $0 [iso|wsl]" >&2; exit 2 ;;
+  iso|wsl|disco) ;;
+  *) echo "uso: $0 [iso|wsl|disco]  (disco precisa de uma ISO gerada antes)" >&2; exit 2 ;;
 esac
 
 if ! grep -q '^ID=debian$' /etc/os-release; then
@@ -23,6 +23,10 @@ fi
 
 if [ "$TARGET" = wsl ]; then
   exec $SUDO bash "$SRC/scripts/build-wsl.sh" "$SRC"
+fi
+
+if [ "$TARGET" = disco ]; then
+  exec $SUDO bash "$SRC/scripts/build-disco.sh" "$SRC" "$WORK"
 fi
 
 if ! command -v lb >/dev/null 2>&1; then

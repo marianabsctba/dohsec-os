@@ -10,3 +10,4 @@ config/chroot
 config/common
 config/source
 *.wsl
+vm/

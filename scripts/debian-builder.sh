@@ -40,13 +40,17 @@ if [ ! -x "$BUILDER/usr/bin/lb" ]; then
   chroot "$BUILDER" apt-get install -y live-build
 fi
 
+# So o codigo: sem .git e sem os artefatos grandes (ISO, .wsl, disco da VM)
 rm -rf "$BUILDER/src"
-cp -r "$SRC" "$BUILDER/src"
-rm -rf "$BUILDER/src/.git"
+mkdir -p "$BUILDER/src"
+tar -C "$SRC" --exclude=./.git --exclude='*.iso' --exclude='*.wsl' --exclude=./vm -cf - . | tar -C "$BUILDER/src" -xf -
 chroot "$BUILDER" env HOME=/root /bin/bash /src/build.sh "$TARGET"
 
 if [ "$TARGET" = wsl ]; then
   cp "$BUILDER/src/dohsec-os.wsl" "$SRC/"
+elif [ "$TARGET" = disco ]; then
+  mkdir -p "$SRC/vm"
+  cp "$BUILDER/src/vm/"* "$SRC/vm/"
 else
   cp "$BUILDER/src/"*.iso "$SRC/"
 fi
