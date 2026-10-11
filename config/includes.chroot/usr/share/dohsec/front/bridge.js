@@ -346,7 +346,8 @@
       '<div class="dohsec-barra">' +
       '<button class="xp-btn" data-dohsec-investigar="' + esc(r.pasta) + '">💻 Investigar no Terminal</button> ' +
       '<button class="xp-btn" data-dohsec-dir="' + esc(r.pasta) + '">🗂️ Ver arquivos</button> ' +
-      '<button class="xp-btn" data-dohsec-app="tools">🧰 Ferramentas</button></div>' +
+      '<button class="xp-btn" data-dohsec-app="tools">🧰 Ferramentas</button>' +
+      '<button class="xp-btn" data-dohsec-relatorio="' + n + '">📝 Relatório</button></div>' +
       markdown(r.leiame) +
       '<h4>Sua resposta</h4><div class="cli-row"><input id="dohsecResp_' + n + '" placeholder="digite a resposta">' +
       '<button class="xp-btn" data-dohsec-responder="' + n + '">Responder</button>' +
@@ -750,6 +751,101 @@
     aviso(r.ok ? 'Abrindo o Wireshark' : 'Nao deu', r.ok ? caminho.split('/').pop() : r.erro);
   }
 
+  // ---------------------------------------------------------------- Relatorio de Incidente
+  // Diario do analista por caso + campos do relatorio; exporta Markdown e HTML para ~/Relatorios
+  async function relatorios() {
+    const d = await api('/api/relatorios');
+    janela('reports', 'Relatórios de Incidente', '📝',
+      '<h3>📝 Relatórios de Incidente</h3><p class="dohsec-dica">Cada caso tem um diário do analista e um ' +
+      'relatório com linha do tempo, IOCs, evidências (com SHA-256) e remediação, igual ao da vida real. ' +
+      'No Terminal: <code>relatorio anota "o que descobri"</code> dentro da pasta do caso.</p>' +
+      (d.relatorios.length ? d.relatorios.map(r =>
+        '<div class="dohsec-caso' + (r.resolvido ? ' dohsec-ok' : '') + '"><b>' + (r.resolvido ? '✅' : '🔎') + ' ' +
+        r.n + '. ' + esc(r.titulo) + '</b> <span class="muted-mini">' + r.preenchidos + '/' + r.total_campos +
+        ' campos, ' + r.anotacoes + ' anotações' + (r.atualizado ? ', ' + esc(r.atualizado) : '') + '</span>' +
+        '<div class="dohsec-barra"><button class="xp-btn dohsec-mini" data-dohsec-relatorio="' + r.n +
+        '">Abrir</button></div></div>').join('')
+        : '<p class="muted-mini">Nenhum ainda. Investigue um caso na Mesa do Incidente e clique em 📝 Relatório.</p>') +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-dir="~/Relatorios">🗂️ Pasta ~/Relatorios</button>' +
+      '<button class="xp-btn" data-dohsec-app="case">🚨 Mesa do Incidente</button></div>',
+      { w: 'min(760px,94vw)', h: 'min(640px,82vh)' });
+  }
+
+  function diario(itens) {
+    return itens.length ? itens.map(a => '<div class="dohsec-nota-diario"><span class="dohsec-mono">' + esc(a.quando) +
+      '</span> ' + esc(a.texto) + '</div>').join('') : '<p class="muted-mini">Sem anotações. Anote cada pista que achar.</p>';
+  }
+
+  async function relatorio(n) {
+    const d = await api('/api/relatorio?n=' + encodeURIComponent(n));
+    if (d.bloqueado) return aviso('🔒 Ainda nao', d.erro);
+    janela('relatorio_' + n, 'Relatório: ' + d.titulo, '📝',
+      '<h3>📝 Relatório de Incidente: ' + esc(d.titulo) + '</h3>' +
+      '<p class="dohsec-dica">Preencha enquanto investiga. Caso, analista, situação e a lista de evidências ' +
+      'com SHA-256 entram sozinhos.</p>' +
+      '<h4>Diário do analista</h4><div id="dohsecDiario_' + n + '">' + diario(d.dados.diario) + '</div>' +
+      '<div class="cli-row"><input id="dohsecAnota_' + n + '" maxlength="1000" placeholder="ex.: 14:02 achei 312 falhas de login vindas de 203.0.113.7">' +
+      '<button class="xp-btn" data-dohsec-anotar="' + n + '">Anotar</button></div>' +
+      d.campos.map(c => '<h4>' + esc(c.nome) + '</h4><div class="muted-mini">' + esc(c.ajuda) + '</div>' +
+        '<textarea class="dohsec-campo" id="dohsecRel_' + n + '_' + c.chave + '" rows="' +
+        (c.chave === 'resumo' || c.chave === 'impacto' || c.chave === 'licoes' ? 3 : 5) + '">' +
+        esc(d.dados.campos[c.chave] || '') + '</textarea>').join('') +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-relsalvar="' + n + '">💾 Salvar</button>' +
+      '<button class="xp-btn" data-dohsec-relver="' + n + '">👁️ Ver relatório</button>' +
+      '<button class="xp-btn" data-dohsec-relexportar="' + n + '">📤 Exportar para ~/Relatorios</button></div>' +
+      '<div id="dohsecRelOut_' + n + '"></div>',
+      { w: 'min(860px,94vw)', h: 'min(700px,86vh)' });
+    relatorioCampos[n] = d.campos.map(c => c.chave);
+  }
+  const relatorioCampos = {};
+
+  async function salvaRelatorio(n, quieto) {
+    const campos = {};
+    (relatorioCampos[n] || []).forEach(k => {
+      const el = document.getElementById('dohsecRel_' + n + '_' + k);
+      if (el) campos[k] = el.value;
+    });
+    const r = await api('/api/relatorio/salvar', { n: Number(n), campos });
+    if (r.bloqueado) throw new Error(r.erro);
+    if (!quieto) aviso('Relatório salvo', 'Caso ' + n + ', ' + r.atualizado);
+    if (existe('reports')) {
+      // Atualiza a lista sem tirar o relatorio da frente
+      await relatorios();
+      if (existe('relatorio_' + n)) OS.focusWin(existe('relatorio_' + n));
+    }
+  }
+
+  async function anotaRelatorio(n) {
+    const campo = document.getElementById('dohsecAnota_' + n);
+    const texto = campo ? campo.value.trim() : '';
+    if (!texto) return aviso('Diário', 'Escreva a anotação primeiro.');
+    const r = await api('/api/relatorio/anotar', { n: Number(n), texto });
+    if (!r.ok) return aviso('Diário', r.erro);
+    campo.value = '';
+    const alvo = document.getElementById('dohsecDiario_' + n);
+    if (alvo) alvo.innerHTML = diario(r.diario);
+  }
+
+  async function verRelatorio(n) {
+    await salvaRelatorio(n, true);
+    const d = await api('/api/relatorio?n=' + encodeURIComponent(n));
+    janela('relatorio_ver_' + n, 'Relatório (prévia)', '👁️',
+      '<div class="dohsec-relatorio">' + markdown(d.markdown) + '</div>' +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-relexportar="' + n + '">📤 Exportar para ~/Relatorios</button></div>',
+      { w: 'min(900px,94vw)', h: 'min(720px,86vh)' });
+  }
+
+  async function exportaRelatorio(n) {
+    if (existe('relatorio_' + n)) await salvaRelatorio(n, true);
+    const r = await api('/api/relatorio/exportar', { n: Number(n) });
+    if (!r.ok) return aviso('Nao deu', r.erro);
+    aviso('Relatório exportado', r.html.split('/').pop());
+    const out = document.getElementById('dohsecRelOut_' + n);
+    if (out) out.innerHTML = '<div class="os-good"><b>📤 Exportado:</b><br><code>' + esc(r.md) + '</code><br><code>' +
+      esc(r.html) + '</code> (abra no navegador para imprimir ou salvar em PDF)<div class="dohsec-barra">' +
+      '<button class="xp-btn dohsec-mini" data-dohsec-dir="~/Relatorios">🗂️ Abrir a pasta</button></div></div>';
+  }
+
   // ---------------------------------------------------------------- Energia
   async function energia(acao) {
     const frase = acao === 'desligar' ? 'Desligar o D\'OH!Sec OS?' : 'Reiniciar o D\'OH!Sec OS?';
@@ -789,12 +885,14 @@
     burns: painelBurns,
     inspector: () => inspetor(''),
     capture: captura,
+    reports: relatorios,
   };
 
   // Apps novos no desktop e no menu Iniciar (o front monta os icones no login)
   [['files', 'Arquivos', '🗂️'], ['tools', 'Ferramentas', '🧰'], ['burns', 'Painel do Sr. Burns', '👔'],
     ['inspector', 'Inspetor de Arquivos', '🔬'],
     ['capture', 'Captura de Rede', '🦈'],
+    ['reports', 'Relatórios', '📝'],
     ['lab', 'Laboratório', '🧪']].forEach(a => {
     if (!OS.apps.find(x => x[0] === a[0])) OS.apps.splice(2, 0, a);
   });
@@ -832,6 +930,11 @@
     ['data-dohsec-capturar', v => capturar(v)],
     ['data-dohsec-analisar', v => analisaCaptura(v)],
     ['data-dohsec-wireshark', v => abreWireshark(v)],
+    ['data-dohsec-relatorio', v => relatorio(v)],
+    ['data-dohsec-anotar', v => anotaRelatorio(v)],
+    ['data-dohsec-relsalvar', v => salvaRelatorio(v)],
+    ['data-dohsec-relver', v => verRelatorio(v)],
+    ['data-dohsec-relexportar', v => exportaRelatorio(v)],
     ['data-dohsec-resposta', v => { if (respostaPendente) respostaPendente(v === 'sim'); }],
   ];
   document.addEventListener('click', e => {
@@ -855,6 +958,8 @@
     if (e.target.id === 'dohsecInspQ') { e.preventDefault(); inspeciona('campo'); }
     const nomeCampo = e.target.id.match(/^dohsecNome_(\w+)$/);
     if (nomeCampo) { e.preventDefault(); gravaNome(nomeCampo[1]); }
+    const nota = e.target.id.match(/^dohsecAnota_(\d+)$/);
+    if (nota) { e.preventDefault(); anotaRelatorio(nota[1]); }
     const m = e.target.id.match(/^dohsecResp_(\d+)$/);
     if (m) { e.preventDefault(); responder(m[1]); }
   }, true);

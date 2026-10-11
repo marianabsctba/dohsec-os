@@ -213,7 +213,8 @@ def iniciar(casos, prog, chave):
     mostra_markdown((destino / "LEIAME.md").read_text())
     print(f"\n{CINZA}Seus arquivos estao em:{FIM} {destino}")
     print(f"{CINZA}Para ir ate la, digite:{FIM} {AZUL}cd {destino}{FIM}")
-    print(f"{CINZA}Para ler de novo esta explicacao:{FIM} {AZUL}lab iniciar {n}{FIM}\n")
+    print(f"{CINZA}Para ler de novo esta explicacao:{FIM} {AZUL}lab iniciar {n}{FIM}")
+    print(f"{CINZA}Anote cada pista no relatorio:{FIM} {AZUL}relatorio anota \"o que voce descobriu\"{FIM}\n")
 
 
 def dica(casos, prog, chave):

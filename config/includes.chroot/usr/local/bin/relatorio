@@ -1,0 +1,292 @@
+#!/usr/bin/env python3
+"""relatorio - Relatorio de Incidente do D'OH!Sec OS: diario do analista que vira relatorio.
+
+  relatorio                        lista os relatorios dos casos
+  relatorio anota [N] "texto"      anota no diario do caso (dentro da pasta do caso, o N e opcional)
+  relatorio ver [N]                mostra o relatorio no terminal
+  relatorio exportar [N]           salva em ~/Relatorios (Markdown e HTML para imprimir)
+
+Os campos (resumo, linha do tempo, IOCs, impacto, remediacao, licoes) sao preenchidos no app
+Relatorio de Incidente, pelo botao 📝 na janela do caso.
+"""
+import hashlib
+import html
+import importlib.machinery
+import importlib.util
+import json
+import os
+import re
+import sys
+from datetime import datetime
+from pathlib import Path
+
+DADOS = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")) / "dohsec" / "relatorios"
+SAIDA = Path.home() / "Relatorios"
+CAMPOS = [
+    ("resumo", "Resumo", "O que aconteceu, em 2 ou 3 frases, para alguém que não é técnico."),
+    ("linha", "Linha do tempo", "Uma linha por evento: QUANDO | O QUE ACONTECEU"),
+    ("iocs", "Indicadores (IOCs)", "Um por linha: IPs, domínios, hashes, nomes de arquivo, contas."),
+    ("impacto", "Impacto", "O que foi afetado: dados, contas, serviços, pessoas."),
+    ("remediacao", "Remediação", "Um passo por linha: o que foi feito ou deve ser feito para conter e corrigir."),
+    ("licoes", "Lições aprendidas", "O que muda para não acontecer de novo."),
+]
+LIMITE_CAMPO = 8000
+LIMITE_EVIDENCIAS = 40
+
+AMARELO, ROSA, CINZA, VERDE, FIM = "\033[1;33m", "\033[38;5;205m", "\033[2m", "\033[1;32m", "\033[0m"
+
+
+def carrega_lab():
+    loader = importlib.machinery.SourceFileLoader("lab", "/usr/local/bin/lab")
+    spec = importlib.util.spec_from_loader("lab", loader)
+    modulo = importlib.util.module_from_spec(spec)
+    loader.exec_module(modulo)
+    return modulo
+
+
+def agora():
+    return datetime.now().strftime("%Y-%m-%d %H:%M")
+
+
+def carrega(cid):
+    try:
+        return json.loads((DADOS / f"{cid}.json").read_text())
+    except (OSError, ValueError):
+        return {"campos": {}, "diario": []}
+
+
+def salva(cid, dados):
+    DADOS.mkdir(parents=True, exist_ok=True)
+    dados["atualizado"] = agora()
+    (DADOS / f"{cid}.json").write_text(json.dumps(dados, indent=2, ensure_ascii=False))
+
+
+def grava_campos(cid, campos):
+    dados = carrega(cid)
+    for chave, _, _ in CAMPOS:
+        if chave in campos:
+            dados["campos"][chave] = str(campos[chave])[:LIMITE_CAMPO]
+    salva(cid, dados)
+    return dados
+
+
+def anota(cid, texto):
+    texto = texto.strip()[:1000]
+    if not texto:
+        raise ValueError("Anotacao vazia.")
+    dados = carrega(cid)
+    dados["diario"].append({"quando": agora(), "texto": texto})
+    salva(cid, dados)
+    return dados
+
+
+def evidencias(lab, cid):
+    """Arquivos do caso com SHA-256 no momento do relatorio (cadeia de custodia)."""
+    pasta = lab.TRABALHO / cid
+    itens = []
+    if not pasta.is_dir():
+        return itens
+    for arq in sorted(p for p in pasta.rglob("*") if p.is_file()):
+        if arq.name == "LEIAME.md":
+            continue
+        if len(itens) >= LIMITE_EVIDENCIAS:
+            break
+        h = hashlib.sha256()
+        with arq.open("rb") as f:
+            for bloco in iter(lambda: f.read(1 << 20), b""):
+                h.update(bloco)
+        itens.append({"arquivo": str(arq.relative_to(pasta)), "tamanho": arq.stat().st_size, "sha256": h.hexdigest()})
+    return itens
+
+
+def preenchido(dados):
+    return sum(1 for chave, _, _ in CAMPOS if dados["campos"].get(chave, "").strip())
+
+
+def celula(texto):
+    return texto.replace("|", "\\|").strip()
+
+
+def linhas(texto):
+    return [l.strip() for l in (texto or "").splitlines() if l.strip()]
+
+
+def markdown(lab, n, c, dados, prog):
+    """Relatorio em Markdown (o mesmo subconjunto que o front e o terminal desenham)."""
+    perfil = lab.perfil(prog)
+    estado = prog.get(c["id"], {})
+    casos = lab.carrega_casos()
+    campos = dados["campos"]
+    situacao = "Resolvido" if estado.get("resolvido") else "Em investigação"
+    md = [f"# Relatório de Incidente: {c['titulo']}", "",
+          "| Campo | Valor |", "|---|---|",
+          f"| Caso | {n} ({celula(c['nivel'])}) |",
+          f"| Analista | {celula(perfil.get('nome') or 'Funcionario sem nome')} ({celula(lab.cargo_atual(casos, prog))}) |",
+          f"| Situação | {situacao} |",
+          f"| Tentativas / dicas | {estado.get('tentativas', 0)} / {estado.get('dicas', 0)} |",
+          f"| Atualizado em | {dados.get('atualizado', agora())} |",
+          "| Organização | Usina Nuclear de Springfield |", ""]
+
+    md += ["## Resumo", campos.get("resumo", "").strip() or "(a preencher)", ""]
+
+    md.append("## Linha do tempo")
+    eventos = linhas(campos.get("linha"))
+    if eventos:
+        md += ["| Quando | Evento |", "|---|---|"]
+        for e in eventos:
+            quando, _, oque = e.partition("|")
+            md.append(f"| {celula(quando) if oque else '-'} | {celula(oque or quando)} |")
+    else:
+        md.append("(a preencher)")
+    md.append("")
+
+    md.append("## Indicadores (IOCs)")
+    md += [f"- `{i}`" for i in linhas(campos.get("iocs"))] or ["(nenhum registrado)"]
+    md.append("")
+
+    md.append("## Evidências analisadas")
+    ev = evidencias(lab, c["id"])
+    if ev:
+        md += ["| Arquivo | Tamanho | SHA-256 |", "|---|---|---|"]
+        md += [f"| `{celula(e['arquivo'])}` | {e['tamanho']} B | `{e['sha256']}` |" for e in ev]
+    else:
+        md.append("(inicie o caso para listar as evidências)")
+    md.append("")
+
+    md += ["## Impacto", campos.get("impacto", "").strip() or "(a preencher)", ""]
+    md.append("## Remediação")
+    md += [f"- {p}" for p in linhas(campos.get("remediacao"))] or ["(a preencher)"]
+    md.append("")
+    md += ["## Lições aprendidas", campos.get("licoes", "").strip() or "(a preencher)", ""]
+
+    md.append("## Diário do analista")
+    md += [f"- **{d['quando']}** {d['texto']}" for d in dados["diario"]] or ["(sem anotações)"]
+    return "\n".join(md) + "\n"
+
+
+def para_html(md, titulo):
+    """Markdown do relatorio -> pagina HTML pronta para imprimir ou salvar em PDF."""
+    def inline(s):
+        s = html.escape(s).replace("\\|", "|")
+        s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
+        return re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
+
+    corpo, tabela, lista = [], [], False
+    for linha in md.splitlines() + [""]:
+        if linha.startswith("|"):
+            cel = [c.strip() for c in re.split(r"(?<!\\)\|", linha.strip().strip("|"))]
+            if not all(re.fullmatch(r"-+", c) for c in cel):
+                tabela.append(cel)
+            continue
+        if tabela:
+            corpo.append("<table>" + "".join(
+                "<tr>" + "".join(f"<{'td' if n else 'th'}>{inline(c)}</{'td' if n else 'th'}>" for c in r) + "</tr>"
+                for n, r in enumerate(tabela)) + "</table>")
+            tabela = []
+        if linha.startswith("- "):
+            if not lista:
+                corpo.append("<ul>")
+                lista = True
+            corpo.append(f"<li>{inline(linha[2:])}</li>")
+            continue
+        if lista:
+            corpo.append("</ul>")
+            lista = False
+        if linha.startswith("# "):
+            corpo.append(f"<h1>{inline(linha[2:])}</h1>")
+        elif linha.startswith("## "):
+            corpo.append(f"<h2>{inline(linha[3:])}</h2>")
+        elif linha.strip():
+            corpo.append(f"<p>{inline(linha)}</p>")
+    estilo = ("body{font-family:'DejaVu Sans',sans-serif;max-width:900px;margin:32px auto;padding:0 16px;color:#171717}"
+              "h1{border-bottom:4px solid #ffd84d;padding-bottom:8px}h2{color:#5b3518;margin-top:28px}"
+              "table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #d8c890;padding:6px 8px;"
+              "text-align:left;vertical-align:top}th{background:#fff1b8}code{font-family:'DejaVu Sans Mono',monospace;"
+              "font-size:12px;word-break:break-all}.rodape{margin-top:40px;color:#777;font-size:12px}"
+              "@media print{body{margin:0}}")
+    return (f"<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"utf-8\"><title>{html.escape(titulo)}</title>"
+            f"<style>{estilo}</style></head><body>{''.join(corpo)}"
+            "<p class=\"rodape\">Gerado pelo D'OH!Sec OS - Relatório de Incidente</p></body></html>\n")
+
+
+def exporta(lab, n, c, prog):
+    dados = carrega(c["id"])
+    md = markdown(lab, n, c, dados, prog)
+    SAIDA.mkdir(parents=True, exist_ok=True)
+    base = SAIDA / f"relatorio-{c['id']}"
+    base.with_suffix(".md").write_text(md)
+    base.with_suffix(".html").write_text(para_html(md, "Relatório - " + c["titulo"]))
+    return {"md": str(base.with_suffix(".md")), "html": str(base.with_suffix(".html"))}
+
+
+def lista(lab, casos, prog):
+    itens = []
+    for n, c in enumerate(casos, 1):
+        estado = prog.get(c["id"], {})
+        dados = carrega(c["id"])
+        if not (estado.get("iniciado") or dados["diario"] or dados["campos"]):
+            continue
+        itens.append({"n": n, "id": c["id"], "titulo": c["titulo"], "resolvido": estado.get("resolvido", False),
+                      "preenchidos": preenchido(dados), "total_campos": len(CAMPOS),
+                      "anotacoes": len(dados["diario"]), "atualizado": dados.get("atualizado", "")})
+    return itens
+
+
+# ---------------------------------------------------------------- terminal
+def caso_da_pasta(lab, casos):
+    """Dentro de ~/springfield/casos/ID, o caso e o da pasta."""
+    try:
+        rel = Path.cwd().resolve().relative_to(lab.TRABALHO.resolve())
+    except ValueError:
+        return None
+    return lab.acha_caso(casos, rel.parts[0]) if rel.parts else None
+
+
+def escolhe(lab, casos, args):
+    if args and (args[0].isdigit() or any(args[0] == c["id"] for c in casos)):
+        return lab.acha_caso(casos, args[0]), args[1:]
+    achado = caso_da_pasta(lab, casos)
+    if not achado:
+        sys.exit("D'oh! Diga o numero do caso (ex.: relatorio ver 3) ou rode dentro da pasta do caso.")
+    return achado, args
+
+
+def main():
+    lab = carrega_lab()
+    casos = lab.carrega_casos()
+    prog = lab.carrega_progresso()
+    args = sys.argv[1:]
+    if not args:
+        itens = lista(lab, casos, prog)
+        print(f"\n{AMARELO}  Relatorios de Incidente{FIM}  {CINZA}(salvos em ~/Relatorios ao exportar){FIM}\n")
+        for i in itens:
+            marca = f"{VERDE}resolvido{FIM}" if i["resolvido"] else f"{CINZA}em andamento{FIM}"
+            print(f"  {AMARELO}{i['n']:>2}{FIM}  {i['titulo']:<42} {i['preenchidos']}/{i['total_campos']} campos, "
+                  f"{i['anotacoes']} anotacoes  {marca}")
+        if not itens:
+            print("  Nenhum ainda. Comece um caso com: lab iniciar 1")
+        print(f"\n{CINZA}  Anotar no diario: relatorio anota N \"o que voce descobriu\"{FIM}\n")
+        return
+    acao = args[0]
+    if acao not in ("anota", "ver", "exportar"):
+        print(__doc__.strip())
+        sys.exit(2)
+    (n, c), resto = escolhe(lab, casos, args[1:])
+    if lab.bloqueio(casos, prog, c):
+        sys.exit("🔒 " + lab.bloqueio(casos, prog, c))
+    if acao == "anota":
+        try:
+            dados = anota(c["id"], " ".join(resto))
+        except ValueError:
+            sys.exit('Escreva a anotacao: relatorio anota "o que voce descobriu"')
+        print(f"{VERDE}Anotado{FIM} no diario de '{c['titulo']}' ({len(dados['diario'])} anotacoes).")
+    elif acao == "ver":
+        lab.mostra_markdown(markdown(lab, n, c, carrega(c["id"]), prog))
+        print()
+    else:
+        r = exporta(lab, n, c, prog)
+        print(f"{VERDE}Relatorio salvo:{FIM}\n  {r['md']}\n  {r['html']}  {CINZA}(abra no navegador para imprimir){FIM}")
+
+
+if __name__ == "__main__":
+    main()

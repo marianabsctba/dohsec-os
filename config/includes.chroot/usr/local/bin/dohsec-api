@@ -684,18 +684,86 @@ def api_lab_responder(q, corpo):
             "icone": lab.ICONES.get(promocao, "") if promocao else ""}
 
 
+# ---------------------------------------------------------------- Relatorio de Incidente
+def carrega_relatorio():
+    loader = importlib.machinery.SourceFileLoader("relatorio", "/usr/local/bin/relatorio")
+    spec = importlib.util.spec_from_loader("relatorio", loader)
+    modulo = importlib.util.module_from_spec(spec)
+    loader.exec_module(modulo)
+    return modulo
+
+
+def _caso_relatorio(n):
+    lab = carrega_lab()
+    casos = lab.carrega_casos()
+    prog = lab.carrega_progresso()
+    num, c = lab.acha_caso(casos, str(n))
+    return lab, casos, prog, num, c
+
+
+def api_relatorios(q, corpo):
+    rel = carrega_relatorio()
+    lab = carrega_lab()
+    rel.SAIDA.mkdir(parents=True, exist_ok=True)
+    return {"relatorios": rel.lista(lab, lab.carrega_casos(), lab.carrega_progresso())}
+
+
+def api_relatorio(q, corpo):
+    rel = carrega_relatorio()
+    lab, casos, prog, n, c = _caso_relatorio(q.get("n", [""])[0])
+    if lab.bloqueio(casos, prog, c):
+        return {"bloqueado": True, "erro": lab.bloqueio(casos, prog, c)}
+    dados = rel.carrega(c["id"])
+    return {"n": n, "titulo": c["titulo"], "dados": dados,
+            "campos": [{"chave": k, "nome": nome, "ajuda": ajuda} for k, nome, ajuda in rel.CAMPOS],
+            "markdown": rel.markdown(lab, n, c, dados, prog)}
+
+
+def api_relatorio_salvar(q, corpo):
+    rel = carrega_relatorio()
+    lab, casos, prog, n, c = _caso_relatorio(corpo.get("n"))
+    if lab.bloqueio(casos, prog, c):
+        return {"bloqueado": True, "erro": lab.bloqueio(casos, prog, c)}
+    campos = corpo.get("campos") if isinstance(corpo.get("campos"), dict) else {}
+    dados = rel.grava_campos(c["id"], campos)
+    return {"ok": True, "atualizado": dados["atualizado"]}
+
+
+def api_relatorio_anotar(q, corpo):
+    rel = carrega_relatorio()
+    lab, casos, prog, n, c = _caso_relatorio(corpo.get("n"))
+    if lab.bloqueio(casos, prog, c):
+        return {"bloqueado": True, "erro": lab.bloqueio(casos, prog, c)}
+    try:
+        dados = rel.anota(c["id"], str(corpo.get("texto", "")))
+    except ValueError as e:
+        return {"ok": False, "erro": str(e)}
+    return {"ok": True, "diario": dados["diario"]}
+
+
+def api_relatorio_exportar(q, corpo):
+    rel = carrega_relatorio()
+    lab, casos, prog, n, c = _caso_relatorio(corpo.get("n"))
+    if lab.bloqueio(casos, prog, c):
+        return {"bloqueado": True, "erro": lab.bloqueio(casos, prog, c)}
+    return {"ok": True, **rel.exporta(lab, n, c, prog)}
+
+
 ROTAS_GET = {
     "/api/sistema": api_sistema, "/api/processos": api_processos, "/api/rede": api_rede,
     "/api/logs": api_logs, "/api/siem": api_siem, "/api/permissoes": api_permissoes,
     "/api/updates": api_updates, "/api/arquivos": api_arquivos, "/api/arquivo": api_arquivo,
     "/api/lab": api_lab, "/api/carreira": api_carreira, "/api/burns": api_burns, "/api/inspecionar": api_inspecionar,
     "/api/capturas": api_capturas, "/api/captura/analisar": api_analisar_captura,
+    "/api/relatorios": api_relatorios, "/api/relatorio": api_relatorio,
 }
 ROTAS_POST = {
     "/api/processos/encerrar": api_encerrar, "/api/energia": api_energia,
     "/api/lab/iniciar": api_lab_iniciar, "/api/lab/dica": api_lab_dica,
     "/api/lab/responder": api_lab_responder, "/api/carreira/nome": api_carreira_nome,
     "/api/abrir": api_abrir, "/api/captura": api_captura, "/api/burns/corrigir": api_burns_corrigir,
+    "/api/relatorio/salvar": api_relatorio_salvar, "/api/relatorio/anotar": api_relatorio_anotar,
+    "/api/relatorio/exportar": api_relatorio_exportar,
 }
 
 

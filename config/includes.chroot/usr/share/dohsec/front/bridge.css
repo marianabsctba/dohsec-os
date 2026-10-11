@@ -310,3 +310,27 @@
   align-items: center;
   gap: 4px;
 }
+/* Relatorio de Incidente */
+.dohsec-campo {
+  width: 100%;
+  box-sizing: border-box;
+  font: 13px "Share Tech Mono", monospace;
+  border: 2px solid var(--dohsec-borda);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: #fff;
+  resize: vertical;
+  margin-top: 4px;
+}
+.dohsec-nota-diario {
+  background: var(--panel);
+  border-left: 4px solid var(--yellow);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 3px 0;
+  font-size: 13px;
+}
+.dohsec-relatorio code {
+  word-break: break-all;
+  white-space: normal;
+}
