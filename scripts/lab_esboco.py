@@ -286,7 +286,7 @@ def psexesvc(rnd, cid):
     linhas.sort(key=lambda l: (l[1], l[0]))
     texto = "TimeCreated,EventID,Computador,NomeDoServico,Arquivo,Conta\n" + "\n".join(
         f"{t.isoformat()},7045,{h},{n},\"{c}\",{conta}" for t, h, n, c, conta in linhas) + "\n"
-    return caso(cid, "Movimentacao lateral com PSEXESVC", "especialista", "dificil",
+    return caso(cid, "Movimentacao lateral com PSEXESVC", "especialista", "avancado",
                 """Um invasor que entra numa maquina tenta pular para as outras (**movimentacao lateral**).
 Uma forma comum no Windows deixa rastro claro: o servico **PSEXESVC** e instalado em cada maquina
 alcancada (evento **7045**, "servico instalado"). O arquivo junta os eventos 7045 exportados de cada
@@ -328,7 +328,7 @@ def acesso_lsass(rnd, cid):
     linhas.sort()
     texto = "UtcTime,EventID,Computador,SourceImage,TargetImage,GrantedAccess\n" + "\n".join(
         f"{t.isoformat()},10,FIN-WS05,\"{o}\",\"{a}\",{g}" for t, o, a, g in linhas) + "\n"
-    return caso(cid, "Credencial em memoria suspeita", "especialista", "dificil",
+    return caso(cid, "Credencial em memoria suspeita", "especialista", "avancado",
                 """O **lsass.exe** guarda as credenciais de quem esta logado no Windows. Por isso, programa estranho
 lendo a memoria dele e alarme vermelho. O Sysmon registra cada acesso a outro processo (**evento 10**):
 quem acessou (SourceImage), quem foi acessado (TargetImage) e com quais permissoes (GrantedAccess).

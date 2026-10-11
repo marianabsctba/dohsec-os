@@ -768,7 +768,7 @@
     "id": "44-psexesvc-lateral",
     "titulo": "Movimentacao lateral com PSEXESVC",
     "trilha": "especialista",
-    "nivel": "dificil",
+    "nivel": "avancado",
     "pergunta": "Em qual maquina o PSEXESVC apareceu PRIMEIRO? (o nome do computador)",
     "resposta": "4db0f00ca9b45e57db5976f60d434d8e5c064d05828330d74a47e5b595f0e9df",
     "dicas": [
@@ -787,7 +787,7 @@
     "id": "45-credencial-em-memoria",
     "titulo": "Credencial em memoria suspeita",
     "trilha": "especialista",
-    "nivel": "dificil",
+    "nivel": "avancado",
     "pergunta": "Qual programa fora do normal acessou o lsass.exe? (caminho completo)",
     "resposta": "440039f9404b7608af2cfd7e2181ba956858615d28a9231281b5c4e1953e7775",
     "dicas": [
