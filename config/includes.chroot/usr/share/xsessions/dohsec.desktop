@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=D'OH!Sec OS
+Comment=O front do D'OH!Sec em tela cheia
+Exec=/usr/local/bin/dohsec-shell
+Type=Application
+DesktopNames=DOHSEC

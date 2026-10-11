@@ -1,0 +1,19 @@
+#!/bin/sh
+# Sessao D'OH!Sec: o front do esboco e o sistema. Firefox em modo quiosque, em tela cheia,
+# reaberto se for fechado. Ctrl+Alt+T abre um terminal de verdade por cima.
+
+FRONT=file:///usr/share/dohsec/academy/index.html
+
+xset s off -dpms 2>/dev/null
+xsetroot -solid "#000000" 2>/dev/null
+
+# Gerenciador de janelas leve: o terminal do atalho e caixas de dialogo precisam de um
+xfwm4 --compositor=off >/dev/null 2>&1 &
+xbindkeys -f /etc/dohsec/xbindkeysrc >/dev/null 2>&1 &
+
+while true; do
+  firefox-esr --kiosk "$FRONT"
+  # Espera o Firefox anterior sair de vez; reabrir antes disso cai numa pagina em branco
+  while pgrep -u "$(id -u)" -x firefox-esr >/dev/null; do sleep 0.5; done
+  sleep 1
+done

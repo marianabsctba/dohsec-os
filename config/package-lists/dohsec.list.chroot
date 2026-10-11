@@ -7,6 +7,14 @@ lightdm-gtk-greeter
 desktop-base
 network-manager-gnome
 x11-xserver-utils
+xbindkeys
+wmctrl
+
+# Integracao com maquinas virtuais: a tela acompanha o tamanho da janela
+open-vm-tools
+open-vm-tools-desktop
+spice-vdagent
+hyperv-daemons
 
 # Visual
 papirus-icon-theme

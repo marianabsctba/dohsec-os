@@ -1,0 +1,17 @@
+#!/bin/sh
+# Abre o terminal de verdade por cima do front (que fica em tela cheia)
+
+TITULO="Terminal D'OH!Sec"
+
+xfce4-terminal --title="$TITULO" --dynamic-title-mode=none --geometry=110x32 &
+
+# Espera a janela existir e coloca acima de tudo, com foco
+i=0
+while [ $i -lt 40 ]; do
+  sleep 0.25
+  if wmctrl -r "$TITULO" -b add,above 2>/dev/null; then
+    wmctrl -a "$TITULO"
+    break
+  fi
+  i=$((i + 1))
+done
