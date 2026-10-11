@@ -207,10 +207,12 @@
       '<button class="xp-btn dohsec-mini" data-dohsec-ocultos="1">' + (mostraOcultos ? 'Esconder' : 'Mostrar') +
       ' ocultos</button> ' +
       '<button class="xp-btn dohsec-mini" data-dohsec-termaqui="' + esc(d.caminho) + '">💻 Terminal aqui</button>' +
-      '</div><table class="dohsec-tabela"><thead><tr><th>Nome</th><th>Tamanho</th><th>Permissão</th></tr></thead><tbody>' +
+      '</div><table class="dohsec-tabela"><thead><tr><th>Nome</th><th>Tamanho</th><th>Permissão</th><th></th></tr></thead><tbody>' +
       itens.map(i => '<tr class="dohsec-linha" data-dohsec-' + (i.pasta ? 'dir' : 'ver') + '="' +
         esc(d.caminho.replace(/\/$/, '') + '/' + i.nome) + '"><td>' + (i.pasta ? '📁 ' : '📄 ') + esc(i.nome) +
         '</td><td>' + (i.pasta ? '' : tamanho(i.tamanho)) + '</td><td class="dohsec-mono">' + i.modo +
+        '</td><td>' + (i.pasta ? '' : '<button class="xp-btn dohsec-mini" title="Inspecionar" data-dohsec-inspecionar="' +
+          esc(d.caminho.replace(/\/$/, '') + '/' + i.nome) + '">🔬</button>') +
         '</td></tr>').join('') + '</tbody></table>');
   }
 
@@ -219,6 +221,8 @@
     if (d.erro) return aviso('Arquivos', d.erro);
     janela('viewer', d.caminho.split('/').pop(), '📄',
       '<h3>📄 ' + esc(d.caminho) + '</h3>' +
+      '<div class="dohsec-barra"><button class="xp-btn dohsec-mini" data-dohsec-inspecionar="' + esc(d.caminho) +
+      '">🔬 Inspecionar este arquivo</button></div>' +
       (d.binario ? '<p class="dohsec-dica">Arquivo binário. Use <code>file</code>, <code>strings</code> ou ' +
         '<code>xxd</code> no Terminal.</p>' : '') +
       (d.cortado ? '<p class="dohsec-dica">Arquivo grande: mostrando só o começo. Use <code>less</code>.</p>' : '') +
@@ -476,7 +480,8 @@
       ['tcpdump', 'capturar trafego'], ['yara', 'regras de deteccao'], ['awk', 'colunas de logs']]],
     ['Chefe de Seguranca', [['exiftool', 'metadados'], ['binwalk', 'arquivos dentro de arquivos'], ['sleuthkit (fls, icat)', 'forense de disco'],
       ['foremost', 'recuperar arquivos'], ['aide', 'integridade'], ['ufw / nft', 'firewall'], ['ausearch', 'auditoria (auditd)'],
-      ['lynis', 'auditoria de endurecimento'], ['suricata', 'IDS']]],
+      ['lynis', 'auditoria de endurecimento'], ['suricata', 'IDS'],
+      ['Inspetor de Arquivos', 'laudo com file, strings, exiftool, binwalk, yara e clamscan juntos']]],
     ['Assistente do Sr. Burns (Teste final)', [['grep / less', 'cabecalhos do e-mail e o proxy.log'],
       ['tshark -q -z conv,ip', 'quem mandou dados para fora'], ['wireshark', 'a mesma captura no grafico', 'wireshark'],
       ['comm / diff', 'comparar servicos com a lista oficial'], ['systemctl list-unit-files', 'servicos instalados'],
@@ -608,6 +613,68 @@
   }
   let respostaPendente = null;
 
+  // ---------------------------------------------------------------- Inspetor de Arquivos
+  // Laudo de um arquivo com ferramentas reais (file, strings, exiftool, binwalk, yara, clamscan).
+  // O arquivo nunca e executado.
+  async function inspetor(caminho) {
+    const sugestoes = await api('/api/arquivos?caminho=' + encodeURIComponent('~/Downloads'))
+      .then(d => (d.itens || []).filter(i => !i.pasta).slice(0, 8).map(i => d.caminho + '/' + i.nome))
+      .catch(() => []);
+    janela('inspector', 'Inspetor de Arquivos', '🔬',
+      '<h3>🔬 Inspetor de Arquivos</h3><p class="dohsec-dica">Analisa um arquivo com as ferramentas reais ' +
+      '(<code>file</code>, <code>strings</code>, <code>exiftool</code>, <code>binwalk</code>, <code>yara</code>, ' +
+      '<code>clamscan</code>) e da um laudo. <b>O arquivo nunca e executado.</b> Tambem da para abrir pelo ' +
+      'botao 🔬 no app Arquivos.</p>' +
+      '<div class="cli-row"><input id="dohsecInspQ" placeholder="caminho do arquivo, ex.: ~/Downloads/fatura.pdf" value="' +
+      esc(caminho || '') + '"><button class="xp-btn" data-dohsec-inspecionar="campo">Inspecionar</button></div>' +
+      (sugestoes.length ? '<div class="dohsec-barra"><span class="muted-mini">Em Downloads:</span>' +
+        sugestoes.map(s => '<button class="xp-btn dohsec-mini" data-dohsec-inspecionar="' + esc(s) + '">' +
+          esc(s.split('/').pop()) + '</button>').join('') + '</div>' : '') +
+      '<div id="dohsecInspOut"></div>',
+      { w: 'min(860px,94vw)', h: 'min(700px,86vh)' });
+    setTimeout(() => { const q = document.getElementById('dohsecInspQ'); if (q) q.focus(); }, 50);
+    if (caminho) inspeciona(caminho);
+  }
+
+  async function inspeciona(caminho) {
+    if (caminho === 'campo') caminho = (document.getElementById('dohsecInspQ') || {}).value || '';
+    caminho = caminho.trim().replace(/^~/, '/home/' + (document.body.dataset.u || ''));
+    if (!caminho) return aviso('Inspetor', 'Digite o caminho de um arquivo.');
+    if (!existe('inspector')) return inspetor(caminho);
+    const out = document.getElementById('dohsecInspOut');
+    const campo = document.getElementById('dohsecInspQ');
+    if (campo) campo.value = caminho;
+    out.innerHTML = '<p class="dohsec-dica">🔬 Analisando... (antivirus e binwalk podem levar alguns segundos)</p>';
+    const d = await api('/api/inspecionar?caminho=' + encodeURIComponent(caminho));
+    if (d.erro) { out.innerHTML = '<p class="dohsec-dica">' + esc(d.erro) + '</p>'; return; }
+    const veredito = {
+      ok: ['🟢', 'Tranquilo', 'Nada estranho encontrado.'],
+      alerta: ['🟡', 'Atencao', 'Tem pontos que merecem cuidado.'],
+      risco: ['🔴', 'Suspeito', 'Nao abra nem execute. Investigue antes.'],
+    }[d.veredito];
+    const icone = { risco: '🔴', alerta: '🟡' };
+    const linha = (rotulo, valor) => '<tr><th>' + esc(rotulo) + '</th><td class="dohsec-mono">' + esc(valor) + '</td></tr>';
+    out.innerHTML =
+      '<div class="dohsec-veredito dohsec-v-' + d.veredito + '"><span>' + veredito[0] + '</span><div><b>' +
+      veredito[1] + '</b>: ' + esc(d.nome) + '<div class="muted-mini">' + veredito[2] + '</div></div></div>' +
+      (d.achados.length ? '<h4>O que chamou atencao</h4>' + d.achados.map(a =>
+        '<div class="dohsec-achado">' + icone[a.nivel] + ' ' + esc(a.texto) + '</div>').join('') : '') +
+      '<h4>Identidade</h4><table class="dohsec-tabela dohsec-laudo">' +
+      linha('Tipo real (file)', d.tipo) + linha('MIME', d.mime) + linha('Tamanho', tamanho(d.tamanho)) +
+      linha('Arquivo', d.stat) + linha('SHA-256', d.sha256) + linha('MD5', d.md5) + '</table>' +
+      '<h4>Textos encontrados (strings: ' + d.strings_total + ' trechos)</h4>' +
+      (d.destaques.length ? d.destaques.map(x => '<div><b>' + esc(x.tipo) + ':</b> ' +
+        x.valores.map(v => '<code>' + esc(v) + '</code>').join(' ') + '</div>').join('')
+        : '<p class="muted-mini">Nenhum link, IP, e-mail ou senha nos textos.</p>') +
+      '<h4>Metadados (exiftool)</h4>' + (d.metadados.length ? pre(d.metadados.join('\n')) : '<p class="muted-mini">Sem metadados relevantes.</p>') +
+      '<h4>Arquivos embutidos (binwalk)</h4>' + (d.embutidos.length ? pre(d.embutidos.join('\n')) : '<p class="muted-mini">Nenhuma assinatura encontrada.</p>') +
+      '<h4>Regras YARA</h4>' + (d.yara.length ? d.yara.map(r => '<div>🎯 <b>' + esc(r.regra) + '</b>: ' + esc(r.descricao) + '</div>').join('')
+        : '<p class="muted-mini">Nenhuma regra bateu.</p>') +
+      '<h4>Antivirus (ClamAV)</h4><p>' + esc(d.antivirus) + '</p>' +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-termaqui="' + esc(d.caminho.replace(/\/[^/]*$/, '')) +
+      '">💻 Investigar no Terminal</button></div>';
+  }
+
   // ---------------------------------------------------------------- Energia
   async function energia(acao) {
     const frase = acao === 'desligar' ? 'Desligar o D\'OH!Sec OS?' : 'Reiniciar o D\'OH!Sec OS?';
@@ -645,10 +712,12 @@
     certificate: certificado,
     tools: ferramentas,
     burns: painelBurns,
+    inspector: () => inspetor(''),
   };
 
   // Apps novos no desktop e no menu Iniciar (o front monta os icones no login)
   [['files', 'Arquivos', '🗂️'], ['tools', 'Ferramentas', '🧰'], ['burns', 'Painel do Sr. Burns', '👔'],
+    ['inspector', 'Inspetor de Arquivos', '🔬'],
     ['lab', 'Laboratório', '🧪']].forEach(a => {
     if (!OS.apps.find(x => x[0] === a[0])) OS.apps.splice(2, 0, a);
   });
@@ -682,6 +751,7 @@
     ['data-dohsec-salvar-cert', () => salvaCertificado()],
     ['data-dohsec-nome', v => gravaNome(v)],
     ['data-dohsec-corrigir', v => corrigeBurns(v)],
+    ['data-dohsec-inspecionar', v => inspeciona(v)],
     ['data-dohsec-resposta', v => { if (respostaPendente) respostaPendente(v === 'sim'); }],
   ];
   document.addEventListener('click', e => {
@@ -702,6 +772,7 @@
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter' || !e.target || !e.target.id) return;
     if (e.target.id === 'dohsecSiemQ') { e.preventDefault(); buscaSiem(); }
+    if (e.target.id === 'dohsecInspQ') { e.preventDefault(); inspeciona('campo'); }
     const nomeCampo = e.target.id.match(/^dohsecNome_(\w+)$/);
     if (nomeCampo) { e.preventDefault(); gravaNome(nomeCampo[1]); }
     const m = e.target.id.match(/^dohsecResp_(\d+)$/);

@@ -21,7 +21,8 @@ tar -C "$RAIZ/config/includes.chroot" -czf "$PACOTE" \
 "$VMRUN" "${G[@]}" runProgramInGuest "$VMX" /usr/bin/bash -c \
   "sudo tar -C / --no-same-owner -xzf /tmp/dohsec-atualizacao.tar.gz && \
    sudo chmod 755 /usr/local/bin/* && rm -f /tmp/dohsec-atualizacao.tar.gz && \
-   { [ -f /etc/dohsec/senha-padrao ] || LC_ALL=C chage -l homer 2>/dev/null | head -1 | cut -d: -f2- | sed 's/^ *//' | sudo tee /etc/dohsec/senha-padrao >/dev/null; } && \
-   sudo systemctl reboot"
+   { [ -f /etc/dohsec/senha-padrao ] || LC_ALL=C chage -l homer 2>/dev/null | head -1 | cut -d: -f2- | sed 's/^ *//' | sudo tee /etc/dohsec/senha-padrao >/dev/null; }"
 rm -f "$PACOTE"
+# Reinicia pelo VMware (reiniciar de dentro da VM deixa o vmrun esperando para sempre)
+"$VMRUN" -T player reset "$VMX" soft
 echo "Atualizado. A VM esta reiniciando."

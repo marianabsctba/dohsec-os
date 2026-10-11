@@ -246,3 +246,42 @@
   font-weight: bold;
   margin: 8px 0 14px;
 }
+/* Inspetor de Arquivos */
+.dohsec-veredito {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  background: #fffdf3;
+  border: 3px solid #3bb273;
+}
+.dohsec-veredito span {
+  font-size: 36px;
+}
+.dohsec-v-alerta {
+  border-color: #ff9b30;
+}
+.dohsec-v-risco {
+  border-color: #e84d5b;
+}
+.dohsec-achado {
+  background: #fffdf3;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+.dohsec-laudo th {
+  width: 160px;
+  background: #fff6d7 !important;
+}
+.dohsec-laudo td {
+  white-space: normal !important;
+  word-break: break-all;
+}
+#dohsecInspOut code {
+  word-break: break-all;
+  white-space: normal;
+}
