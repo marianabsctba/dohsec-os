@@ -477,7 +477,7 @@
       ['file / xxd', 'tipo real de um arquivo'], ['strings', 'texto escondido em binarios'], ['systemctl / journalctl', 'servicos e logs'],
       ['ss / ip', 'rede e portas'], ['which / type', 'qual programa roda']]],
     ['Supervisor de Seguranca', [['jq', 'filtrar JSON'], ['tshark', 'analisar capturas de rede'], ['wireshark', 'capturas de rede (grafico)', 'wireshark'],
-      ['tcpdump', 'capturar trafego'], ['yara', 'regras de deteccao'], ['awk', 'colunas de logs']]],
+      ['tcpdump', 'capturar trafego'], ['Captura de Rede (app)', 'grava e resume o trafego em 1 clique'], ['yara', 'regras de deteccao'], ['awk', 'colunas de logs']]],
     ['Chefe de Seguranca', [['exiftool', 'metadados'], ['binwalk', 'arquivos dentro de arquivos'], ['sleuthkit (fls, icat)', 'forense de disco'],
       ['foremost', 'recuperar arquivos'], ['aide', 'integridade'], ['ufw / nft', 'firewall'], ['ausearch', 'auditoria (auditd)'],
       ['lynis', 'auditoria de endurecimento'], ['suricata', 'IDS'],
@@ -675,6 +675,81 @@
       '">💻 Investigar no Terminal</button></div>';
   }
 
+  // ---------------------------------------------------------------- Captura de Rede em 1 clique
+  async function captura() {
+    const d = await api('/api/capturas');
+    const lista = (itens, vazio) => itens.length ? itens.map(c =>
+      '<div class="dohsec-cap"><span class="dohsec-mono">' + esc(c.nome) + '</span>' +
+      '<span><button class="xp-btn dohsec-mini" data-dohsec-analisar="' + esc(c.caminho) + '">Analisar</button> ' +
+      '<button class="xp-btn dohsec-mini" data-dohsec-wireshark="' + esc(c.caminho) + '">🦈 Wireshark</button></span></div>'
+    ).join('') : '<p class="muted-mini">' + vazio + '</p>';
+    janela('capture', 'Captura de Rede', '🦈',
+      '<h3>🦈 Captura de Rede</h3><p class="dohsec-dica">Grava o trafego <b>desta maquina</b> com o ' +
+      '<code>dumpcap</code> e resume com o <code>tshark</code>: quem falou com quem, nomes consultados no DNS e ' +
+      'sites acessados. As capturas ficam em <code>~/Capturas</code>.</p>' +
+      '<div class="dohsec-barra"><button class="xp-btn" data-dohsec-capturar="10">⏺ 10 s</button>' +
+      '<button class="xp-btn" data-dohsec-capturar="30">⏺ 30 s</button>' +
+      '<button class="xp-btn" data-dohsec-capturar="60">⏺ 60 s</button>' +
+      '<label class="dohsec-check-label"><input type="checkbox" id="dohsecCapExemplo" checked> gerar trafego de exemplo ' +
+      '(acessa alguns sites durante a captura)</label></div>' +
+      '<div id="dohsecCapOut"></div>' +
+      '<h4>Suas capturas</h4>' + lista(d.capturas, 'Nenhuma ainda. Clique em um dos botoes acima.') +
+      '<h4>Capturas dos casos do laboratorio</h4>' + lista(d.laboratorio, 'Inicie um caso com captura (ex.: Vazamento por DNS).'),
+      { w: 'min(860px,94vw)', h: 'min(700px,86vh)' });
+  }
+
+  async function capturar(segundos) {
+    const out = document.getElementById('dohsecCapOut');
+    const exemplo = (document.getElementById('dohsecCapExemplo') || {}).checked;
+    let resta = Number(segundos);
+    out.innerHTML = '<div class="dohsec-gravando">⏺ Gravando... <b id="dohsecCapResta">' + resta + '</b> s</div>';
+    const relogio = setInterval(() => {
+      resta = Math.max(0, resta - 1);
+      const el = document.getElementById('dohsecCapResta');
+      if (el) el.textContent = resta;
+    }, 1000);
+    try {
+      const r = await api('/api/captura', { segundos: Number(segundos), exemplo: !!exemplo });
+      clearInterval(relogio);
+      if (r.erro) { out.innerHTML = '<p class="dohsec-dica">' + esc(r.erro) + '</p>'; return; }
+      await captura();
+      mostraResumo(r);
+    } catch (e) { clearInterval(relogio); out.innerHTML = '<p class="dohsec-dica">' + esc(e.message) + '</p>'; }
+  }
+
+  async function analisaCaptura(caminho) {
+    const out = document.getElementById('dohsecCapOut');
+    if (out) out.innerHTML = '<p class="dohsec-dica">Analisando...</p>';
+    const r = await api('/api/captura/analisar?caminho=' + encodeURIComponent(caminho));
+    if (r.erro) return aviso('Captura', r.erro);
+    mostraResumo(r);
+  }
+
+  function mostraResumo(r) {
+    const out = document.getElementById('dohsecCapOut');
+    if (!out) return;
+    const tabela = (titulo, itens) => '<h4>' + titulo + '</h4>' + (itens.length
+      ? '<table class="dohsec-tabela"><tbody>' + itens.map(([v, n]) => '<tr><td class="dohsec-mono">' + esc(v) +
+        '</td><td>' + n + 'x</td></tr>').join('') + '</tbody></table>'
+      : '<p class="muted-mini">Nada nesta captura.</p>');
+    out.innerHTML = '<div class="os-good"><b>📊 ' + esc(r.nome) + '</b>: ' + esc(r.pacotes) + ' pacotes. ' +
+      '<button class="xp-btn dohsec-mini" data-dohsec-wireshark="' + esc(r.arquivo) + '">🦈 Abrir no Wireshark</button></div>' +
+      '<h4>Quem falou com quem</h4>' + (r.conversas.length
+        ? '<table class="dohsec-tabela"><thead><tr><th>De</th><th>Para</th><th>Pacotes</th><th>Bytes</th></tr></thead><tbody>' +
+          r.conversas.map(c => '<tr><td class="dohsec-mono">' + esc(c.a) + '</td><td class="dohsec-mono">' + esc(c.b) +
+            '</td><td>' + esc(c.quadros) + '</td><td>' + esc(c.bytes) + '</td></tr>').join('') + '</tbody></table>'
+        : '<p class="muted-mini">Nenhuma conversa IP.</p>') +
+      tabela('Nomes consultados no DNS', r.dns) +
+      tabela('Sites acessados por HTTPS (SNI)', r.https) +
+      tabela('Pedidos HTTP (sem criptografia)', r.http) +
+      '<h4>Protocolos</h4>' + pre(r.protocolos);
+  }
+
+  async function abreWireshark(caminho) {
+    const r = await api('/api/abrir', { programa: 'wireshark', arquivo: caminho });
+    aviso(r.ok ? 'Abrindo o Wireshark' : 'Nao deu', r.ok ? caminho.split('/').pop() : r.erro);
+  }
+
   // ---------------------------------------------------------------- Energia
   async function energia(acao) {
     const frase = acao === 'desligar' ? 'Desligar o D\'OH!Sec OS?' : 'Reiniciar o D\'OH!Sec OS?';
@@ -713,11 +788,13 @@
     tools: ferramentas,
     burns: painelBurns,
     inspector: () => inspetor(''),
+    capture: captura,
   };
 
   // Apps novos no desktop e no menu Iniciar (o front monta os icones no login)
   [['files', 'Arquivos', '🗂️'], ['tools', 'Ferramentas', '🧰'], ['burns', 'Painel do Sr. Burns', '👔'],
     ['inspector', 'Inspetor de Arquivos', '🔬'],
+    ['capture', 'Captura de Rede', '🦈'],
     ['lab', 'Laboratório', '🧪']].forEach(a => {
     if (!OS.apps.find(x => x[0] === a[0])) OS.apps.splice(2, 0, a);
   });
@@ -752,6 +829,9 @@
     ['data-dohsec-nome', v => gravaNome(v)],
     ['data-dohsec-corrigir', v => corrigeBurns(v)],
     ['data-dohsec-inspecionar', v => inspeciona(v)],
+    ['data-dohsec-capturar', v => capturar(v)],
+    ['data-dohsec-analisar', v => analisaCaptura(v)],
+    ['data-dohsec-wireshark', v => abreWireshark(v)],
     ['data-dohsec-resposta', v => { if (respostaPendente) respostaPendente(v === 'sim'); }],
   ];
   document.addEventListener('click', e => {

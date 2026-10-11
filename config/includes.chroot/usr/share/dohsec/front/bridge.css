@@ -285,3 +285,24 @@
   word-break: break-all;
   white-space: normal;
 }
+/* Captura de Rede */
+.dohsec-cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fffdf3;
+  border-radius: 6px;
+  padding: 5px 10px;
+  margin: 4px 0;
+}
+.dohsec-gravando {
+  font-size: 18px;
+  color: #e84d5b;
+  padding: 10px 0;
+}
+.dohsec-check-label {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

@@ -458,6 +458,102 @@ def api_inspecionar(q, corpo):
     return laudo
 
 
+# ---------------------------------------------------------------------------
+# Captura de Rede em 1 clique: grava o trafego desta maquina e resume com o tshark
+# ---------------------------------------------------------------------------
+CAPTURAS = Path.home() / "Capturas"
+SITES_EXEMPLO = ["https://deb.debian.org/", "https://www.wikipedia.org/", "http://example.com/",
+                 "https://www.debian.org/", "https://archive.org/"]
+
+
+def _interface_padrao():
+    for linha in roda(["ip", "route", "show", "default"]).splitlines():
+        partes = linha.split()
+        if "dev" in partes:
+            return partes[partes.index("dev") + 1]
+    return "any"
+
+
+def _conta(linhas, limite=15):
+    contagem = {}
+    for l in linhas:
+        l = l.strip()
+        if l:
+            contagem[l] = contagem.get(l, 0) + 1
+    return sorted(contagem.items(), key=lambda x: -x[1])[:limite]
+
+
+def resumo_captura(arq):
+    a = str(arq)
+
+    def campos(filtro, *nomes):
+        cmd = ["tshark", "-r", a, "-Y", filtro, "-T", "fields"]
+        for n in nomes:
+            cmd += ["-e", n]
+        return roda(cmd, timeout=60).splitlines()
+
+    conversas = []
+    for l in roda(["tshark", "-r", a, "-q", "-z", "conv,ip"], timeout=60).splitlines():
+        if "<->" in l:
+            c = l.split()
+            # tshark 4: A <-> B, depois pares (quadros, bytes+unidade) para B->A, A->B e total
+            valores = []
+            for tok in c[3:]:
+                if tok in ("bytes", "kB", "MB", "GB") and valores:
+                    valores[-1] += " " + tok
+                else:
+                    valores.append(tok)
+            if len(valores) >= 6:
+                conversas.append({"a": c[0], "b": c[2], "quadros": valores[4], "bytes": valores[5]})
+    total = roda(["capinfos", "-c", "-M", a]).split(":")[-1].strip()
+    protocolos = roda(["tshark", "-r", a, "-q", "-z", "io,phs"], timeout=60)
+    protocolos = "\n".join(l for l in protocolos.splitlines() if l.strip() and not l.startswith("="))
+    return {
+        "arquivo": a, "nome": Path(a).name, "pacotes": total,
+        "conversas": conversas[:15],
+        "dns": _conta(campos("dns.flags.response == 0", "dns.qry.name")),
+        "https": _conta(campos("tls.handshake.extensions_server_name", "tls.handshake.extensions_server_name")),
+        "http": _conta(" ".join(x.split("\t")) for x in campos("http.request", "http.host", "http.request.uri")),
+        "protocolos": protocolos[:3000],
+    }
+
+
+def api_captura(q, corpo):
+    segundos = min(max(int(corpo.get("segundos", 30)), 5), 120)
+    CAPTURAS.mkdir(exist_ok=True)
+    from datetime import datetime
+    arq = CAPTURAS / f"captura-{datetime.now():%Y%m%d-%H%M%S}.pcapng"
+    iface = _interface_padrao()
+    if corpo.get("exemplo"):
+        roteiro = "sleep 2; " + "; ".join(f"curl -s -o /dev/null --max-time 6 {s}; sleep 1" for s in SITES_EXEMPLO)
+        subprocess.Popen(["sh", "-c", roteiro], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         start_new_session=True)
+    try:
+        r = subprocess.run(["dumpcap", "-q", "-i", iface, "-a", f"duration:{segundos}", "-w", str(arq)],
+                           capture_output=True, text=True, timeout=segundos + 30)
+    except subprocess.TimeoutExpired:
+        return {"erro": "A captura nao terminou a tempo."}
+    if r.returncode != 0 or not arq.exists():
+        return {"erro": "Nao deu para capturar: " + (r.stderr or "").strip()[:300] +
+                " (o usuario precisa estar no grupo wireshark)"}
+    return resumo_captura(arq)
+
+
+def api_capturas(q, corpo):
+    CAPTURAS.mkdir(exist_ok=True)
+    proprias = sorted(CAPTURAS.glob("*.pcap*"), key=lambda x: -x.stat().st_mtime)[:15]
+    do_lab = sorted((Path.home() / "springfield").glob("casos/*/**/*.pcap*"))[:15]
+    return {"capturas": [{"caminho": str(x), "nome": x.name, "tamanho": x.stat().st_size} for x in proprias],
+            "laboratorio": [{"caminho": str(x), "nome": x.parent.name + "/" + x.name} for x in do_lab]}
+
+
+def api_analisar_captura(q, corpo):
+    arq = caminho_seguro(q.get("caminho", [""])[0])
+    if not arq.is_file() or not arq.name.endswith((".pcap", ".pcapng")):
+        return {"erro": "Escolha um arquivo .pcap ou .pcapng."}
+    return resumo_captura(arq)
+
+
 FERRAMENTAS_GRAFICAS = {"wireshark": ["wireshark"]}
 
 
@@ -465,6 +561,11 @@ def api_abrir(q, corpo):
     cmd = FERRAMENTAS_GRAFICAS.get(str(corpo.get("programa", "")))
     if not cmd:
         return {"ok": False, "erro": "Ferramenta desconhecida."}
+    if corpo.get("arquivo"):
+        arq = caminho_seguro(str(corpo["arquivo"]))
+        if not arq.is_file() or not arq.name.endswith((".pcap", ".pcapng")):
+            return {"ok": False, "erro": "So abro capturas .pcap/.pcapng."}
+        cmd = cmd + [str(arq)]
     subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     return {"ok": True}
 
@@ -588,12 +689,13 @@ ROTAS_GET = {
     "/api/logs": api_logs, "/api/siem": api_siem, "/api/permissoes": api_permissoes,
     "/api/updates": api_updates, "/api/arquivos": api_arquivos, "/api/arquivo": api_arquivo,
     "/api/lab": api_lab, "/api/carreira": api_carreira, "/api/burns": api_burns, "/api/inspecionar": api_inspecionar,
+    "/api/capturas": api_capturas, "/api/captura/analisar": api_analisar_captura,
 }
 ROTAS_POST = {
     "/api/processos/encerrar": api_encerrar, "/api/energia": api_energia,
     "/api/lab/iniciar": api_lab_iniciar, "/api/lab/dica": api_lab_dica,
     "/api/lab/responder": api_lab_responder, "/api/carreira/nome": api_carreira_nome,
-    "/api/abrir": api_abrir, "/api/burns/corrigir": api_burns_corrigir,
+    "/api/abrir": api_abrir, "/api/captura": api_captura, "/api/burns/corrigir": api_burns_corrigir,
 }
 
 
