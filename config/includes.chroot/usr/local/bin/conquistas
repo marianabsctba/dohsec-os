@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""conquistas - medalhas do D'OH!Sec OS.
+
+  conquistas        mostra as medalhas ganhas e o que falta
+
+Tudo e conferido de verdade: comandos do historico do bash, casos do laboratorio, relatorios
+exportados, capturas de rede e o uso do Inspetor e do Painel do Sr. Burns. Medalha ganha nao
+se perde, mesmo que o historico seja apagado.
+"""
+import importlib.machinery
+import importlib.util
+import json
+import os
+import re
+import sys
+from datetime import date
+from pathlib import Path
+
+DADOS = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")) / "dohsec"
+ARQUIVO = DADOS / "conquistas.json"
+HISTORICO = Path(os.environ.get("HISTFILE") or Path.home() / ".bash_history")
+
+AMARELO, ROSA, CINZA, VERDE, NEGRITO, FIM = ("\033[1;33m", "\033[38;5;205m", "\033[2m", "\033[1;32m",
+                                             "\033[1m", "\033[0m")
+
+# (id, icone, nome, descricao, como ganhar, grupo)
+MEDALHAS = [
+    ("primeiro-grep", "🔍", "Primeiro grep", "Procurou texto com o grep.", "Use o grep no Terminal.", "Terminal"),
+    ("leitor-de-manual", "📖", "Leitor de manual", "Abriu o manual de um comando.", "Rode man NOME.", "Terminal"),
+    ("explorador", "🧭", "Explorador", "Achou arquivos com o find.", "Use o find.", "Terminal"),
+    ("encanador", "🚰", "Encanador", "Juntou 3 comandos ou mais com pipes.", "Algo como: cat log | grep x | wc -l", "Terminal"),
+    ("impressao-digital", "🧬", "Impressão digital", "Calculou um hash SHA-256.", "Use o sha256sum.", "Terminal"),
+    ("dono-do-pedaco", "🔐", "Dono do pedaço", "Mudou permissões com o chmod.", "Use o chmod.", "Terminal"),
+    ("curioso", "💡", "Curioso", "Consultou o glossário ou a cola.", "Rode oque TERMO ou cola TEMA.", "Terminal"),
+    ("olho-de-tubarao", "🦈", "Olho de tubarão", "Analisou tráfego com tshark ou Wireshark.", "Use o tshark ou o Wireshark.", "Terminal"),
+    ("primeiro-caso", "🍩", "Primeiro caso", "Resolveu o primeiro caso da usina.", "Resolva qualquer caso.", "Laboratório"),
+    ("de-primeira", "🎯", "De primeira", "Acertou um caso na primeira tentativa.", "Responda certo sem errar antes.", "Laboratório"),
+    ("sem-cola", "🧠", "Sem cola", "Resolveu 5 casos sem pedir dica.", "5 casos sem usar lab dica.", "Laboratório"),
+    ("cacador-de-cron", "⏰", "Caçador de cron", "Achou a tarefa agendada escondida.", "Resolva o caso 'Lendo o cron'.", "Laboratório"),
+    ("matou-o-kdonut", "⛏️", "Matou o kdonut", "Achou o que ressuscitava o minerador de donutcoin.", "Resolva o caso do donutcoin.", "Laboratório"),
+    ("maratonista", "🏃", "Maratonista", "Resolveu 10 casos.", "Resolva 10 casos.", "Laboratório"),
+    ("meio-caminho", "🌗", "Meio caminho", "Resolveu 20 casos.", "Resolva 20 casos.", "Laboratório"),
+    ("assistente", "👔", "Eeexcelente", "Passou no Teste final do Sr. Burns.", "Vire Assistente do Sr. Burns.", "Laboratório"),
+    ("usina-segura", "☢️", "Usina segura", "Resolveu todos os casos.", "Resolva os 40 casos.", "Laboratório"),
+    ("primeiro-relatorio", "📝", "Papelada em dia", "Exportou um Relatório de Incidente.", "Exporte um relatório.", "Relatórios"),
+    ("diario-em-dia", "📓", "Diário em dia", "Fez 10 anotações no diário do analista.", "Anote 10 pistas nos relatórios.", "Relatórios"),
+    ("grampo", "🎙️", "Ouvido na rede", "Gravou uma captura de rede.", "Use o app Captura de Rede.", "Apps"),
+    ("perito", "🔬", "Perito", "Pediu um laudo ao Inspetor de Arquivos.", "Inspecione um arquivo.", "Apps"),
+    ("pegou-no-flagra", "🚨", "Pegou no flagra", "O Inspetor marcou um arquivo como suspeito.", "Inspecione um arquivo perigoso.", "Apps"),
+    ("porteiro", "🔥", "Porteiro de plantão", "Ligou o firewall da maquina.", "Painel do Sr. Burns com firewall ativo.", "Apps"),
+    ("senha-nova", "🔑", "Senha nova", "Trocou a senha padrão.", "Rode passwd e confira no Painel.", "Apps"),
+    ("burns-sorriu", "😈", "O Sr. Burns sorriu", "Nota 90 ou mais no Painel do Sr. Burns.", "Corrija os itens do Painel.", "Apps"),
+]
+
+# Comandos do historico que valem medalha
+POR_COMANDO = {
+    "primeiro-grep": r"\b[ef]?grep\b",
+    "leitor-de-manual": r"(^|[;&|]\s*)man\s+\S",
+    "explorador": r"(^|[;&|]\s*)find\b",
+    "impressao-digital": r"\bsha256sum\b",
+    "dono-do-pedaco": r"\bchmod\b",
+    "curioso": r"(^|[;&|]\s*)(oque|cola)\b",
+    "olho-de-tubarao": r"\b(tshark|wireshark)\b",
+}
+
+
+def carrega_lab():
+    loader = importlib.machinery.SourceFileLoader("lab", "/usr/local/bin/lab")
+    spec = importlib.util.spec_from_loader("lab", loader)
+    modulo = importlib.util.module_from_spec(spec)
+    loader.exec_module(modulo)
+    return modulo
+
+
+def carrega():
+    try:
+        dados = json.loads(ARQUIVO.read_text())
+    except (OSError, ValueError):
+        dados = {}
+    dados.setdefault("ganhas", {})
+    dados.setdefault("eventos", {})
+    dados.setdefault("avisadas", [])
+    return dados
+
+
+def salva(dados):
+    DADOS.mkdir(parents=True, exist_ok=True)
+    tmp = ARQUIVO.with_suffix(".tmp")
+    tmp.write_text(json.dumps(dados, indent=2, ensure_ascii=False))
+    tmp.replace(ARQUIVO)
+
+
+def registra(evento):
+    """Marca que algo aconteceu num app (ex.: 'inspetor'). Nunca derruba quem chamou."""
+    try:
+        dados = carrega()
+        dados["eventos"][evento] = dados["eventos"].get(evento, 0) + 1
+        salva(dados)
+    except OSError:
+        pass
+
+
+def comandos():
+    try:
+        texto = HISTORICO.read_text(errors="replace")
+    except OSError:
+        return []
+    return [l.strip() for l in texto.splitlines() if l.strip() and not l.startswith("#")]
+
+
+def merecidas(dados):
+    """Ids das medalhas cujas condicoes valem agora."""
+    ok = set()
+    hist = comandos()
+    for mid, padrao in POR_COMANDO.items():
+        if any(re.search(padrao, c) for c in hist):
+            ok.add(mid)
+    if any(c.count("|") - c.count("||") * 2 >= 2 for c in hist):
+        ok.add("encanador")
+
+    lab = carrega_lab()
+    casos = lab.carrega_casos()
+    prog = lab.carrega_progresso()
+    feitos = [c for c in casos if lab.resolvido(prog, c)]
+    ids = {c["id"] for c in feitos}
+    if feitos:
+        ok.add("primeiro-caso")
+    if any(prog[c["id"]].get("tentativas", 0) == 1 for c in feitos):
+        ok.add("de-primeira")
+    if sum(1 for c in feitos if not prog[c["id"]].get("dicas")) >= 5:
+        ok.add("sem-cola")
+    if any(i.startswith("16-") for i in ids):
+        ok.add("cacador-de-cron")
+    if any(i.startswith("22-") for i in ids):
+        ok.add("matou-o-kdonut")
+    if len(feitos) >= 10:
+        ok.add("maratonista")
+    if len(feitos) >= 20:
+        ok.add("meio-caminho")
+    if lab.cargo_atual(casos, prog) == lab.CARGO_FINAL:
+        ok.add("assistente")
+    if casos and len(feitos) == len(casos):
+        ok.add("usina-segura")
+
+    if any((Path.home() / "Relatórios").glob("*.html")):
+        ok.add("primeiro-relatorio")
+    notas = 0
+    for arq in (DADOS / "relatorios").glob("*.json"):
+        try:
+            notas += len(json.loads(arq.read_text()).get("diario", []))
+        except (OSError, ValueError):
+            pass
+    if notas >= 10:
+        ok.add("diario-em-dia")
+    if any((Path.home() / "Capturas").glob("*.pcap*")):
+        ok.add("grampo")
+
+    eventos = dados["eventos"]
+    for evento, mid in (("inspetor", "perito"), ("inspetor-risco", "pegou-no-flagra"), ("firewall-ok", "porteiro"),
+                        ("senha-trocada", "senha-nova"), ("burns-90", "burns-sorriu")):
+        if eventos.get(evento):
+            ok.add(mid)
+    return ok
+
+
+def avalia(marcar_avisadas=False):
+    """Atualiza as medalhas ganhas e devolve a lista completa, com as novas (ainda nao avisadas)."""
+    dados = carrega()
+    hoje = date.today().isoformat()
+    mudou = False
+    for mid in merecidas(dados):
+        if mid not in dados["ganhas"]:
+            dados["ganhas"][mid] = hoje
+            mudou = True
+    novas = [m for m in dados["ganhas"] if m not in dados["avisadas"]]
+    if marcar_avisadas and novas:
+        dados["avisadas"] += novas
+        mudou = True
+    if mudou:
+        salva(dados)
+    lista = [{"id": mid, "icone": ic, "nome": nome, "descricao": desc, "como": como, "grupo": grupo,
+              "ganha": mid in dados["ganhas"], "data": dados["ganhas"].get(mid, "")}
+             for mid, ic, nome, desc, como, grupo in MEDALHAS]
+    return {"conquistas": lista, "total": len(lista), "ganhas": sum(1 for m in lista if m["ganha"]),
+            "novas": [m for m in lista if m["id"] in novas]}
+
+
+def main():
+    if sys.argv[1:]:
+        print(__doc__.strip())
+        sys.exit(2)
+    r = avalia(marcar_avisadas=True)
+    print(f"\n{AMARELO}  Conquistas{FIM}  {CINZA}{r['ganhas']}/{r['total']} medalhas{FIM}")
+    grupo = None
+    for m in r["conquistas"]:
+        if m["grupo"] != grupo:
+            grupo = m["grupo"]
+            print(f"\n  {ROSA}{grupo}{FIM}")
+        if m["ganha"]:
+            print(f"  {m['icone']}  {NEGRITO}{m['nome']}{FIM}  {m['descricao']} {CINZA}({m['data']}){FIM}")
+        else:
+            print(f"  {CINZA}🔒  {m['nome']}  - {m['como']}{FIM}")
+    print()
+
+
+if __name__ == "__main__":
+    main()

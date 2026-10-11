@@ -52,6 +52,22 @@ def carrega_lab():
     return modulo
 
 
+def carrega_conquistas():
+    loader = importlib.machinery.SourceFileLoader("conquistas", "/usr/local/bin/conquistas")
+    spec = importlib.util.spec_from_loader("conquistas", loader)
+    modulo = importlib.util.module_from_spec(spec)
+    loader.exec_module(modulo)
+    return modulo
+
+
+def conquista(evento):
+    """Registra um evento para as Conquistas sem nunca atrapalhar o app que chamou."""
+    try:
+        carrega_conquistas().registra(evento)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 # ---------------------------------------------------------------------------
 # Rotas
 # ---------------------------------------------------------------------------
@@ -323,7 +339,15 @@ def checa_burns():
 
 def api_burns(q, corpo):
     try:
-        return checa_burns()
+        r = checa_burns()
+        ok = {i["chave"] for i in r["itens"] if i["ok"]}
+        if "firewall" in ok:
+            conquista("firewall-ok")
+        if "senha" in ok:
+            conquista("senha-trocada")
+        if r["nota"] >= 90:
+            conquista("burns-90")
+        return r
     except Exception as e:  # noqa: BLE001 - o painel mostra o erro em vez de sumir
         return {"nota": 0, "humor": "D'oh!", "frase": "Uma verificacao falhou: " + str(e), "itens": []}
 
@@ -455,6 +479,9 @@ def api_inspecionar(q, corpo):
 
     niveis = [x["nivel"] for x in laudo["achados"]]
     laudo["veredito"] = "risco" if "risco" in niveis else ("alerta" if "alerta" in niveis else "ok")
+    conquista("inspetor")
+    if laudo["veredito"] == "risco":
+        conquista("inspetor-risco")
     return laudo
 
 
@@ -749,13 +776,18 @@ def api_relatorio_exportar(q, corpo):
     return {"ok": True, **rel.exporta(lab, n, c, prog)}
 
 
+def api_conquistas(q, corpo):
+    # ?avisar=1: devolve as novas uma vez so (para o aviso na tela)
+    return carrega_conquistas().avalia(marcar_avisadas=q.get("avisar", [""])[0] == "1")
+
+
 ROTAS_GET = {
     "/api/sistema": api_sistema, "/api/processos": api_processos, "/api/rede": api_rede,
     "/api/logs": api_logs, "/api/siem": api_siem, "/api/permissoes": api_permissoes,
     "/api/updates": api_updates, "/api/arquivos": api_arquivos, "/api/arquivo": api_arquivo,
     "/api/lab": api_lab, "/api/carreira": api_carreira, "/api/burns": api_burns, "/api/inspecionar": api_inspecionar,
     "/api/capturas": api_capturas, "/api/captura/analisar": api_analisar_captura,
-    "/api/relatorios": api_relatorios, "/api/relatorio": api_relatorio,
+    "/api/relatorios": api_relatorios, "/api/relatorio": api_relatorio, "/api/conquistas": api_conquistas,
 }
 ROTAS_POST = {
     "/api/processos/encerrar": api_encerrar, "/api/energia": api_energia,

@@ -8,6 +8,14 @@ command_not_found_handle() {
   return 127
 }
 
+# Historico gravado a cada comando (as Conquistas leem o ~/.bash_history; o Terminal do front
+# pode ser fechado sem sair do bash)
+shopt -s histappend
+case "$PROMPT_COMMAND" in
+  *"history -a"*) ;;
+  *) PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
+esac
+
 alias academy='firefox-esr --new-window file:///usr/share/dohsec/academy/index.html >/dev/null 2>&1 &'
 
 # Banner so no primeiro terminal da sessao

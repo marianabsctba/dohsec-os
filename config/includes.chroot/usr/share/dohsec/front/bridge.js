@@ -302,6 +302,7 @@
         proxima.feitos + '/' + proxima.total + '): ' + esc(proxima.recompensa) + '. ' +
         '<button class="xp-btn dohsec-mini" data-dohsec-app="case">Abrir a Mesa do Incidente</button></div>'
         : '<div class="os-good"><b>Voce chegou ao topo:</b> Assistente do Sr. Burns. Eeexcelente.</div>') +
+      faixaMedalhas(await api('/api/conquistas').catch(() => null)) +
       '<h4>Plano de carreira</h4>' + degraus +
       '<h4>Historico de promocoes</h4>' + historico,
       { w: 'min(760px,94vw)', h: 'min(660px,84vh)' });
@@ -427,6 +428,7 @@
   // Certificado do cargo atual (desenhado em canvas, salvo como PNG)
   async function certificado() {
     const k = await atualizaCarreira();
+    k.medalhas = await api('/api/conquistas').catch(() => null);
     janela('certificate', 'Certificado', '🏆',
       campoNome(k, 'certificado') +
       '<canvas id="dohsecCert" width="1200" height="800" class="dohsec-cert"></canvas>' +
@@ -456,9 +458,18 @@
     g.font = 'bold 50px "DejaVu Sans", sans-serif'; g.fillStyle = '#ff5fb7';
     g.fillText((k.icone || '') + ' ' + k.cargo, 600, 530);
     g.font = '24px "DejaVu Sans", sans-serif'; g.fillStyle = '#5b3518';
-    g.fillText(k.feitos + ' de ' + k.total + ' casos resolvidos com ferramentas reais do Debian', 600, 600);
+    g.fillText(k.feitos + ' de ' + k.total + ' casos resolvidos com ferramentas reais do Debian', 600, 590);
+    const m = k.medalhas;
+    if (m && m.ganhas) {
+      const icones = m.conquistas.filter(x => x.ganha).map(x => x.icone);
+      g.font = '22px "DejaVu Sans", sans-serif';
+      g.fillText('Conquistas: ' + m.ganhas + ' de ' + m.total, 600, 635);
+      g.font = '30px "Noto Color Emoji", "DejaVu Sans", sans-serif';
+      g.fillText(icones.slice(0, 18).join(' ') + (icones.length > 18 ? ' ...' : ''), 600, 675);
+    }
+    g.font = '24px "DejaVu Sans", sans-serif';
     const ultima = k.promocoes.length ? k.promocoes[k.promocoes.length - 1].data : new Date().toISOString().slice(0, 10);
-    g.fillText('Emitido em ' + ultima + '  -  Ass.: C. M. Burns (por W. Smithers)', 600, 680);
+    g.fillText('Emitido em ' + ultima + '  -  Ass.: C. M. Burns (por W. Smithers)', 600, 725);
   }
 
   function salvaCertificado() {
@@ -846,6 +857,47 @@
       '<button class="xp-btn dohsec-mini" data-dohsec-dir="~/Relatorios">🗂️ Abrir a pasta</button></div></div>';
   }
 
+  // ---------------------------------------------------------------- Conquistas
+  // Medalhas conferidas de verdade (historico do bash, casos, relatorios, capturas, apps)
+  function faixaMedalhas(m) {
+    if (!m) return '';
+    const ganhas = m.conquistas.filter(x => x.ganha);
+    return '<h4>Conquistas <span class="muted-mini">' + m.ganhas + '/' + m.total + '</span></h4>' +
+      '<div class="dohsec-faixa">' + (ganhas.length
+        ? ganhas.map(x => '<span title="' + esc(x.nome + ': ' + x.descricao) + '">' + esc(x.icone) + '</span>').join('')
+        : '<span class="muted-mini">Nenhuma ainda. Use o Terminal e resolva casos para ganhar medalhas.</span>') +
+      ' <button class="xp-btn dohsec-mini" data-dohsec-app="medals">🏅 Ver todas</button></div>';
+  }
+
+  async function medalhas() {
+    const m = await api('/api/conquistas?avisar=1');
+    const grupos = [...new Set(m.conquistas.map(x => x.grupo))];
+    janela('medals', 'Conquistas', '🏅',
+      '<h3>🏅 Conquistas <span class="muted-mini">' + m.ganhas + ' de ' + m.total + '</span></h3>' +
+      barra(m.ganhas, m.total) +
+      '<p class="dohsec-dica">Tudo conferido de verdade: comandos que você usou no Terminal, casos resolvidos, ' +
+      'relatórios, capturas e os apps. Medalha ganha não se perde. No Terminal: <code>conquistas</code>.</p>' +
+      grupos.map(g => '<h4>' + esc(g) + '</h4><div class="dohsec-medalhas">' +
+        m.conquistas.filter(x => x.grupo === g).map(x =>
+          '<div class="dohsec-medalha' + (x.ganha ? '' : ' dohsec-trancado') + '">' +
+          '<span class="dohsec-medalha-icone">' + (x.ganha ? esc(x.icone) : '🔒') + '</span>' +
+          '<b>' + esc(x.nome) + '</b><span class="muted-mini">' +
+          (x.ganha ? esc(x.descricao) + '<br>' + esc(x.data) : esc(x.como)) + '</span></div>').join('') +
+        '</div>').join(''),
+      { w: 'min(860px,94vw)', h: 'min(700px,86vh)' });
+  }
+
+  // Avisa na tela cada medalha nova (uma vez so)
+  let conferindo = false;
+  async function confereConquistas() {
+    if (conferindo || !document.getElementById('wins')) return;
+    conferindo = true;
+    try {
+      const m = await api('/api/conquistas?avisar=1');
+      m.novas.forEach((x, i) => setTimeout(() => aviso('🏅 Conquista desbloqueada!', x.icone + ' ' + x.nome), i * 1500));
+    } catch (e) { /* tenta de novo no proximo ciclo */ } finally { conferindo = false; }
+  }
+
   // ---------------------------------------------------------------- Energia
   async function energia(acao) {
     const frase = acao === 'desligar' ? 'Desligar o D\'OH!Sec OS?' : 'Reiniciar o D\'OH!Sec OS?';
@@ -886,6 +938,7 @@
     inspector: () => inspetor(''),
     capture: captura,
     reports: relatorios,
+    medals: medalhas,
   };
 
   // Apps novos no desktop e no menu Iniciar (o front monta os icones no login)
@@ -893,6 +946,7 @@
     ['inspector', 'Inspetor de Arquivos', '🔬'],
     ['capture', 'Captura de Rede', '🦈'],
     ['reports', 'Relatórios', '📝'],
+    ['medals', 'Conquistas', '🏅'],
     ['lab', 'Laboratório', '🧪']].forEach(a => {
     if (!OS.apps.find(x => x[0] === a[0])) OS.apps.splice(2, 0, a);
   });
@@ -904,6 +958,7 @@
   if (wins) new MutationObserver(pintaCargo).observe(wins, { childList: true });
   relogio();
   setInterval(relogio, 20000);
+  setInterval(confereConquistas, 15000);
   login();
 
   // Cliques dos apps reais (em fase de captura, como o front faz)
@@ -943,7 +998,8 @@
       if (el) {
         e.preventDefault();
         e.stopPropagation();
-        Promise.resolve(fn(el.getAttribute(attr))).catch(err => aviso('Erro', err.message));
+        Promise.resolve(fn(el.getAttribute(attr))).catch(err => aviso('Erro', err.message))
+          .then(() => setTimeout(confereConquistas, 800));
         return;
       }
     }
