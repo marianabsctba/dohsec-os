@@ -1,0 +1,31 @@
+Start timestamp: 2026-03-14 04:00:01 -0300 (AIDE 0.18)
+AIDE found differences between database and filesystem!!
+
+Summary:
+  Total number of entries:      48211
+  Added entries:                1
+  Removed entries:              0
+  Changed entries:              2
+
+---------------------------------------------------
+Added entries:
+---------------------------------------------------
+
+f++++++++++++++++: /var/tmp/.cache/kdonut-watch.sh
+
+---------------------------------------------------
+Changed entries:
+---------------------------------------------------
+
+f   ...    .C... : /usr/bin/passwd
+f   ...    .C... : /etc/motd
+
+---------------------------------------------------
+Detailed information about changes:
+---------------------------------------------------
+
+File: /usr/bin/passwd
+  SHA256    : 4GBzO0n1u1VWD3kcx4ySv0cmc/fd3Lc6tW8m | Y7zR8q2tKQx8iGfJdP0tQ0b5qv1T9mN3cX2a
+
+File: /etc/motd
+  SHA256    : n3cX2aQ0b5qv1T9mY7zR8q2tKQx8iGfJdP0t | tW8m4GBzO0n1u1VWD3kcx4ySv0cmc/fd3Lc6

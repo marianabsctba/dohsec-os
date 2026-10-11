@@ -34,6 +34,56 @@ librsvg2-bin
 librsvg2-common
 python3
 
+# Ferramentas da trilha de aprendizado
+# Nivel 0-1: terminal, sistema, rede basica, arquivos
+tree
+file
+binutils
+xxd
+unzip
+bsdextrautils
+jq
+sqlite3
+vim
+htop
+lsof
+strace
+man-db
+manpages-pt-br
+curl
+wget
+bind9-dnsutils
+whois
+net-tools
+traceroute
+netcat-openbsd
+openssl
+gnupg
+# Nivel 2: SOC (logs, trafego, deteccao)
+tcpdump
+tshark
+wireshark
+nmap
+yara
+clamav
+# Nivel 3: DFIR e hardening
+sleuthkit
+binwalk
+libimage-exiftool-perl
+foremost
+testdisk
+lynis
+auditd
+aide
+ufw
+nftables
+suricata
+python3-scapy
+
+# Front como sistema: terminal real (xterm.js + WebSocket) e servico local
+node-xterm
+python3-websockets
+
 # Base
 sudo
 locales

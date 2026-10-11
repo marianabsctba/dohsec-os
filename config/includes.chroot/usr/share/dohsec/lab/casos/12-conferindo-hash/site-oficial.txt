@@ -1,0 +1,2 @@
+Atualizacao oficial do controle do reator
+SHA256: a413e2a751c159fd2da3373e0704d932766a4aafe17662f89bf3649ef4e9777c

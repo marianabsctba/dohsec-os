@@ -1,0 +1,19 @@
+#!/bin/bash
+# Programa que o dohsec-pty roda no Terminal do front: bash de verdade.
+#   dohsec-term [PASTA] [ACAO]
+# PASTA: onde o terminal abre (precisa existir). ACAO: nome de uma acao conhecida; comandos
+# arbitrarios nunca vem da URL, para nenhuma pagina conseguir mandar o terminal executar algo.
+
+cd "$HOME" || exit 1
+if [ -n "${1:-}" ] && [ -d "$1" ]; then
+  cd "$1" || exit 1
+fi
+
+case "${2:-}" in
+  atualizar)
+    echo "Atualizando o D'OH!Sec OS (sudo apt update && sudo apt upgrade)"
+    sudo apt update && sudo apt upgrade
+    ;;
+esac
+
+exec bash -i

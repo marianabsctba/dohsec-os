@@ -38,7 +38,8 @@ cp -r "$SRC/config/includes.chroot/." "$STAGE/"
 cp -r "$SRC/config/wsl/rootfs/." "$STAGE/"
 rm -rf "$STAGE/usr/share/plymouth" "$STAGE/etc/lightdm" "$STAGE/etc/xdg/autostart" "$STAGE/etc/xdg/xfce4" \
   "$STAGE/usr/local/bin/dohsec-session" "$STAGE/usr/local/bin/dohsec-ceu" "$STAGE/usr/local/bin/noturno" \
-  "$STAGE/usr/local/bin/dohsec-shell" "$STAGE/usr/local/bin/dohsec-terminal" "$STAGE/usr/share/xsessions" "$STAGE/etc/dohsec/xbindkeysrc" \
+  "$STAGE/usr/local/bin/dohsec-shell" "$STAGE/usr/local/bin/dohsec-terminal" "$STAGE/usr/local/bin/dohsec-api" \
+  "$STAGE/usr/local/bin/dohsec-pty" "$STAGE/usr/local/bin/dohsec-term" "$STAGE/usr/share/dohsec/front" "$STAGE/usr/share/xsessions" "$STAGE/etc/dohsec/xbindkeysrc" \
   "$STAGE/usr/share/dohsec/wallpaper.svg" "$STAGE/usr/share/dohsec/wallpaper-noite.svg"
 
 rsvg-convert -w 256 -h 256 "$STAGE/usr/share/dohsec/donut.svg" -o "$STAGE/usr/share/dohsec/donut.png"

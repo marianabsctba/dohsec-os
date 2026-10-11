@@ -1,0 +1,11 @@
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22/tcp                     ALLOW IN    10.20.0.0/16
+[ 2] 80/tcp                     ALLOW IN    Anywhere
+[ 3] 443/tcp                    ALLOW IN    Anywhere
+[ 4] 5432/tcp                   ALLOW IN    Anywhere
+[ 5] 9100/tcp                   ALLOW IN    10.20.0.10

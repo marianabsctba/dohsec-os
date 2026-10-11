@@ -6,7 +6,7 @@
     "OverrideFirstRunPage": "",
     "OverridePostUpdatePage": "",
     "Homepage": {
-      "URL": "file:///usr/share/dohsec/academy/index.html",
+      "URL": "http://127.0.0.1:7700/",
       "StartPage": "homepage"
     },
     "Preferences": {

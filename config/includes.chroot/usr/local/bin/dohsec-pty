@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""dohsec-pty - terminal real do front: bash num pseudo-terminal, ligado por WebSocket.
+
+Escuta so em 127.0.0.1:7681. Cada conexao abre um `dohsec-term [PASTA] [ACAO]`.
+Seguranca: aceita so conexoes vindas da pagina do front (Origin http://127.0.0.1:7700) e
+com a chave da sessao (DOHSEC_TOKEN, a mesma do dohsec-api).
+
+Mensagens da pagina (JSON): {"t": "i", "d": "texto digitado"} e {"t": "r", "c": colunas, "r": linhas}.
+A saida do terminal vai como texto.
+"""
+import asyncio
+import fcntl
+import json
+import os
+import pty
+import secrets
+import signal
+import struct
+import sys
+import termios
+from urllib.parse import parse_qs, urlparse
+
+from websockets.asyncio.server import serve
+
+HOST, PORTA = "127.0.0.1", 7681
+ORIGEM = "http://127.0.0.1:7700"
+TOKEN = os.environ.get("DOHSEC_TOKEN", "")
+PROGRAMA = "/usr/local/bin/dohsec-term"
+
+
+def ajusta_tamanho(fd, colunas, linhas):
+    fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", linhas, colunas, 0, 0))
+
+
+async def sessao(ws):
+    req = ws.request
+    if req.headers.get("Origin") != ORIGEM:
+        await ws.close(4003, "origem invalida")
+        return
+    q = parse_qs(urlparse(req.path).query)
+    if not TOKEN or not secrets.compare_digest(q.get("t", [""])[0], TOKEN):
+        await ws.close(4003, "sem autorizacao")
+        return
+
+    args = [PROGRAMA, q.get("pasta", [""])[0], q.get("acao", [""])[0]]
+    pid, fd = pty.fork()
+    if pid == 0:
+        os.environ["TERM"] = "xterm-256color"
+        os.execv(PROGRAMA, args)
+
+    loop = asyncio.get_running_loop()
+    fila = asyncio.Queue()
+
+    def le():
+        try:
+            dados = os.read(fd, 65536)
+        except OSError:
+            dados = b""
+        fila.put_nowait(dados)
+
+    loop.add_reader(fd, le)
+
+    async def envia():
+        while True:
+            dados = await fila.get()
+            if not dados:
+                await ws.close()
+                return
+            await ws.send(dados.decode("utf-8", "replace"))
+
+    tarefa = asyncio.create_task(envia())
+    try:
+        async for msg in ws:
+            try:
+                m = json.loads(msg)
+            except ValueError:
+                continue
+            if m.get("t") == "i":
+                os.write(fd, str(m.get("d", "")).encode())
+            elif m.get("t") == "r":
+                ajusta_tamanho(fd, int(m.get("c", 80)), int(m.get("r", 24)))
+    finally:
+        loop.remove_reader(fd)
+        tarefa.cancel()
+        try:
+            os.kill(pid, signal.SIGHUP)
+        except ProcessLookupError:
+            pass
+        os.close(fd)
+        try:
+            os.waitpid(pid, 0)
+        except ChildProcessError:
+            pass
+
+
+async def main():
+    if not TOKEN:
+        sys.exit("dohsec-pty: DOHSEC_TOKEN nao definido")
+    async with serve(sessao, HOST, PORTA, max_size=2 ** 20):
+        await asyncio.Future()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

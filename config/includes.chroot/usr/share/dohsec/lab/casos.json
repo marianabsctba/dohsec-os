@@ -90,9 +90,252 @@
     ]
   },
   {
-    "id": "06-forca-bruta",
+    "id": "06-lendo-o-manual",
+    "titulo": "Lendo o manual",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Qual opcao do `ls` ordena os arquivos pelo tamanho, do maior para o menor?",
+    "resposta": "922e17b4edd60ff0277a57db2cdf26a407350a6ffbd4129318f293841d289609",
+    "dicas": [
+      "Abra o manual: man ls",
+      "Dentro do man, digite /size e aperte Enter.",
+      "E uma letra maiuscula depois do traco."
+    ],
+    "aprendizado": [
+      "man COMANDO abre o manual completo; COMANDO --help mostra um resumo.",
+      "Dentro do man, / procura e q sai.",
+      "Na duvida, o manual responde: e o primeiro lugar para olhar."
+    ]
+  },
+  {
+    "id": "07-achando-com-find",
+    "titulo": "Achando arquivos com find",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Ha um arquivo de backup (`.bak`) perdido no `arquivo-morto`. Qual o nome dele?",
+    "resposta": "1ef8c027b3c852861b8cde92294d81221545ec8c8eb419ba7d8610952e83b6e0",
+    "dicas": [
+      "Tente: find arquivo-morto -name '*.bak'",
+      "O nome comeca com ponto: e um arquivo escondido.",
+      "A resposta e so o nome do arquivo, com o ponto do inicio."
+    ],
+    "aprendizado": [
+      "find procura em todas as subpastas de uma vez.",
+      "-name com * acha padroes como *.bak, *.log, *.conf.",
+      "Backups esquecidos (.bak, .old) sao alvo comum de invasores: vale procurar."
+    ]
+  },
+  {
+    "id": "08-abrindo-pacotes",
+    "titulo": "Abrindo pacotes com tar",
+    "trilha": "estagiario",
+    "nivel": "basico",
+    "pergunta": "Dentro da `caixa.tar.gz` tem outro pacote lacrado. Qual a palavra-chave do bilhete la dentro?",
+    "resposta": "9ac1fb99ab339102e058d7d6c8344aeff15f0f333b55ed5665e9da1b2601d6e4",
+    "dicas": [
+      "Veja o que tem dentro: tar -tzf caixa.tar.gz",
+      "Extraia: tar -xzf caixa.tar.gz e depois entre em caixa/",
+      "O lacre.tar e outro pacote: tar -xf caixa/lacre.tar"
+    ],
+    "aprendizado": [
+      "tar -t lista, tar -x extrai; o z cuida da compressao gzip.",
+      "Pacotes podem ter pacotes dentro: va abrindo camada por camada.",
+      "Liste antes de extrair: evita espalhar arquivos onde voce nao queria."
+    ]
+  },
+  {
+    "id": "09-quem-sou-eu",
+    "titulo": "Quem sou eu?",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "Qual e o UID (numero) do seu usuario neste sistema?",
+    "resposta": "40510175845988f13f6162ed8526f0b09f73384467fa855e1e79b44a56562a58",
+    "dicas": [
+      "Rode: id",
+      "O UID aparece logo no comeco: uid=NUMERO(nome)"
+    ],
+    "aprendizado": [
+      "id mostra quem voce e para o sistema: UID e grupos.",
+      "UID 0 e o root (administrador); usuarios comuns comecam em 1000.",
+      "Os grupos (como sudo e adm) definem poderes extras."
+    ]
+  },
+  {
+    "id": "10-lendo-permissoes",
+    "titulo": "Lendo permissoes com ls -l",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "Qual arquivo da listagem **qualquer pessoa** do sistema pode alterar?",
+    "resposta": "1d637f8fe56a460ab8520708c0141835de324f19223ff16b2588a34b2794b187",
+    "dicas": [
+      "Olhe o ultimo trio de letras de cada linha (os 'outros').",
+      "Procure um w no ultimo trio: rw-rw-rw-"
+    ],
+    "aprendizado": [
+      "As permissoes vem em 3 trios: dono, grupo, outros.",
+      "w no trio dos outros = qualquer um altera: quase sempre um erro.",
+      "Arquivo de senha legivel ou alteravel por todos e incidente na certa."
+    ]
+  },
+  {
+    "id": "11-chmod-cofre",
+    "titulo": "Dando permissao com chmod",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "Rode o `abre-cofre.sh`. Qual codigo o cofre mostra?",
+    "resposta": "cdb8ab7b2d1d5a37688f786bcee0a9fef22320bcba3ecf3c4bf514ab2039a02a",
+    "dicas": [
+      "Tente rodar: ./abre-cofre.sh (vai dar permissao negada)",
+      "De permissao de execucao: chmod +x abre-cofre.sh",
+      "Agora sim: ./abre-cofre.sh"
+    ],
+    "aprendizado": [
+      "chmod +x torna um arquivo executavel; chmod -x tira.",
+      "./ diz: rode o programa desta pasta.",
+      "Antes de rodar um script desconhecido, leia o conteudo (cat ou less)."
+    ]
+  },
+  {
+    "id": "12-conferindo-hash",
+    "titulo": "Conferindo hash",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "Varias versoes da atualizacao foram baixadas de sites diferentes. Qual arquivo bate com o hash oficial?",
+    "resposta": "6f3f868046cdfab39b7b6d385487c3831669eda49fdafb1358981a61f995f203",
+    "dicas": [
+      "Veja o hash oficial: cat site-oficial.txt",
+      "Calcule todos: sha256sum downloads/*",
+      "Filtre pelo comeco do hash oficial: sha256sum downloads/* | grep PRIMEIROS-CARACTERES"
+    ],
+    "aprendizado": [
+      "sha256sum confere se o arquivo e exatamente o publicado.",
+      "Arquivo de fonte estranha com hash diferente: nao instale.",
+      "Hash tambem identifica malware conhecido em listas de inteligencia."
+    ]
+  },
+  {
+    "id": "13-extensao-mente",
+    "titulo": "Extensao mente, conteudo nao",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "Um dos anexos esta disfarcado: na verdade e um arquivo ZIP. Qual?",
+    "resposta": "d6820433f8355bda2e505517420569b88b35869859dce8549feb86cbbba8d838",
+    "dicas": [
+      "Rode: file anexos/*",
+      "Procure 'Zip archive' na saida."
+    ],
+    "aprendizado": [
+      "file identifica o tipo pelo conteudo, nao pelo nome.",
+      "Golpes disfarcam arquivos (o caso do invoice_real.pdf.exe e parecido).",
+      "xxd mostra a assinatura: ZIP comeca com PK, PDF com %PDF."
+    ]
+  },
+  {
+    "id": "14-strings-firmware",
+    "titulo": "Achando texto com strings",
+    "trilha": "operador",
+    "nivel": "medio",
+    "pergunta": "O firmware do painel do reator tem uma senha padrao embutida. Qual e?",
+    "resposta": "148e9a43e78a17a3e9384e720dc53bce843b40b57130b1729980036ed3acfd2c",
+    "dicas": [
+      "Rode: strings firmware-painel.bin",
+      "Filtre: strings firmware-painel.bin | grep -i senha"
+    ],
+    "aprendizado": [
+      "strings acha texto dentro de qualquer arquivo binario.",
+      "Senha padrao embutida em firmware e falha classica de fabricante.",
+      "Troque sempre a senha padrao de equipamentos novos."
+    ]
+  },
+  {
+    "id": "15-sudo-de-madrugada",
+    "titulo": "O que fizeram com sudo?",
+    "trilha": "operador",
+    "nivel": "medio",
+    "pergunta": "De madrugada alguem leu um arquivo sensivel com sudo. Qual arquivo?",
+    "resposta": "7b5ddf499844cf05866927513cf62fee9af8c281812def040b964146b0ea87d6",
+    "dicas": [
+      "Filtre os comandos: grep COMMAND auth.log",
+      "Procure algo fora da rotina (o lenny nem costuma usar sudo).",
+      "A resposta e o caminho do arquivo lido."
+    ],
+    "aprendizado": [
+      "Todo uso de sudo fica no log: grep COMMAND ou journalctl _COMM=sudo.",
+      "/etc/shadow guarda os hashes de senha: le-lo e sinal de ataque.",
+      "Revise quem esta no grupo sudo e alerte uso fora do horario."
+    ]
+  },
+  {
+    "id": "16-lendo-o-cron",
+    "titulo": "Lendo o agendador (cron)",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "A que horas roda o backup do reator? Responda no formato HH:MM.",
+    "resposta": "fe3f8e909b0d714d4d1c16ba371602deabf4c92fffca9c404e6ec711285e2440",
+    "dicas": [
+      "Ache a linha do backup-reator.sh.",
+      "O primeiro numero e o minuto, o segundo e a hora."
+    ],
+    "aprendizado": [
+      "Os 5 campos do cron: minuto, hora, dia do mes, mes, dia da semana.",
+      "crontab -l lista as tarefas do usuario; /etc/cron.* tem as do sistema.",
+      "Invasores adoram cron para persistencia (lembra do donutcoin?)."
+    ]
+  },
+  {
+    "id": "17-servico-caiu",
+    "titulo": "Qual servico caiu?",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "O alarme de temperatura disparou. Qual servico falhou? (nome completo, com .service)",
+    "resposta": "91b537c8c7415638f2e9c200110fdf6cfe99385c430bb21f3b9a93a453a712c1",
+    "dicas": [
+      "Procure a palavra Failed: grep -i failed journal.txt"
+    ],
+    "aprendizado": [
+      "systemctl --failed lista os servicos que cairam.",
+      "journalctl -u NOME mostra o historico de um servico.",
+      "Na vida real: grep -i failed e o primeiro passo em incidente de disponibilidade."
+    ]
+  },
+  {
+    "id": "18-porta-sobrando",
+    "titulo": "Porta que nao deveria estar aberta",
+    "trilha": "operador",
+    "nivel": "medio",
+    "pergunta": "Compare as portas escutando com o inventario autorizado. Qual porta esta sobrando?",
+    "resposta": "1483099c89000a68c3d88446a6a7669b765f09900cbfb0898ccd784b2a6bfe2d",
+    "dicas": [
+      "Liste as portas da coluna Local Address:Port.",
+      "Compare com inventario.txt: qual nao esta la?"
+    ],
+    "aprendizado": [
+      "ss -tlnp mostra o que escuta e qual programa.",
+      "Porta aberta sem dono no inventario: investigue o processo.",
+      "Inventario de portas autorizadas e a base de qualquer auditoria."
+    ]
+  },
+  {
+    "id": "19-qual-programa-roda",
+    "titulo": "Qual programa roda de verdade?",
+    "trilha": "operador",
+    "nivel": "facil",
+    "pergunta": "Neste sistema, qual arquivo (caminho completo) roda quando voce digita `ls`?",
+    "resposta": "bf1c32c3ce623b191156458fdc57b1638419ab4fe492488b12c451d543fa784d",
+    "dicas": [
+      "Rode: which ls",
+      "Se aparecer um alias, use: type -a ls"
+    ],
+    "aprendizado": [
+      "O PATH define onde o sistema procura os comandos, na ordem.",
+      "which e type mostram qual programa vai rodar de fato.",
+      "Pasta gravavel no comeco do PATH e porta para programa falso."
+    ]
+  },
+  {
+    "id": "20-forca-bruta",
     "titulo": "Brute force em conta de servico",
-    "trilha": "casos",
+    "trilha": "analista",
     "aprendizado": [
       "O que aconteceu: alguem testou milhares de senhas ate acertar a da conta svc_backup (ataque de forca bruta).",
       "Por que e perigoso: contas de servico costumam ter muito acesso e ninguem percebe quando sao usadas.",
@@ -109,9 +352,9 @@
     ]
   },
   {
-    "id": "07-powershell-financeiro",
+    "id": "21-powershell-financeiro",
     "titulo": "PowerShell encoded no Financeiro",
-    "trilha": "casos",
+    "trilha": "analista",
     "aprendizado": [
       "O que aconteceu: um documento do Word abriu um PowerShell escondido que baixa um script da internet.",
       "Por que e perigoso: o -enc esconde o comando de quem olha rapido; e um truque comum para fugir de filtros.",
@@ -128,9 +371,9 @@
     ]
   },
   {
-    "id": "08-donutcoin",
+    "id": "22-donutcoin",
     "titulo": "Servidor minerando donutcoin",
-    "trilha": "casos",
+    "trilha": "analista",
     "aprendizado": [
       "O que aconteceu: um invasor usou o servidor web para minerar criptomoeda e agendou no cron um script que religa o minerador.",
       "Por que e perigoso: matar o processo nao resolve; sem remover a persistencia, o problema volta sozinho.",
@@ -147,9 +390,9 @@
     ]
   },
   {
-    "id": "09-pdf-exe",
+    "id": "23-pdf-exe",
     "titulo": "invoice_real.pdf.exe executado",
-    "trilha": "casos",
+    "trilha": "analista",
     "aprendizado": [
       "O que aconteceu: phishing. O From dizia Financeiro, mas o e-mail saiu de outro dominio, e o anexo era um programa disfarcado de PDF.",
       "Por que e perigoso: o campo From e escrito por quem envia; so os outros cabecalhos mostram a origem real.",
@@ -166,9 +409,9 @@
     ]
   },
   {
-    "id": "10-everyone-privilegiado",
+    "id": "24-everyone-privilegiado",
     "titulo": "Everyone em grupo privilegiado",
-    "trilha": "casos",
+    "trilha": "analista",
     "aprendizado": [
       "O que aconteceu: uma conta sem necessidade de acesso adicionou o grupo Everyone (todo mundo) num grupo de administradores.",
       "Por que e perigoso: qualquer conta da empresa virou administradora, inclusive uma conta invadida.",
@@ -181,6 +424,230 @@
     "dicas": [
       "Procure a linha em que o membro e Everyone: grep Everyone grupos.csv",
       "A terceira coluna diz quem fez a alteracao."
+    ]
+  },
+  {
+    "id": "25-eventos-com-jq",
+    "titulo": "Eventos em JSON com jq",
+    "trilha": "analista",
+    "nivel": "medio",
+    "pergunta": "Alguem apagou os backups da usina na nuvem. De qual IP veio o evento ApagarBackup?",
+    "resposta": "fae7833f06e0b1d7a347165c251458b16d9224a7b411f0245eeb2e471db3e00e",
+    "dicas": [
+      "Filtre: jq -c 'select(.evento==\"ApagarBackup\")' eventos.json",
+      "O IP esta no campo ip."
+    ],
+    "aprendizado": [
+      "jq e o grep do JSON: select filtra, .campo extrai.",
+      "Apagar backup e passo tipico antes de ransomware.",
+      "Conta de servico usada de IP externo merece alerta imediato."
+    ]
+  },
+  {
+    "id": "26-vazamento-por-dns",
+    "titulo": "Vazamento por DNS",
+    "trilha": "analista",
+    "nivel": "avancado",
+    "pergunta": "A captura mostra consultas DNS estranhas. Para qual dominio os dados estao sendo enviados? (so o dominio principal, sem os subdominios)",
+    "resposta": "4c181c51ccc6bda08275eff5f814b16faf8e56c8ea9de5dbaeec8a4e2d7ea9d0",
+    "dicas": [
+      "Liste os nomes: tshark -r dns.pcap -Y dns -T fields -e dns.qry.name",
+      "Junte com sort | uniq -c para ver os repetidos e os estranhos.",
+      "Os nomes estranhos terminam todos no mesmo dominio. Responda so ele (ex.: exemplo.test)."
+    ],
+    "aprendizado": [
+      "tshark e o Wireshark no terminal: -Y filtra, -T fields extrai campos.",
+      "Subdominios longos e aleatorios = sinal de exfiltracao ou tunel por DNS.",
+      "Monitore volume e tamanho das consultas DNS por maquina."
+    ]
+  },
+  {
+    "id": "27-conversa-suspeita",
+    "titulo": "Quem mais fala com o servidor suspeito?",
+    "trilha": "analista",
+    "nivel": "medio",
+    "pergunta": "O IP externo 203.0.113.66 esta na lista de ameacas. Qual maquina interna enviou mais dados para ele?",
+    "resposta": "a9d07fadab26a5c578e3d2166a6a293064d3f23e7089a7a9ade9c3c0ec8a7678",
+    "dicas": [
+      "Veja as conversas: tshark -r rede.pcap -q -z conv,ip",
+      "Procure as linhas com 203.0.113.66 e compare os bytes."
+    ],
+    "aprendizado": [
+      "-z conv,ip resume quem falou com quem e quanto.",
+      "Muito dado saindo para IP de ameaca = possivel vazamento.",
+      "Isole a maquina e investigue o processo que gerou o trafego."
+    ]
+  },
+  {
+    "id": "28-regras-yara",
+    "titulo": "Cacando com regras YARA",
+    "trilha": "analista",
+    "nivel": "medio",
+    "pergunta": "Use a regra `donut.yar` nas amostras. Qual arquivo bate com a regra?",
+    "resposta": "c46c2c2fd816b274c0c875f3d825f871a0ce05023047c0cac53922a0d6406e64",
+    "dicas": [
+      "Leia a regra: cat donut.yar",
+      "Rode: yara donut.yar amostras/"
+    ],
+    "aprendizado": [
+      "Uma regra YARA junta strings e uma condicao.",
+      "yara -s mostra exatamente quais strings bateram.",
+      "Regras publicas (de CERTs e fabricantes) ajudam a achar ameacas conhecidas."
+    ]
+  },
+  {
+    "id": "29-sql-injection",
+    "titulo": "Tentativa de SQL injection",
+    "trilha": "analista",
+    "nivel": "medio",
+    "pergunta": "Alguem tentou roubar dados do banco pelo site. Qual IP?",
+    "resposta": "d6c4658934c37a9020ca98a1444fcc5b1b672262e13cc274a30648d7f2f5bc11",
+    "dicas": [
+      "Procure: grep -i 'union' access.log",
+      "O IP e o primeiro campo da linha."
+    ],
+    "aprendizado": [
+      "Logs web mostram tentativas de injecao direto na URL.",
+      "%20 e %27 sao espaco e aspas codificados: decodifique mentalmente.",
+      "Defesa: consultas parametrizadas no codigo e um WAF na frente."
+    ]
+  },
+  {
+    "id": "30-maior-download",
+    "titulo": "O maior download do dia",
+    "trilha": "analista",
+    "nivel": "medio",
+    "pergunta": "Qual arquivo (caminho na URL) foi o maior download do dia?",
+    "resposta": "8f1903d7acf0b38947264e649262d6a7b3e89f747d0cdca744b5be143013838f",
+    "dicas": [
+      "Extraia tamanho e pagina: awk '{print $10, $7}' access.log",
+      "Ordene: ... | sort -n | tail -3"
+    ],
+    "aprendizado": [
+      "awk separa colunas por espaco: $1, $7, $10...",
+      "Pasta de backup acessivel pela web e falha grave de configuracao.",
+      "Alertar por volume de saida pega vazamentos que passam por outros filtros."
+    ]
+  },
+  {
+    "id": "31-alertas-suricata",
+    "titulo": "Alertas do Suricata",
+    "trilha": "analista",
+    "nivel": "avancado",
+    "pergunta": "Qual alerta (signature_id) mais disparou contra o servidor?",
+    "resposta": "bb5af488d608d321a11098f519020f499e63f97af757f0d1de58fdc0b1be5c42",
+    "dicas": [
+      "So os alertas: jq -c 'select(.event_type==\"alert\")' eve.json",
+      "Extraia o id: jq -r 'select(.event_type==\"alert\") | .alert.signature_id' eve.json",
+      "Conte: ... | sort | uniq -c | sort -rn | head -1"
+    ],
+    "aprendizado": [
+      "O eve.json do Suricata e lido com jq como qualquer JSON.",
+      "A receita sort | uniq -c | sort -rn funciona em qualquer campo.",
+      "Varredura de SSH em massa: bloqueie, use chave e fail2ban."
+    ]
+  },
+  {
+    "id": "32-metadados-exif",
+    "titulo": "Metadados com exiftool",
+    "trilha": "especialista",
+    "nivel": "medio",
+    "pergunta": "Uma foto de cracha falso apareceu na sala de controle. Quem consta como autor (Artist) da foto?",
+    "resposta": "f872585057d99abe9f3a5dc092b7429b361da0f89af5a555e54a8012ebad7ded",
+    "dicas": [
+      "Rode: exiftool foto-cracha.jpg",
+      "Procure o campo Artist."
+    ],
+    "aprendizado": [
+      "exiftool le metadados de fotos, PDFs, documentos do Office...",
+      "Data e autor nos metadados ajudam a montar a linha do tempo.",
+      "Antes de publicar arquivos, limpe os metadados (exiftool -all= arq)."
+    ]
+  },
+  {
+    "id": "33-escondido-na-imagem",
+    "titulo": "Arquivo escondido dentro da imagem",
+    "trilha": "especialista",
+    "nivel": "avancado",
+    "pergunta": "O logo do site da usina esta maior do que deveria. Qual codigo de acesso esta escondido nele?",
+    "resposta": "8a6bb7e2905a81dd0685768a745545656ec762e29cfb3217b0c0e21987d0a2f1",
+    "dicas": [
+      "Veja o que tem dentro: binwalk logo-usina.png",
+      "Tem um Zip depois do PNG. Extraia: binwalk -e logo-usina.png (ou unzip logo-usina.png)",
+      "Leia o codigo.txt extraido."
+    ],
+    "aprendizado": [
+      "binwalk acha arquivos embutidos pelas assinaturas.",
+      "Tamanho fora do normal e a primeira pista de dado escondido.",
+      "Tecnica usada para vazar dados e esconder ferramentas: fique de olho."
+    ]
+  },
+  {
+    "id": "34-integridade-aide",
+    "titulo": "Integridade com AIDE",
+    "trilha": "especialista",
+    "nivel": "medio",
+    "pergunta": "O AIDE avisou mudancas. Qual **programa do sistema** foi alterado (e e o mais grave)?",
+    "resposta": "1985ef3ced64ed4733424e112431e16aaf16c84ba9991e8231f8585354da595c",
+    "dicas": [
+      "Olhe a secao Changed entries.",
+      "/etc/motd e so a mensagem de boas-vindas; e o outro?"
+    ],
+    "aprendizado": [
+      "AIDE compara hashes com uma base de referencia confiavel.",
+      "Binario do sistema alterado fora de atualizacao = possivel rootkit.",
+      "Guarde a base do AIDE fora da maquina, senao o invasor tambem a altera."
+    ]
+  },
+  {
+    "id": "35-firewall-ufw",
+    "titulo": "Firewall com ufw",
+    "trilha": "especialista",
+    "nivel": "medio",
+    "pergunta": "Qual o numero da regra que expoe o banco de dados (PostgreSQL, porta 5432) para qualquer lugar?",
+    "resposta": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+    "dicas": [
+      "Procure a porta 5432 na lista.",
+      "Responda so o numero entre colchetes."
+    ],
+    "aprendizado": [
+      "ufw status numbered mostra as regras com numero.",
+      "'Anywhere' = a internet inteira pode tentar conectar.",
+      "Banco so deve aceitar conexao do servidor da aplicacao."
+    ]
+  },
+  {
+    "id": "36-linha-do-tempo",
+    "titulo": "Montando a linha do tempo",
+    "trilha": "especialista",
+    "nivel": "avancado",
+    "pergunta": "Monte a linha do tempo. Qual conta o invasor usou **primeiro** para entrar na rede?",
+    "resposta": "69bfe1e6e44821df7f8a0927bd7e61ef208fdb25deaa4353450bc3fb904abd52",
+    "dicas": [
+      "Junte e ordene: cat *.log | sort",
+      "Procure o primeiro acesso de IP externo (198.51.100.x)."
+    ],
+    "aprendizado": [
+      "Datas no formato ISO (2026-03-14T01:02) ordenam certinho com sort.",
+      "A historia aqui: VPN com conta roubada, SSH, conta root falsa, webshell.",
+      "Linha do tempo e o coracao do relatorio de incidente."
+    ]
+  },
+  {
+    "id": "37-auditoria-auditd",
+    "titulo": "Auditoria com auditd",
+    "trilha": "especialista",
+    "nivel": "avancado",
+    "pergunta": "O usuario de auid 1003 abriu uma conexao para fora. Qual programa (caminho completo do exe) ele executou?",
+    "resposta": "38cf71bcbd9a611dbab93362516e4c6c6d069eb06fd35ae66f023ad62181b409",
+    "dicas": [
+      "Filtre: grep auid=1003 audit.log",
+      "O caminho esta no campo exe=."
+    ],
+    "aprendizado": [
+      "auditd registra execucoes com o usuario original (auid).",
+      "nc (netcat) conectando a IP externo e sinal classico de shell reversa.",
+      "ausearch e aureport resumem os logs do auditd."
     ]
   }
 ]

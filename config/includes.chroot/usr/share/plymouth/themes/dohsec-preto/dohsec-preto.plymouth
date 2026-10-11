@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=D'OH!Sec (preto)
+Description=Tela preta enquanto o sistema sobe: o unico boot visivel e o D'OH!BIOS do front
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/dohsec-preto
+ScriptFile=/usr/share/plymouth/themes/dohsec-preto/dohsec-preto.script

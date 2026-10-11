@@ -1,0 +1,6 @@
+Portas autorizadas no usina-web01
+22   ssh (administracao)
+80   http (site)
+443  https (site)
+5432 postgres (so local)
+9100 monitoramento (so local)

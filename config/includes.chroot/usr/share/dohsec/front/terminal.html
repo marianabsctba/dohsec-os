@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Terminal D'OH!Sec</title>
+<link rel="stylesheet" href="/xterm/xterm/css/xterm.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #1b1708; overflow: hidden; }
+  #term { position: absolute; inset: 4px 0 0 6px; }
+  #aviso { color: #fff6d7; font: 14px 'DejaVu Sans Mono', monospace; padding: 12px; display: none; }
+</style>
+</head>
+<body>
+<div id="aviso"></div>
+<div id="term"></div>
+<script src="/xterm/xterm/lib/xterm.js"></script>
+<script src="/xterm/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+<script>
+(function () {
+  const CFG = window.DOHSEC_API;
+  const p = new URLSearchParams(location.search);
+  const term = new Terminal({
+    cursorBlink: true,
+    fontFamily: "'DejaVu Sans Mono', monospace",
+    fontSize: 15,
+    theme: {
+      background: '#1B1708', foreground: '#FFF6D7', cursor: '#FF5FB7', selectionBackground: '#5B3518',
+      black: '#171717', red: '#E84D5B', green: '#3BB273', yellow: '#FFD84D', blue: '#2F7DF6',
+      magenta: '#FF5FB7', cyan: '#5FC8F6', white: '#FFF6D7', brightBlack: '#5B3518', brightRed: '#FF6F7C',
+      brightGreen: '#5FD394', brightYellow: '#FFE680', brightBlue: '#6FA6FF', brightMagenta: '#FF8FCB',
+      brightCyan: '#8CDCFF', brightWhite: '#FFFFFF'
+    }
+  });
+  const fit = new FitAddon.FitAddon();
+  term.loadAddon(fit);
+  term.open(document.getElementById('term'));
+  fit.fit();
+
+  const ws = new WebSocket('ws://127.0.0.1:7681/?t=' + encodeURIComponent(CFG.token) +
+    '&pasta=' + encodeURIComponent(p.get('pasta') || '') + '&acao=' + encodeURIComponent(p.get('acao') || ''));
+  const envia = m => { if (ws.readyState === 1) ws.send(JSON.stringify(m)); };
+  const tamanho = () => { fit.fit(); envia({ t: 'r', c: term.cols, r: term.rows }); };
+
+  ws.onopen = () => { tamanho(); term.focus(); };
+  ws.onmessage = e => term.write(e.data);
+  ws.onclose = () => term.write('\r\n\x1b[38;5;205m[sessao encerrada: feche a janela ou abra o Terminal de novo]\x1b[0m\r\n');
+  term.onData(d => envia({ t: 'i', d: d }));
+  new ResizeObserver(tamanho).observe(document.getElementById('term'));
+  window.addEventListener('focus', () => term.focus());
+})();
+</script>
+</body>
+</html>

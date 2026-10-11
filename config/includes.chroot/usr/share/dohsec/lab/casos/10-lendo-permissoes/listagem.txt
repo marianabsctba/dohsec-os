@@ -1,0 +1,7 @@
+total 28
+-rw-r----- 1 smithers rh       2210 mar 14 07:12 folha-de-pagamento.csv
+-rw-r--r-- 1 lenny    usina     812 mar 14 07:30 cardapio.txt
+-rwxr-x--- 1 root     operacao 4096 mar 13 22:01 desliga-reator.sh
+-rw-rw-rw- 1 carl     usina    1540 mar 14 06:55 senhas-wifi.txt
+-rw------- 1 burns    burns     990 mar 12 18:40 diario-secreto.txt
+-rw-r--r-- 1 homer    usina     120 mar 14 08:02 lista-de-donuts.txt

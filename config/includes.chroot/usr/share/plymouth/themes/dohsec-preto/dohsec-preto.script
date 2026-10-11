@@ -1,0 +1,3 @@
+// Tela preta enquanto o sistema sobe; o boot que a pessoa ve e o D'OH!BIOS do front
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);

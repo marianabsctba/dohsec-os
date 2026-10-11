@@ -1,0 +1,6 @@
+# crontab -l -u root  (usina-srv01)
+# m  h  dom mon dow  comando
+*/5  *  *   *   *    /usr/local/sbin/coleta-sensores.sh
+0    6  *   *   1-5  /usr/local/sbin/relatorio-turno.sh
+30   2  *   *   *    /usr/local/sbin/backup-reator.sh
+15   23 1   *   *    /usr/local/sbin/limpa-logs.sh

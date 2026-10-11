@@ -11,5 +11,5 @@ lb config noauto \
   --iso-application "DOHSec OS" \
   --iso-publisher "Be Safe Inc." \
   --iso-volume "DOHSEC_OS" \
-  --bootappend-live "boot=live components quiet splash username=homer user-fullname=Homer hostname=springfield locales=pt_BR.UTF-8 keyboard-layouts=br timezone=America/Sao_Paulo" \
+  --bootappend-live "boot=live components quiet splash username=homer user-fullname=Homer user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,bluetooth,sudo,adm,systemd-journal,wireshark hostname=springfield locales=pt_BR.UTF-8 keyboard-layouts=br timezone=America/Sao_Paulo" \
   "${@}"

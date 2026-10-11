@@ -1,0 +1,376 @@
+#!/usr/bin/env python3
+"""dohsec-api - servico local que liga o front do D'OH!Sec ao sistema de verdade.
+
+Escuta so em 127.0.0.1:7700. Entrega o front (com a ponte bridge.js injetada) e uma API
+JSON com dados reais: sistema, processos, rede, logs, busca (SIEM), permissoes, updates,
+arquivos, energia e o Laboratorio Springfield.
+
+Seguranca: toda chamada /api/ exige o cabecalho X-DOHSEC-Token (sorteado a cada sessao e
+entregue so dentro da pagina) e Host 127.0.0.1:7700 (evita DNS rebinding). Roda como o
+usuario da sessao, nunca como root.
+"""
+import hashlib
+import importlib.machinery
+import importlib.util
+import json
+import os
+import secrets
+import shutil
+import signal
+import subprocess
+import sys
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import parse_qs, urlparse
+
+HOST, PORTA = "127.0.0.1", 7700
+FRONT = Path("/usr/share/dohsec/academy/index.html")
+PONTE = Path("/usr/share/dohsec/front")
+XTERM = Path("/usr/share/nodejs")
+XTERM_PASTAS = ("xterm", "xterm-addon-fit")
+# A mesma chave vai para o dohsec-pty (terminal real); sem ela no ambiente, sorteia uma
+TOKEN = os.environ.get("DOHSEC_TOKEN") or secrets.token_hex(16)
+LIMITE_ARQUIVO = 256 * 1024
+
+
+def roda(cmd, timeout=10):
+    """Roda um comando e devolve a saida (ou o erro) como texto."""
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        return (r.stdout or "") + (r.stderr if r.returncode else "")
+    except FileNotFoundError:
+        return f"comando nao encontrado: {cmd[0]}\n"
+    except subprocess.TimeoutExpired:
+        return "tempo esgotado\n"
+
+
+def carrega_lab():
+    loader = importlib.machinery.SourceFileLoader("lab", "/usr/local/bin/lab")
+    spec = importlib.util.spec_from_loader("lab", loader)
+    modulo = importlib.util.module_from_spec(spec)
+    loader.exec_module(modulo)
+    return modulo
+
+
+# ---------------------------------------------------------------------------
+# Rotas
+# ---------------------------------------------------------------------------
+def api_sistema(q, corpo):
+    mem = {}
+    for linha in Path("/proc/meminfo").read_text().splitlines():
+        k, v = linha.split(":", 1)
+        mem[k] = int(v.split()[0])
+    uptime = float(Path("/proc/uptime").read_text().split()[0])
+    os_release = dict(
+        l.split("=", 1) for l in Path("/etc/os-release").read_text().splitlines() if "=" in l
+    )
+    return {
+        "sistema": os_release.get("PRETTY_NAME", "").strip('"'),
+        "host": os.uname().nodename,
+        "kernel": os.uname().release,
+        "usuario": os.environ.get("USER", ""),
+        "uptime_s": int(uptime),
+        "mem_total_mb": mem.get("MemTotal", 0) // 1024,
+        "mem_usada_mb": (mem.get("MemTotal", 0) - mem.get("MemAvailable", 0)) // 1024,
+        "cpus": os.cpu_count(),
+        "carga": os.getloadavg(),
+    }
+
+
+def api_processos(q, corpo):
+    saida = roda(["ps", "-eo", "pid,user,pcpu,pmem,stat,comm,args", "--sort=-pcpu", "--no-headers"])
+    procs = []
+    for linha in saida.splitlines()[:150]:
+        partes = linha.split(None, 6)
+        if len(partes) < 6:
+            continue
+        pid, user, cpu, mem, stat, comm = partes[:6]
+        procs.append({"pid": int(pid), "usuario": user, "cpu": float(cpu), "mem": float(mem),
+                      "estado": stat, "nome": comm, "comando": partes[6] if len(partes) > 6 else comm})
+    return {"processos": procs, "meu_usuario": os.environ.get("USER", "")}
+
+
+def api_encerrar(q, corpo):
+    pid = int(corpo.get("pid", 0))
+    if pid <= 1 or pid == os.getpid():
+        return {"ok": False, "erro": "Esse processo nao pode ser encerrado por aqui."}
+    try:
+        os.kill(pid, signal.SIGTERM)
+        return {"ok": True}
+    except PermissionError:
+        return {"ok": False, "erro": "Sem permissao: o processo e de outro usuario. Use sudo kill no terminal."}
+    except ProcessLookupError:
+        return {"ok": False, "erro": "O processo ja nao existe."}
+
+
+def api_rede(q, corpo):
+    return {
+        "interfaces": roda(["ip", "-brief", "address"]),
+        "rotas": roda(["ip", "route"]),
+        "dns": Path("/etc/resolv.conf").read_text() if Path("/etc/resolv.conf").exists() else "",
+        "conexoes": roda(["ss", "-tunap"]),
+        "escutando": roda(["ss", "-tlnp"]),
+    }
+
+
+def api_logs(q, corpo):
+    fonte = q.get("fonte", ["sistema"])[0]
+    linhas = q.get("linhas", ["300"])[0]
+    if fonte == "auth":
+        cmd = ["journalctl", "--no-pager", "-o", "short-iso", "-n", linhas,
+               "SYSLOG_FACILITY=4", "SYSLOG_FACILITY=10"]
+    elif fonte == "erros":
+        cmd = ["journalctl", "--no-pager", "-o", "short-iso", "-n", linhas, "-p", "warning"]
+    elif fonte == "kernel":
+        cmd = ["journalctl", "--no-pager", "-o", "short-iso", "-n", linhas, "-k"]
+    else:
+        cmd = ["journalctl", "--no-pager", "-o", "short-iso", "-n", linhas]
+    return {"fonte": fonte, "texto": roda(cmd)}
+
+
+def api_siem(q, corpo):
+    termo = q.get("q", [""])[0].strip()
+    if not termo:
+        return {"resultados": [], "erro": "Digite algo para buscar."}
+    resultados = []
+    # Journal do sistema
+    for linha in roda(["journalctl", "--no-pager", "-o", "short-iso", "-g", termo, "-n", "200",
+                       "--case-sensitive=false"]).splitlines():
+        if linha and not linha.startswith("-- "):
+            resultados.append({"fonte": "journal", "linha": linha})
+    # Evidencias do laboratorio (as do usuario e as originais)
+    pastas = [Path.home() / "springfield", Path("/var/log")]
+    for pasta in pastas:
+        if pasta.exists():
+            saida = roda(["grep", "-rniI", "--max-count=50", "--", termo, str(pasta)], timeout=15)
+            for linha in saida.splitlines()[:300]:
+                if ":" in linha:
+                    arq, resto = linha.split(":", 1)
+                    resultados.append({"fonte": arq, "linha": resto})
+    return {"termo": termo, "resultados": resultados[:500], "total": len(resultados)}
+
+
+def api_permissoes(q, corpo):
+    usuarios = []
+    for linha in Path("/etc/passwd").read_text().splitlines():
+        p = linha.split(":")
+        if len(p) >= 7 and (int(p[2]) == 0 or int(p[2]) >= 1000) and not p[6].endswith("nologin"):
+            usuarios.append({"nome": p[0], "uid": int(p[2]), "home": p[5], "shell": p[6]})
+    return {
+        "eu": roda(["id"]).strip(),
+        "usuarios": usuarios,
+        "sudo": roda(["sudo", "-n", "-l"]),
+        "home": roda(["ls", "-la", str(Path.home())]),
+        "suid": roda(["find", "/usr/bin", "/usr/sbin", "-perm", "-4000", "-type", "f"], timeout=15),
+    }
+
+
+def api_updates(q, corpo):
+    return {
+        "pendentes": roda(["apt", "list", "--upgradable"], timeout=30),
+        "comando": "sudo apt update && sudo apt upgrade",
+    }
+
+
+def caminho_seguro(c):
+    p = Path(c or str(Path.home())).expanduser()
+    return p.resolve()
+
+
+def api_arquivos(q, corpo):
+    p = caminho_seguro(q.get("caminho", [""])[0])
+    if not p.is_dir():
+        return {"erro": f"Nao e uma pasta: {p}"}
+    itens = []
+    try:
+        for f in sorted(p.iterdir(), key=lambda x: (not x.is_dir(), x.name.lower())):
+            try:
+                st = f.stat()
+                itens.append({"nome": f.name, "pasta": f.is_dir(), "tamanho": st.st_size,
+                              "modo": oct(st.st_mode)[-3:], "oculto": f.name.startswith(".")})
+            except OSError:
+                itens.append({"nome": f.name, "pasta": False, "tamanho": 0, "modo": "???", "oculto": False})
+    except PermissionError:
+        return {"erro": f"Sem permissao para abrir {p}"}
+    return {"caminho": str(p), "pai": str(p.parent), "itens": itens}
+
+
+def api_arquivo(q, corpo):
+    p = caminho_seguro(q.get("caminho", [""])[0])
+    if not p.is_file():
+        return {"erro": f"Nao e um arquivo: {p}"}
+    try:
+        dados = p.read_bytes()[:LIMITE_ARQUIVO]
+    except PermissionError:
+        return {"erro": f"Sem permissao para ler {p}"}
+    if b"\0" in dados[:4096]:
+        return {"caminho": str(p), "binario": True, "texto": roda(["file", str(p)])}
+    return {"caminho": str(p), "binario": False, "texto": dados.decode("utf-8", "replace"),
+            "cortado": p.stat().st_size > LIMITE_ARQUIVO}
+
+
+def api_energia(q, corpo):
+    acao = corpo.get("acao")
+    if acao == "desligar":
+        subprocess.Popen(["systemctl", "poweroff"])
+    elif acao == "reiniciar":
+        subprocess.Popen(["systemctl", "reboot"])
+    else:
+        return {"ok": False, "erro": "acao invalida"}
+    return {"ok": True}
+
+
+def api_lab(q, corpo):
+    lab = carrega_lab()
+    casos = lab.carrega_casos()
+    prog = lab.carrega_progresso()
+    itens = []
+    for i, c in enumerate(casos, 1):
+        e = prog.get(c["id"], {})
+        itens.append({"n": i, "id": c["id"], "titulo": c["titulo"], "trilha": c.get("trilha"),
+                      "nivel": c["nivel"], "pergunta": c["pergunta"], "total_dicas": len(c["dicas"]),
+                      "dicas": c["dicas"][:e.get("dicas", 0)],
+                      "iniciado": e.get("iniciado", False), "resolvido": e.get("resolvido", False),
+                      "aprendizado": c.get("aprendizado", []) if e.get("resolvido") else []})
+    return {"casos": itens, "trilhas": [{"id": t, "nome": n, "sub": s} for t, n, s in lab.TRILHAS]}
+
+
+def api_lab_iniciar(q, corpo):
+    lab = carrega_lab()
+    casos = lab.carrega_casos()
+    prog = lab.carrega_progresso()
+    n, c = lab.acha_caso(casos, str(corpo.get("n")))
+    destino = lab.TRABALHO / c["id"]
+    if not destino.exists():
+        shutil.copytree(lab.BASE / "casos" / c["id"], destino)
+    prog.setdefault(c["id"], {})["iniciado"] = True
+    lab.salva_progresso(prog)
+    return {"pasta": str(destino), "leiame": (destino / "LEIAME.md").read_text()}
+
+
+def api_lab_dica(q, corpo):
+    lab = carrega_lab()
+    casos = lab.carrega_casos()
+    prog = lab.carrega_progresso()
+    n, c = lab.acha_caso(casos, str(corpo.get("n")))
+    e = prog.setdefault(c["id"], {})
+    e["dicas"] = min(e.get("dicas", 0) + 1, len(c["dicas"]))
+    lab.salva_progresso(prog)
+    return {"dicas": c["dicas"][:e["dicas"]]}
+
+
+def api_lab_responder(q, corpo):
+    lab = carrega_lab()
+    casos = lab.carrega_casos()
+    prog = lab.carrega_progresso()
+    n, c = lab.acha_caso(casos, str(corpo.get("n")))
+    e = prog.setdefault(c["id"], {})
+    e["tentativas"] = e.get("tentativas", 0) + 1
+    certo = hashlib.sha256(lab.normaliza(str(corpo.get("resposta", ""))).encode()).hexdigest() == c["resposta"]
+    if certo:
+        e["resolvido"] = True
+    lab.salva_progresso(prog)
+    return {"certo": certo, "aprendizado": c.get("aprendizado", []) if certo else []}
+
+
+ROTAS_GET = {
+    "/api/sistema": api_sistema, "/api/processos": api_processos, "/api/rede": api_rede,
+    "/api/logs": api_logs, "/api/siem": api_siem, "/api/permissoes": api_permissoes,
+    "/api/updates": api_updates, "/api/arquivos": api_arquivos, "/api/arquivo": api_arquivo,
+    "/api/lab": api_lab,
+}
+ROTAS_POST = {
+    "/api/processos/encerrar": api_encerrar, "/api/energia": api_energia,
+    "/api/lab/iniciar": api_lab_iniciar, "/api/lab/dica": api_lab_dica,
+    "/api/lab/responder": api_lab_responder,
+}
+
+
+class Handler(BaseHTTPRequestHandler):
+    server_version = "dohsec-api"
+
+    def log_message(self, fmt, *args):
+        pass
+
+    def responde(self, status, corpo, tipo="application/json; charset=utf-8"):
+        dados = corpo if isinstance(corpo, bytes) else json.dumps(corpo, ensure_ascii=False).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", tipo)
+        self.send_header("Content-Length", str(len(dados)))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        if tipo.startswith("text/html"):
+            # So o proprio front pode embutir estas paginas
+            self.send_header("Content-Security-Policy", "frame-ancestors 'self'")
+        self.end_headers()
+        self.wfile.write(dados)
+
+    def host_ok(self):
+        return self.headers.get("Host") in (f"{HOST}:{PORTA}", f"localhost:{PORTA}")
+
+    def api_ok(self):
+        return self.host_ok() and secrets.compare_digest(self.headers.get("X-DOHSEC-Token", ""), TOKEN)
+
+    def do_GET(self):
+        url = urlparse(self.path)
+        if not self.host_ok():
+            return self.responde(403, {"erro": "host invalido"})
+        cfg = f'<script>window.DOHSEC_API={json.dumps({"token": TOKEN})};</script>'
+        if url.path in ("/", "/index.html"):
+            html = FRONT.read_text(encoding="utf-8")
+            injecao = (cfg + '<link rel="stylesheet" href="/front/bridge.css">'
+                       '<script src="/front/bridge.js"></script>')
+            html = html.replace("</body>", injecao + "</body>", 1)
+            return self.responde(200, html.encode(), "text/html; charset=utf-8")
+        if url.path == "/terminal":
+            html = (PONTE / "terminal.html").read_text(encoding="utf-8")
+            html = html.replace("</head>", cfg + "</head>", 1)
+            return self.responde(200, html.encode(), "text/html; charset=utf-8")
+        if url.path.startswith("/xterm/"):
+            arq = (XTERM / url.path[len("/xterm/"):]).resolve()
+            pasta_ok = any(str(arq).startswith(str(XTERM / p) + "/") for p in XTERM_PASTAS)
+            if not pasta_ok or arq.suffix not in (".js", ".css") or not arq.is_file():
+                return self.responde(404, {"erro": "nao encontrado"})
+            tipo = "text/javascript" if arq.suffix == ".js" else "text/css"
+            return self.responde(200, arq.read_bytes(), tipo + "; charset=utf-8")
+        if url.path.startswith("/front/"):
+            nome = url.path[len("/front/"):]
+            arq = (PONTE / nome).resolve()
+            if arq.parent != PONTE.resolve() or not arq.is_file():
+                return self.responde(404, {"erro": "nao encontrado"})
+            tipo = {"js": "text/javascript", "css": "text/css"}.get(arq.suffix[1:], "application/octet-stream")
+            return self.responde(200, arq.read_bytes(), tipo + "; charset=utf-8")
+        if url.path in ROTAS_GET:
+            if not self.api_ok():
+                return self.responde(403, {"erro": "sem autorizacao"})
+            try:
+                return self.responde(200, ROTAS_GET[url.path](parse_qs(url.query), {}))
+            except Exception as e:  # noqa: BLE001 - o front mostra o erro para a pessoa
+                return self.responde(500, {"erro": str(e)})
+        return self.responde(404, {"erro": "nao encontrado"})
+
+    def do_POST(self):
+        url = urlparse(self.path)
+        if url.path not in ROTAS_POST:
+            return self.responde(404, {"erro": "nao encontrado"})
+        if not self.api_ok():
+            return self.responde(403, {"erro": "sem autorizacao"})
+        try:
+            tam = int(self.headers.get("Content-Length", "0"))
+            corpo = json.loads(self.rfile.read(min(tam, 65536)) or b"{}")
+            return self.responde(200, ROTAS_POST[url.path](parse_qs(url.query), corpo))
+        except SystemExit as e:  # acha_caso do lab encerra com mensagem
+            return self.responde(400, {"erro": str(e)})
+        except Exception as e:  # noqa: BLE001
+            return self.responde(500, {"erro": str(e)})
+
+
+def main():
+    ThreadingHTTPServer.allow_reuse_address = True
+    srv = ThreadingHTTPServer((HOST, PORTA), Handler)
+    print(f"dohsec-api em http://{HOST}:{PORTA}/", file=sys.stderr)
+    srv.serve_forever()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,8 +1,10 @@
 #!/bin/sh
-# Sessao D'OH!Sec: o front do esboco e o sistema. Firefox em modo quiosque, em tela cheia,
-# reaberto se for fechado. Ctrl+Alt+T abre um terminal de verdade por cima.
+# Sessao D'OH!Sec: o front do esboco e o sistema. Sobe o servico local (dohsec-api) e o
+# terminal real (dohsec-pty), e abre o front em tela cheia no Firefox (modo quiosque),
+# reabrindo se for fechado. Ctrl+Alt+T abre um terminal tambem por fora do front.
 
-FRONT=file:///usr/share/dohsec/academy/index.html
+FRONT=http://127.0.0.1:7700/
+LOGS="${XDG_RUNTIME_DIR:-/tmp}"
 
 xset s off -dpms 2>/dev/null
 xsetroot -solid "#000000" 2>/dev/null
@@ -10,6 +12,20 @@ xsetroot -solid "#000000" 2>/dev/null
 # Gerenciador de janelas leve: o terminal do atalho e caixas de dialogo precisam de um
 xfwm4 --compositor=off >/dev/null 2>&1 &
 xbindkeys -f /etc/dohsec/xbindkeysrc >/dev/null 2>&1 &
+
+# Servico local e terminal real, so em 127.0.0.1, com uma chave sorteada a cada sessao.
+# O terminal so aceita conexoes da pagina do front que tenham essa chave.
+DOHSEC_TOKEN=$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
+export DOHSEC_TOKEN
+dohsec-api >"$LOGS/dohsec-api.log" 2>&1 &
+dohsec-pty >"$LOGS/dohsec-pty.log" 2>&1 &
+
+# Espera o servico responder antes de abrir o front
+i=0
+while [ $i -lt 40 ] && ! curl -s -o /dev/null "$FRONT"; do
+  sleep 0.25
+  i=$((i + 1))
+done
 
 while true; do
   firefox-esr --kiosk "$FRONT"

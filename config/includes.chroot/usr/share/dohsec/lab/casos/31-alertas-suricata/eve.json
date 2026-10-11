@@ -1,0 +1,332 @@
+{"timestamp": "2026-03-14T07:01:11", "event_type": "alert", "src_ip": "198.51.100.234", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:02:17", "event_type": "alert", "src_ip": "198.51.100.141", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:03:44", "event_type": "alert", "src_ip": "198.51.100.134", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:03:44", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:04:09", "event_type": "alert", "src_ip": "198.51.100.6", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:04:09", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:04:37", "event_type": "alert", "src_ip": "198.51.100.88", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:04:37", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:05:12", "event_type": "alert", "src_ip": "198.51.100.198", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:07:00", "event_type": "alert", "src_ip": "198.51.100.9", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:07:00", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:07:15", "event_type": "alert", "src_ip": "198.51.100.138", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:08:24", "event_type": "alert", "src_ip": "198.51.100.84", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:08:24", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:09:48", "event_type": "alert", "src_ip": "198.51.100.205", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:09:48", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:10:30", "event_type": "alert", "src_ip": "198.51.100.203", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T07:10:30", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:11:13", "event_type": "alert", "src_ip": "198.51.100.129", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:11:23", "event_type": "alert", "src_ip": "198.51.100.126", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:11:42", "event_type": "alert", "src_ip": "198.51.100.116", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:13:16", "event_type": "alert", "src_ip": "198.51.100.56", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:13:32", "event_type": "alert", "src_ip": "198.51.100.8", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:13:59", "event_type": "alert", "src_ip": "198.51.100.230", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:14:54", "event_type": "alert", "src_ip": "198.51.100.226", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:15:26", "event_type": "alert", "src_ip": "198.51.100.136", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T07:15:40", "event_type": "alert", "src_ip": "198.51.100.96", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:17:04", "event_type": "alert", "src_ip": "198.51.100.58", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T07:17:04", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:18:38", "event_type": "alert", "src_ip": "198.51.100.119", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:18:38", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:20:21", "event_type": "alert", "src_ip": "198.51.100.68", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:20:21", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:20:27", "event_type": "alert", "src_ip": "198.51.100.189", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:21:19", "event_type": "alert", "src_ip": "198.51.100.227", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:21:25", "event_type": "alert", "src_ip": "198.51.100.132", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T07:21:25", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:22:32", "event_type": "alert", "src_ip": "198.51.100.119", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:22:58", "event_type": "alert", "src_ip": "198.51.100.102", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:24:05", "event_type": "alert", "src_ip": "198.51.100.157", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:24:05", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:25:11", "event_type": "alert", "src_ip": "198.51.100.4", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:26:53", "event_type": "alert", "src_ip": "198.51.100.59", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:28:47", "event_type": "alert", "src_ip": "198.51.100.6", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:29:45", "event_type": "alert", "src_ip": "198.51.100.42", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:31:16", "event_type": "alert", "src_ip": "198.51.100.75", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:31:16", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:31:21", "event_type": "alert", "src_ip": "198.51.100.16", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:33:07", "event_type": "alert", "src_ip": "198.51.100.144", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:33:07", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:34:04", "event_type": "alert", "src_ip": "198.51.100.10", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:35:17", "event_type": "alert", "src_ip": "198.51.100.234", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:35:17", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:37:06", "event_type": "alert", "src_ip": "198.51.100.241", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:37:41", "event_type": "alert", "src_ip": "198.51.100.218", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:39:24", "event_type": "alert", "src_ip": "198.51.100.11", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:40:04", "event_type": "alert", "src_ip": "198.51.100.245", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T07:40:04", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:40:10", "event_type": "alert", "src_ip": "198.51.100.96", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:41:20", "event_type": "alert", "src_ip": "198.51.100.218", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T07:43:14", "event_type": "alert", "src_ip": "198.51.100.88", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:45:08", "event_type": "alert", "src_ip": "198.51.100.17", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:45:08", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:45:49", "event_type": "alert", "src_ip": "198.51.100.115", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:47:15", "event_type": "alert", "src_ip": "198.51.100.127", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:49:01", "event_type": "alert", "src_ip": "198.51.100.111", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T07:49:01", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:50:48", "event_type": "alert", "src_ip": "198.51.100.217", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:52:27", "event_type": "alert", "src_ip": "198.51.100.81", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:54:03", "event_type": "alert", "src_ip": "198.51.100.171", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T07:54:21", "event_type": "alert", "src_ip": "198.51.100.4", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:54:37", "event_type": "alert", "src_ip": "198.51.100.71", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:54:37", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T07:56:18", "event_type": "alert", "src_ip": "198.51.100.76", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:56:54", "event_type": "alert", "src_ip": "198.51.100.115", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:58:38", "event_type": "alert", "src_ip": "198.51.100.173", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T07:59:56", "event_type": "alert", "src_ip": "198.51.100.15", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T07:59:56", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:00:25", "event_type": "alert", "src_ip": "198.51.100.30", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:02:11", "event_type": "alert", "src_ip": "198.51.100.59", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:02:24", "event_type": "alert", "src_ip": "198.51.100.22", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:04:24", "event_type": "alert", "src_ip": "198.51.100.87", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:04:24", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:04:49", "event_type": "alert", "src_ip": "198.51.100.61", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:05:59", "event_type": "alert", "src_ip": "198.51.100.184", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:07:26", "event_type": "alert", "src_ip": "198.51.100.243", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:08:39", "event_type": "alert", "src_ip": "198.51.100.240", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:08:39", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:10:11", "event_type": "alert", "src_ip": "198.51.100.78", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:10:11", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:10:48", "event_type": "alert", "src_ip": "198.51.100.151", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:10:48", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:12:13", "event_type": "alert", "src_ip": "198.51.100.78", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:13:31", "event_type": "alert", "src_ip": "198.51.100.77", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:13:45", "event_type": "alert", "src_ip": "198.51.100.115", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:14:41", "event_type": "alert", "src_ip": "198.51.100.124", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:16:26", "event_type": "alert", "src_ip": "198.51.100.217", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:17:23", "event_type": "alert", "src_ip": "198.51.100.32", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:17:23", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:19:07", "event_type": "alert", "src_ip": "198.51.100.112", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:19:35", "event_type": "alert", "src_ip": "198.51.100.141", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:21:18", "event_type": "alert", "src_ip": "198.51.100.204", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:23:05", "event_type": "alert", "src_ip": "198.51.100.98", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:24:39", "event_type": "alert", "src_ip": "198.51.100.50", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:24:48", "event_type": "alert", "src_ip": "198.51.100.178", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:24:48", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:26:13", "event_type": "alert", "src_ip": "198.51.100.28", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:27:59", "event_type": "alert", "src_ip": "198.51.100.210", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:29:03", "event_type": "alert", "src_ip": "198.51.100.193", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:29:20", "event_type": "alert", "src_ip": "198.51.100.98", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:29:51", "event_type": "alert", "src_ip": "198.51.100.8", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:29:51", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:31:42", "event_type": "alert", "src_ip": "198.51.100.44", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:31:42", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:32:24", "event_type": "alert", "src_ip": "198.51.100.190", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:32:24", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:33:37", "event_type": "alert", "src_ip": "198.51.100.127", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:35:12", "event_type": "alert", "src_ip": "198.51.100.36", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:36:13", "event_type": "alert", "src_ip": "198.51.100.40", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:36:13", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:36:41", "event_type": "alert", "src_ip": "198.51.100.3", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:37:04", "event_type": "alert", "src_ip": "198.51.100.234", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:38:49", "event_type": "alert", "src_ip": "198.51.100.30", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:38:49", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:40:35", "event_type": "alert", "src_ip": "198.51.100.55", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:40:35", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:41:12", "event_type": "alert", "src_ip": "198.51.100.80", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:41:59", "event_type": "alert", "src_ip": "198.51.100.246", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:43:45", "event_type": "alert", "src_ip": "198.51.100.191", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:43:54", "event_type": "alert", "src_ip": "198.51.100.42", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:44:42", "event_type": "alert", "src_ip": "198.51.100.54", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:45:09", "event_type": "alert", "src_ip": "198.51.100.41", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:45:24", "event_type": "alert", "src_ip": "198.51.100.30", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:45:47", "event_type": "alert", "src_ip": "198.51.100.136", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:45:47", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:46:14", "event_type": "alert", "src_ip": "198.51.100.143", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:48:00", "event_type": "alert", "src_ip": "198.51.100.225", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:48:17", "event_type": "alert", "src_ip": "198.51.100.65", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:49:31", "event_type": "alert", "src_ip": "198.51.100.154", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:51:08", "event_type": "alert", "src_ip": "198.51.100.30", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:51:37", "event_type": "alert", "src_ip": "198.51.100.21", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T08:51:37", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:52:50", "event_type": "alert", "src_ip": "198.51.100.136", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:54:23", "event_type": "alert", "src_ip": "198.51.100.132", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:55:37", "event_type": "alert", "src_ip": "198.51.100.42", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:55:37", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:57:19", "event_type": "alert", "src_ip": "198.51.100.113", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T08:57:47", "event_type": "alert", "src_ip": "198.51.100.217", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:59:41", "event_type": "alert", "src_ip": "198.51.100.144", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T08:59:41", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T08:59:57", "event_type": "alert", "src_ip": "198.51.100.100", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T08:59:57", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:01:48", "event_type": "alert", "src_ip": "198.51.100.47", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:01:48", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:02:45", "event_type": "alert", "src_ip": "198.51.100.229", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:02:45", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:02:58", "event_type": "alert", "src_ip": "198.51.100.168", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T09:04:54", "event_type": "alert", "src_ip": "198.51.100.93", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:04:54", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:06:20", "event_type": "alert", "src_ip": "198.51.100.179", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:08:01", "event_type": "alert", "src_ip": "198.51.100.226", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:08:43", "event_type": "alert", "src_ip": "198.51.100.236", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:08:43", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:09:32", "event_type": "alert", "src_ip": "198.51.100.213", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:09:55", "event_type": "alert", "src_ip": "198.51.100.138", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:10:01", "event_type": "alert", "src_ip": "198.51.100.13", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:11:53", "event_type": "alert", "src_ip": "198.51.100.141", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:13:12", "event_type": "alert", "src_ip": "198.51.100.9", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:13:45", "event_type": "alert", "src_ip": "198.51.100.119", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:13:45", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:14:50", "event_type": "alert", "src_ip": "198.51.100.134", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:14:50", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:15:01", "event_type": "alert", "src_ip": "198.51.100.243", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:16:30", "event_type": "alert", "src_ip": "198.51.100.113", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:17:13", "event_type": "alert", "src_ip": "198.51.100.119", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:17:13", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:19:09", "event_type": "alert", "src_ip": "198.51.100.9", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:20:06", "event_type": "alert", "src_ip": "198.51.100.25", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:21:07", "event_type": "alert", "src_ip": "198.51.100.15", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:21:55", "event_type": "alert", "src_ip": "198.51.100.193", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:21:55", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:22:57", "event_type": "alert", "src_ip": "198.51.100.61", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:22:57", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:24:16", "event_type": "alert", "src_ip": "198.51.100.44", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:24:52", "event_type": "alert", "src_ip": "198.51.100.139", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:24:52", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:26:50", "event_type": "alert", "src_ip": "198.51.100.3", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:28:39", "event_type": "alert", "src_ip": "198.51.100.147", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T09:29:50", "event_type": "alert", "src_ip": "198.51.100.243", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T09:30:12", "event_type": "alert", "src_ip": "198.51.100.151", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:30:30", "event_type": "alert", "src_ip": "198.51.100.27", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:31:36", "event_type": "alert", "src_ip": "198.51.100.4", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:31:36", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:32:20", "event_type": "alert", "src_ip": "198.51.100.186", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T09:33:26", "event_type": "alert", "src_ip": "198.51.100.6", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:33:35", "event_type": "alert", "src_ip": "198.51.100.41", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:34:32", "event_type": "alert", "src_ip": "198.51.100.20", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T09:34:32", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:36:02", "event_type": "alert", "src_ip": "198.51.100.207", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:36:02", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:36:25", "event_type": "alert", "src_ip": "198.51.100.114", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:36:25", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:36:44", "event_type": "alert", "src_ip": "198.51.100.18", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:36:44", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:38:33", "event_type": "alert", "src_ip": "198.51.100.108", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:39:48", "event_type": "alert", "src_ip": "198.51.100.116", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:40:34", "event_type": "alert", "src_ip": "198.51.100.114", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T09:40:34", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:42:24", "event_type": "alert", "src_ip": "198.51.100.191", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:42:24", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:43:42", "event_type": "alert", "src_ip": "198.51.100.163", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:43:42", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:44:43", "event_type": "alert", "src_ip": "198.51.100.194", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:45:14", "event_type": "alert", "src_ip": "198.51.100.249", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:45:14", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:46:02", "event_type": "alert", "src_ip": "198.51.100.46", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:47:21", "event_type": "alert", "src_ip": "198.51.100.17", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:47:21", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:48:02", "event_type": "alert", "src_ip": "198.51.100.198", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:48:02", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:48:29", "event_type": "alert", "src_ip": "198.51.100.48", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:50:20", "event_type": "alert", "src_ip": "198.51.100.58", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:50:31", "event_type": "alert", "src_ip": "198.51.100.20", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:50:31", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:51:50", "event_type": "alert", "src_ip": "198.51.100.233", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T09:52:51", "event_type": "alert", "src_ip": "198.51.100.105", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:54:36", "event_type": "alert", "src_ip": "198.51.100.101", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:55:44", "event_type": "alert", "src_ip": "198.51.100.181", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T09:55:44", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:57:04", "event_type": "alert", "src_ip": "198.51.100.187", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:57:04", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T09:58:19", "event_type": "alert", "src_ip": "198.51.100.26", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T09:59:29", "event_type": "alert", "src_ip": "198.51.100.34", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:00:42", "event_type": "alert", "src_ip": "198.51.100.233", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:02:25", "event_type": "alert", "src_ip": "198.51.100.221", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:02:25", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:03:20", "event_type": "alert", "src_ip": "198.51.100.164", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:04:26", "event_type": "alert", "src_ip": "198.51.100.52", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:06:21", "event_type": "alert", "src_ip": "198.51.100.27", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:07:05", "event_type": "alert", "src_ip": "198.51.100.156", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:09:02", "event_type": "alert", "src_ip": "198.51.100.214", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:09:02", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:09:46", "event_type": "alert", "src_ip": "198.51.100.55", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:11:14", "event_type": "alert", "src_ip": "198.51.100.110", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:11:14", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:12:55", "event_type": "alert", "src_ip": "198.51.100.114", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:13:47", "event_type": "alert", "src_ip": "198.51.100.208", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:13:47", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:14:09", "event_type": "alert", "src_ip": "198.51.100.148", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:14:09", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:15:51", "event_type": "alert", "src_ip": "198.51.100.244", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:16:47", "event_type": "alert", "src_ip": "198.51.100.27", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:18:30", "event_type": "alert", "src_ip": "198.51.100.218", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:20:05", "event_type": "alert", "src_ip": "198.51.100.82", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T10:21:16", "event_type": "alert", "src_ip": "198.51.100.45", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:21:16", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:23:06", "event_type": "alert", "src_ip": "198.51.100.36", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:23:57", "event_type": "alert", "src_ip": "198.51.100.194", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:23:57", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:24:30", "event_type": "alert", "src_ip": "198.51.100.46", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:25:07", "event_type": "alert", "src_ip": "198.51.100.110", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T10:25:22", "event_type": "alert", "src_ip": "198.51.100.215", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:25:44", "event_type": "alert", "src_ip": "198.51.100.184", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:26:06", "event_type": "alert", "src_ip": "198.51.100.223", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:26:21", "event_type": "alert", "src_ip": "198.51.100.75", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:27:20", "event_type": "alert", "src_ip": "198.51.100.143", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:28:14", "event_type": "alert", "src_ip": "198.51.100.142", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:29:05", "event_type": "alert", "src_ip": "198.51.100.178", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:30:43", "event_type": "alert", "src_ip": "198.51.100.135", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:30:48", "event_type": "alert", "src_ip": "198.51.100.50", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:30:48", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:32:40", "event_type": "alert", "src_ip": "198.51.100.53", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:33:52", "event_type": "alert", "src_ip": "198.51.100.157", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:34:30", "event_type": "alert", "src_ip": "198.51.100.196", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:34:30", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:34:44", "event_type": "alert", "src_ip": "198.51.100.114", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:36:17", "event_type": "alert", "src_ip": "198.51.100.203", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:37:47", "event_type": "alert", "src_ip": "198.51.100.192", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:38:04", "event_type": "alert", "src_ip": "198.51.100.209", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:39:29", "event_type": "alert", "src_ip": "198.51.100.72", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:40:37", "event_type": "alert", "src_ip": "198.51.100.5", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:40:56", "event_type": "alert", "src_ip": "198.51.100.3", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:40:56", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:42:53", "event_type": "alert", "src_ip": "198.51.100.229", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:42:53", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:43:38", "event_type": "alert", "src_ip": "198.51.100.183", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:45:02", "event_type": "alert", "src_ip": "198.51.100.87", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:45:02", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:46:29", "event_type": "alert", "src_ip": "198.51.100.82", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:47:19", "event_type": "alert", "src_ip": "198.51.100.13", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:48:24", "event_type": "alert", "src_ip": "198.51.100.231", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:48:49", "event_type": "alert", "src_ip": "198.51.100.5", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:48:49", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:50:41", "event_type": "alert", "src_ip": "198.51.100.11", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:52:41", "event_type": "alert", "src_ip": "198.51.100.114", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:52:49", "event_type": "alert", "src_ip": "198.51.100.215", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:54:34", "event_type": "alert", "src_ip": "198.51.100.160", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:54:34", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:54:45", "event_type": "alert", "src_ip": "198.51.100.122", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:54:45", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:56:26", "event_type": "alert", "src_ip": "198.51.100.156", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T10:56:50", "event_type": "alert", "src_ip": "198.51.100.65", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T10:57:50", "event_type": "alert", "src_ip": "198.51.100.67", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T10:57:50", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T10:58:29", "event_type": "alert", "src_ip": "198.51.100.250", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T10:58:57", "event_type": "alert", "src_ip": "198.51.100.234", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:00:44", "event_type": "alert", "src_ip": "198.51.100.238", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:00:44", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T11:01:30", "event_type": "alert", "src_ip": "198.51.100.231", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:03:01", "event_type": "alert", "src_ip": "198.51.100.18", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T11:04:53", "event_type": "alert", "src_ip": "198.51.100.50", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:06:18", "event_type": "alert", "src_ip": "198.51.100.84", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T11:07:40", "event_type": "alert", "src_ip": "198.51.100.202", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T11:07:40", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T11:07:53", "event_type": "alert", "src_ip": "198.51.100.111", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T11:09:02", "event_type": "alert", "src_ip": "198.51.100.195", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T11:10:38", "event_type": "alert", "src_ip": "198.51.100.90", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2210054, "signature": "SURICATA STREAM excessive retransmissions", "severity": 2}}
+{"timestamp": "2026-03-14T11:11:10", "event_type": "alert", "src_ip": "198.51.100.205", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:12:22", "event_type": "alert", "src_ip": "198.51.100.116", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:13:56", "event_type": "alert", "src_ip": "198.51.100.132", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:15:43", "event_type": "alert", "src_ip": "198.51.100.222", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:16:23", "event_type": "alert", "src_ip": "198.51.100.244", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:16:23", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T11:17:50", "event_type": "alert", "src_ip": "198.51.100.37", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:17:50", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T11:19:11", "event_type": "alert", "src_ip": "198.51.100.203", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T11:19:11", "event_type": "flow", "src_ip": "10.20.5.14"}
+{"timestamp": "2026-03-14T11:19:34", "event_type": "alert", "src_ip": "198.51.100.230", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T11:21:21", "event_type": "alert", "src_ip": "198.51.100.96", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2001219, "signature": "ET SCAN Potential SSH Scan", "severity": 2}}
+{"timestamp": "2026-03-14T11:22:24", "event_type": "alert", "src_ip": "198.51.100.8", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}
+{"timestamp": "2026-03-14T11:24:03", "event_type": "alert", "src_ip": "198.51.100.160", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2013028, "signature": "ET POLICY curl User-Agent Outbound", "severity": 2}}
+{"timestamp": "2026-03-14T11:25:34", "event_type": "alert", "src_ip": "198.51.100.105", "dest_ip": "10.20.5.14", "alert": {"signature_id": 2027865, "signature": "ET INFO Observed DNS Query to .cloud TLD", "severity": 2}}

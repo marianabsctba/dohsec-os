@@ -1,0 +1,93 @@
+/* Estilos dos apps reais do D'OH!Sec OS, no visual do front */
+.window[data-id^="terminal"] .content {
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #1b1708;
+}
+.dohsec-term {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #1b1708;
+}
+.dohsec-pre {
+  background: #1b1708;
+  color: #fff6d7;
+  font: 12px/1.45 'Share Tech Mono', 'DejaVu Sans Mono', monospace;
+  padding: 10px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 360px;
+  overflow: auto;
+}
+.dohsec-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.dohsec-tabela th {
+  text-align: left;
+  background: #ffd84d;
+  padding: 4px 6px;
+  position: sticky;
+  top: 0;
+}
+.dohsec-tabela td {
+  padding: 3px 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dohsec-mono {
+  font-family: 'Share Tech Mono', 'DejaVu Sans Mono', monospace;
+}
+.dohsec-linha {
+  cursor: pointer;
+}
+.dohsec-linha:hover {
+  background: rgba(47, 125, 246, .12);
+}
+.dohsec-mini {
+  padding: 2px 8px !important;
+  font-size: 12px !important;
+}
+.dohsec-ativo {
+  background: #2f7df6 !important;
+  color: #fff !important;
+}
+.dohsec-barra {
+  margin: 6px 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dohsec-dica {
+  color: #5b3518;
+  font-size: 12px;
+}
+.dohsec-caso {
+  border: 2px solid #e8d9a8;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 6px 0;
+  background: #fffdf3;
+}
+.dohsec-caso.dohsec-ok {
+  border-color: #3bb273;
+}
+.dohsec-energia {
+  border-top: 1px solid rgba(0, 0, 0, .15);
+  margin-top: 6px;
+  padding-top: 6px;
+}
+/* Menu Iniciar e barra de tarefas sempre acima das janelas (o z-index delas so cresce) */
+.taskbar {
+  z-index: 2147483000 !important;
+}
+#startmenu {
+  z-index: 2147483001 !important;
+}
