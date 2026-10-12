@@ -12,13 +12,19 @@ vai de **Estagiário** a **Assistente do Sr. Burns** resolvendo 48 casos de resp
 
 ## Formatos
 
-| Formato | Arquivo | Para quê |
-| --- | --- | --- |
-| Disco para VMware | `vm/dohsec-os.vmx` | **o jeito recomendado**: sistema instalado, progresso salvo entre reinícios |
-| ISO live | `dohsec-os-amd64.hybrid.iso` | testar em qualquer VM ou pendrive (Ventoy); roda da memória e não guarda nada ao desligar |
-| WSL | `dohsec-os.wsl` | terminal e Laboratório dentro do Windows |
+Para usar, **não precisa clonar este repositório**: baixe o arquivo pronto na página de
+[Releases](https://github.com/marianabsctba/dohsec-os/releases) e siga o passo a passo do formato.
 
-Os três saem do mesmo código com `build.sh` (veja [Gerar](#gerar)).
+| Formato | Arquivo (em Releases) | Para quê | Guarda o progresso? |
+| --- | --- | --- | --- |
+| WSL | `dohsec-os.wsl` | terminal e Laboratório dentro do Windows, sem máquina virtual | ✅ sim |
+| ISO | `dohsec-os-amd64.hybrid.iso` | a experiência completa (desktop, apps, sons) numa máquina virtual ou pendrive | ❌ não, recomeça a cada boot |
+
+Passo a passo: [Instalar no WSL](#instalar-no-wsl-passo-a-passo) e
+[Rodar a ISO numa máquina virtual](#rodar-a-iso-numa-máquina-virtual-passo-a-passo).
+
+Quem gera a partir do código também pode criar um **disco instalado para o VMware** (`build.sh disco`),
+que tem a experiência completa e guarda o progresso. Ele não vai para Releases por ser grande demais.
 
 ## Como é
 
@@ -120,38 +126,79 @@ Cada caso novo deve ter a própria semente (veja `lab_esboco.py`) para não muda
 | `donut` | donut 3D girando |
 | `noturno on` / `off` / `auto` | papel de parede noturno com estrelas piscando (só na ISO e no disco) |
 
-## Rodar no VMware
+## Instalar no WSL (passo a passo)
 
-1. **Player → File → Open...** e escolha `vm/dohsec-os.vmx`.
-2. **Play**. O sistema entra direto, sem pedir senha (usuário `homer`, senha `donut`; troque com `passwd`).
+O D'OH!Sec instala como uma **distro separada**: não precisa clonar o repositório nem abrir o Ubuntu
+que você já tenha, e ele não é alterado. Tudo é feito no Windows.
 
-A VM usa UEFI, 4 GB de RAM e 2 CPUs. Para levar as mudanças do código para uma VM já criada sem perder
-o progresso, ligue a VM e rode `scripts/atualiza-vm.sh` no Git Bash: ele copia programas, front e
-casos, e reinicia a VM.
+1. **Baixe** o `dohsec-os.wsl` em [Releases](https://github.com/marianabsctba/dohsec-os/releases).
+   Ele vai para a pasta Downloads.
+2. **Abra o PowerShell** (ou o Windows Terminal) e atualize o WSL. Precisa da versão 2.4.4 ou mais nova:
 
-## Rodar a ISO
+   ```powershell
+   wsl --update
+   ```
 
-Em qualquer VM (Hyper-V, VirtualBox, VMware) com 4 GB de RAM, aponte o CD para a ISO. No QEMU:
+3. **Instale**: dê dois cliques no `dohsec-os.wsl` baixado, ou rode no PowerShell:
+
+   ```powershell
+   wsl --install --from-file "$env:USERPROFILE\Downloads\dohsec-os.wsl"
+   ```
+
+4. **Primeiro uso**: abre um terminal pedindo um usuário (Enter aceita `homer`) e uma senha, digitada
+   duas vezes. A senha não aparece enquanto você digita: é normal.
+5. **Pronto.** Para abrir de novo: menu Iniciar → **DOHSec-OS**, ou o perfil **DOHSec-OS** no Windows
+   Terminal, ou no PowerShell:
+
+   ```powershell
+   wsl -d DOHSec-OS
+   ```
+
+6. **Comece pelo Laboratório**: digite `lab` e depois `lab iniciar 1`.
+
+Vem com o terminal temático, o Laboratório, `oque`, `cola`, `relatorio` e `conquistas`. O desktop do
+front, os apps e os sons são da ISO; no WSL, `academy` abre o esboço original numa janela.
+As ferramentas de análise dos casos mais avançados não vêm na imagem do WSL. Para instalar:
 
 ```bash
-qemu-system-x86_64 -m 4096 -enable-kvm -cdrom dohsec-os-amd64.hybrid.iso
+sudo apt update && sudo apt install -y jq tshark yara libimage-exiftool-perl binwalk sleuthkit xxd bind9-dnsutils
 ```
 
-A ISO roda da memória: ao desligar, o progresso some. Para guardar, use o disco do VMware.
-Se a VM mostrar "Network boot from Intel E1000", ela não achou a ISO no CD: confira o caminho do
-arquivo nas configurações do CD (e não troque a ISO com a VM suspensa).
+(se o `tshark` perguntar se usuários comuns podem capturar pacotes, responda **Não**)
 
-## Instalar no WSL
+Para desinstalar (apaga a distro e o progresso dela):
 
-Dois cliques no `dohsec-os.wsl`, ou:
-
-```bash
-wsl --install --from-file dohsec-os.wsl
+```powershell
+wsl --unregister DOHSec-OS
 ```
 
-Precisa do WSL 2.4.4 ou mais novo. Vem com o terminal temático, o Laboratório, `oque`, `cola`,
-`relatorio` e `conquistas`; o front do esboço abre no Windows com `academy` (WSLg). As ferramentas de
-análise não vêm na imagem do WSL: instale as que precisar com `sudo apt install`.
+## Rodar a ISO numa máquina virtual (passo a passo)
+
+1. **Baixe** a `dohsec-os-amd64.hybrid.iso` em [Releases](https://github.com/marianabsctba/dohsec-os/releases).
+2. **Crie uma máquina virtual nova** no programa que você usa:
+   - **VMware Workstation Player**: *Create a New Virtual Machine* → *Installer disc image file (iso)* →
+     escolha a ISO → sistema *Linux / Debian 12.x 64-bit* → 20 GB de disco (não é usado) → em
+     *Customize Hardware*, **4 GB de memória** e confirme que há *Sound Card*.
+   - **VirtualBox**: *Novo* → tipo *Linux*, versão *Debian (64-bit)* → **4096 MB** de memória → sem disco
+     → em *Configurações → Armazenamento*, coloque a ISO no drive óptico; em *Áudio*, deixe habilitado.
+   - **QEMU**: `qemu-system-x86_64 -m 4096 -enable-kvm -cdrom dohsec-os-amd64.hybrid.iso`
+3. **Ligue a VM.** Ela vai direto para o **D'OH!BIOS**. Escolha *Inicializar com efeitos sonoros* para
+   ter a música (dá para ligar e desligar depois no 🔇/🔊 da bandeja).
+4. **Login**: digite seu nome (vai para o certificado) e clique em *Entrar no desktop*.
+
+A ISO roda da memória: **ao desligar, o progresso some**. Para guardar o progresso, use o WSL ou o
+disco do VMware.
+Se a VM mostrar "Network boot from Intel E1000", ela não achou a ISO: confira o caminho do arquivo nas
+configurações do CD (e não troque a ISO com a VM suspensa).
+
+Também roda de pendrive: instale o [Ventoy](https://www.ventoy.net) no pendrive e copie a ISO para ele.
+
+## Disco instalado para o VMware (quem gera a partir do código)
+
+Depois de `build.sh iso` e `build.sh disco`, abra no VMware **Player → File → Open...** e escolha
+`vm/dohsec-os.vmx`. O sistema entra direto, sem pedir senha (usuário `homer`, senha `donut`; troque com
+`passwd`). A VM usa UEFI, 4 GB de RAM e 2 CPUs. Para levar as mudanças do código para uma VM já criada
+sem perder o progresso, ligue a VM e rode `scripts/atualiza-vm.sh` no Git Bash.
 
 ## Gerar
 
