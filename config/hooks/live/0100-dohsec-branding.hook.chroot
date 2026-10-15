@@ -66,4 +66,5 @@ fi
 chmod 755 /usr/local/bin/doh /usr/local/bin/donut /usr/local/bin/dohsec-session \
   /usr/local/bin/dohsec-ceu /usr/local/bin/noturno /usr/local/bin/lab /usr/local/bin/dohsec-shell /usr/local/bin/dohsec-terminal \
   /usr/local/bin/dohsec-api /usr/local/bin/dohsec-term /usr/local/bin/dohsec-pty \
-  /usr/local/bin/oque /usr/local/bin/cola /usr/local/bin/relatorio /usr/local/bin/conquistas
+  /usr/local/bin/oque /usr/local/bin/cola /usr/local/bin/relatorio /usr/local/bin/conquistas \
+  /usr/local/bin/dohsec-persistencia

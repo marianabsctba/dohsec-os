@@ -90,6 +90,9 @@ def api_sistema(q, corpo):
         "mem_usada_mb": (mem.get("MemTotal", 0) - mem.get("MemAvailable", 0)) // 1024,
         "cpus": os.cpu_count(),
         "carga": os.getloadavg(),
+        # ISO live: sem persistencia o progresso some ao desligar (o front avisa)
+        "live": Path("/run/live/medium").exists(),
+        "persistente": "/run/live/persistence/" in Path("/proc/mounts").read_text(),
     }
 
 

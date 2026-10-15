@@ -18,7 +18,7 @@ Para usar, **não precisa clonar este repositório**: baixe o arquivo pronto na 
 | Formato | Arquivo (em Releases) | Para quê | Guarda o progresso? |
 | --- | --- | --- | --- |
 | WSL | `dohsec-os.wsl` | terminal e Laboratório dentro do Windows, sem máquina virtual | ✅ sim |
-| ISO | `dohsec-os-amd64.hybrid.iso` | a experiência completa (desktop, apps, sons) numa máquina virtual ou pendrive | ❌ não, recomeça a cada boot |
+| ISO | `dohsec-os-amd64.hybrid.iso` | a experiência completa (desktop, apps, sons) numa máquina virtual ou pendrive | só com a [persistência](#guardar-o-progresso-na-iso-persistência) ligada |
 
 Passo a passo: [Instalar no WSL](#instalar-no-wsl-passo-a-passo) e
 [Rodar a ISO numa máquina virtual](#rodar-a-iso-numa-máquina-virtual-passo-a-passo).
@@ -125,6 +125,7 @@ Cada caso novo deve ter a própria semente (veja `lab_esboco.py`) para não muda
 | `conquistas` | as medalhas ganhas e o que falta |
 | `donut` | donut 3D girando |
 | `noturno on` / `off` / `auto` | papel de parede noturno com estrelas piscando (só na ISO e no disco) |
+| `sudo dohsec-persistencia` | na ISO, prepara um disco vazio para guardar o progresso ([como](#guardar-o-progresso-na-iso-persistência)) |
 
 ## Instalar no WSL (passo a passo)
 
@@ -186,12 +187,36 @@ wsl --unregister DOHSec-OS
    ter a música (dá para ligar e desligar depois no 🔇/🔊 da bandeja).
 4. **Login**: digite seu nome (vai para o certificado) e clique em *Entrar no desktop*.
 
-A ISO roda da memória: **ao desligar, o progresso some**. Para guardar o progresso, use o WSL ou o
-disco do VMware.
+A ISO roda da memória: **ao desligar, o progresso some**, a não ser que você ligue a persistência
+(abaixo). Enquanto não estiver ligada, o sistema avisa ao entrar no desktop.
 Se a VM mostrar "Network boot from Intel E1000", ela não achou a ISO: confira o caminho do arquivo nas
 configurações do CD (e não troque a ISO com a VM suspensa).
 
 Também roda de pendrive: instale o [Ventoy](https://www.ventoy.net) no pendrive e copie a ISO para ele.
+
+### Guardar o progresso na ISO (persistência)
+
+A ISO procura, a cada boot, um espaço chamado `persistence`. Se achar, tudo o que mudar (nome, casos,
+medalhas, relatórios, arquivos) fica salvo nele. Para criar esse espaço numa máquina virtual:
+
+1. **Desligue a VM** e adicione um **segundo disco, vazio**, de 8 GB ou mais:
+   - VMware: *Edit virtual machine settings* → *Add...* → *Hard Disk* → *Create a new virtual disk*
+   - VirtualBox: *Configurações* → *Armazenamento* → no controlador, *Adicionar disco rígido* → *Criar*
+2. **Ligue a VM** (pela ISO, como sempre), abra o **Terminal** e rode:
+
+   ```bash
+   sudo dohsec-persistencia
+   ```
+
+   Ele acha o disco vazio, mostra qual é e pede para você digitar `SIM`. Por segurança, só aceita disco
+   **sem partição e sem nenhum dado**: nunca apaga nada que já exista.
+3. **Reinicie** (menu Iniciar → Reiniciar). Pronto: a partir daí o progresso fica guardado. Mantenha a
+   ISO no CD e o disco novo ligados na VM. O que foi feito antes desse reinício não é guardado, então
+   ligue a persistência logo no começo.
+
+No pendrive com Ventoy, use o [plugin de persistência do Ventoy](https://www.ventoy.net/en/plugin_persistence.html)
+com um arquivo de persistência de rótulo `persistence` (os arquivos prontos do Ventoy para Debian já
+vêm assim).
 
 ## Disco instalado para o VMware (quem gera a partir do código)
 
@@ -237,7 +262,7 @@ Não rode o build com uma VM ligada na mesma máquina: os dois juntos podem esgo
 - `config/includes.chroot/` - arquivos comuns aos formatos: front, apps, comandos, casos, arte
   - `usr/share/dohsec/academy/index.html` - o front do esboço
   - `usr/share/dohsec/front/` - a ponte (`bridge.js`, `bridge.css`) que liga o front ao sistema
-  - `usr/local/bin/` - `dohsec-api`, `dohsec-pty`, `dohsec-shell`, `lab`, `oque`, `cola`, `relatorio`, `conquistas`...
+  - `usr/local/bin/` - `dohsec-api`, `dohsec-pty`, `dohsec-shell`, `lab`, `oque`, `cola`, `relatorio`, `conquistas`, `dohsec-persistencia`...
   - `usr/share/dohsec/lab/` - os casos gerados (evidências e `casos.json`)
 - `config/package-lists/`, `config/hooks/live/`, `auto/config` - ISO (live-build)
 - `config/bootloaders/` - boot da ISO (sem menu, direto para o sistema)

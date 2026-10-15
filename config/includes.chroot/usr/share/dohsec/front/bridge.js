@@ -1105,5 +1105,23 @@
   }, true);
 
   // Nome do usuario (para os atalhos ~ do gerenciador de arquivos)
-  api('/api/sistema').then(s => { document.body.dataset.u = s.usuario; }).catch(() => {});
+  api('/api/sistema').then(s => {
+    document.body.dataset.u = s.usuario;
+    // ISO live sem persistencia: avisa uma vez, ao entrar no desktop, que o progresso nao fica salvo
+    if (s.live && !s.persistente) {
+      const avisaPersistencia = () => setTimeout(() => aviso('⚠️ Progresso nao sera salvo',
+        'Esta ISO roda da memoria. Para guardar: adicione um disco vazio a VM e rode sudo dohsec-persistencia'), 2500);
+      // Na janela, em captura: o front para o clique do botao Entrar antes de ele chegar ao botao
+      if (document.getElementById('enter')) {
+        const aoEntrar = e => {
+          if (!e.target.closest || !e.target.closest('#enter')) return;
+          window.removeEventListener('pointerdown', aoEntrar, true);
+          avisaPersistencia();
+        };
+        window.addEventListener('pointerdown', aoEntrar, true);
+      } else {
+        avisaPersistencia();
+      }
+    }
+  }).catch(() => {});
 })();
