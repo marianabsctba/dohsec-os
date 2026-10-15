@@ -3,7 +3,7 @@
 Distro Linux de treinamento em cibersegurança com tema Springfield, baseada em Debian 13 (trixie).
 Nasceu do esboço [Desafio_Homer](https://github.com/marianabsctba/Desafio_Homer): o front do esboço
 virou o próprio sistema operacional, com terminal, apps e ferramentas de verdade, e uma carreira que
-vai de **Estagiário** a **Assistente do Sr. Burns** resolvendo 48 casos de resposta a incidente.
+vai de **Estagiário** a **Assistente do Sr. Burns** resolvendo 58 casos de resposta a incidente.
 
 > Projeto de fã com caráter acadêmico e sem fins lucrativos. *Os Simpsons* pertencem a Matt Groening e à
 > 20th Television / Disney. Veja [Créditos e aviso legal](#créditos-e-aviso-legal).
@@ -73,9 +73,9 @@ ordem, cada promoção chega por memorando do Smithers e o progresso fica salvo
 | Cargo | Etapa | Casos |
 | --- | --- | --- |
 | 🍩 Estagiário | o terminal | 8 |
-| 🔧 Operador da Usina | o sistema por dentro | 13 |
-| 🛡️ Supervisor de Segurança | logs, tráfego e detecção | 15 |
-| 🔬 Chefe de Segurança | forense e endurecimento | 9 |
+| 🔧 Operador da Usina | o sistema por dentro | 16 |
+| 🛡️ Supervisor de Segurança | logs, tráfego e detecção | 18 |
+| 🔬 Chefe de Segurança | forense e endurecimento | 13 |
 | 👔 Assistente do Sr. Burns | Teste final do Sr. Burns | 3 |
 
 | | |
@@ -88,7 +88,8 @@ ordem, cada promoção chega por memorando do Smithers e o progresso fica salvo
 Casos de resposta a incidente da Usina com evidências de verdade para investigar no terminal: logs de
 SSH e de firewall, e-mails com cabeçalhos, capturas `.pcap`, CSVs de eventos do Windows e do Sysmon,
 `docker inspect`, crontabs, `sudo -l`, imagens com metadados e arquivos embutidos, relatórios do AIDE
-e do auditd. Tudo é sintético: IPs de documentação (RFC 5737), domínios `.test` e nenhum binário malicioso.
+e do auditd, histórico de navegador em SQLite, certificados TLS, downloads assinados com GPG, imagem de
+pendrive com arquivo apagado e cartão de memória formatado. Tudo é sintético: IPs de documentação (RFC 5737), domínios `.test` e nenhum binário malicioso.
 
 ![Laboratório](docs/prints/06-laboratorio.png)
 
@@ -101,14 +102,17 @@ e do auditd. Tudo é sintético: IPs de documentação (RFC 5737), domínios `.t
 | `lab revisar 1` | mostra o que aprendemos no caso |
 | `lab zerar` | apaga o progresso |
 
-As ferramentas instaladas para resolver os casos: `grep`, `awk`, `jq`, `sqlite3`, `file`, `xxd`,
-`strings`, `sha256sum`, `tcpdump`, `tshark`, Wireshark, `nmap`, YARA, ClamAV, `exiftool`, `binwalk`,
-`foremost`, Sleuth Kit, `testdisk`, `lynis`, `auditd`, AIDE, `ufw`, `nftables`, Suricata e Scapy.
+Ferramentas cobradas nos casos: `grep`, `awk`, `find`, `tar`, `jq`, `sqlite3`, `file`, `xxd`, `strings`,
+`sha256sum`, `strace`, `systemctl`, `journalctl`, `ss`, `tcpdump`, `tshark`, Wireshark, `nmap`, `openssl`,
+`gpg`, YARA, ClamAV, Suricata, `exiftool`, `binwalk`, `foremost`, Sleuth Kit (`fls`, `icat`), `lynis`,
+`ausearch` (auditd), AIDE e `ufw`. Também vêm instalados, para explorar livremente: `testdisk`, `nftables`,
+Scapy, `curl`, `wget`, `dig`, `whois`, `traceroute`, `htop` e `lsof`.
 O app **🧰 Ferramentas** mostra o que usar em cada etapa.
 
 As respostas ficam no `casos.json` só como hash. Para criar ou mudar casos, edite
-`scripts/gen-lab.py`, `scripts/lab_casos.py` ou `scripts/lab_esboco.py` e rode `python3 scripts/gen-lab.py`.
-Cada caso novo deve ter a própria semente (veja `lab_esboco.py`) para não mudar as respostas dos outros.
+`scripts/gen-lab.py`, `scripts/lab_casos.py`, `scripts/lab_esboco.py` ou `scripts/lab_ferramentas.py` e rode
+`python3 scripts/gen-lab.py` (precisa de Pillow, cryptography e gpg). Cada caso novo deve ter a própria
+semente (o decorador `semente` de `lab_esboco.py`) para não mudar as respostas dos outros.
 
 ## Comandos do terminal
 
@@ -268,7 +272,7 @@ Não rode o build com uma VM ligada na mesma máquina: os dois juntos podem esgo
 - `config/bootloaders/` - boot da ISO (sem menu, direto para o sistema)
 - `config/wsl/` - só do WSL: pacotes, primeiro uso, ícone, perfil do Terminal
 - `config/vm/dohsec-os.vmx` - modelo da VM do VMware
-- `scripts/gen-lab.py`, `lab_casos.py`, `lab_esboco.py` - geram os casos do Laboratório
+- `scripts/gen-lab.py`, `lab_casos.py`, `lab_esboco.py`, `lab_ferramentas.py` - geram os casos do Laboratório
 - `scripts/gen-xfwm4-theme.py`, `gen-ceu-noturno.py` - bordas das janelas e céu noturno
 - `scripts/build-wsl.sh`, `build-disco.sh`, `debian-builder.sh` - montagem de cada formato
 - `scripts/atualiza-vm.sh` - leva o código novo para a VM sem recriar o disco

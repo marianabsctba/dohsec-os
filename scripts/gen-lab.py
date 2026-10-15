@@ -498,6 +498,7 @@ def ordem():
     """Ordem dos casos no laboratorio (a numeracao sai daqui)."""
     import lab_casos as extra
     import lab_esboco as esboco
+    import lab_ferramentas as ferramentas
     return [
         # Nivel 0: Estagiario
         ("andando-pelas-pastas", aula_pastas), ("arquivos-escondidos", aula_escondidos),
@@ -505,14 +506,14 @@ def ordem():
         ("filtrando-colunas", aula_colunas),
         *extra.ESTAGIARIO,
         # Nivel 1: Operador
-        *extra.OPERADOR, *esboco.OPERADOR,
+        *extra.OPERADOR, *esboco.OPERADOR, *ferramentas.OPERADOR,
         # Nivel 2: Analista SOC
         ("forca-bruta", caso_forca_bruta), ("powershell-financeiro", caso_powershell),
         ("donutcoin", caso_donutcoin), ("pdf-exe", caso_pdf_exe),
         ("everyone-privilegiado", caso_everyone),
-        *extra.ANALISTA, *esboco.ANALISTA,
+        *extra.ANALISTA, *esboco.ANALISTA, *ferramentas.ANALISTA,
         # Nivel 3: Especialista
-        *extra.ESPECIALISTA, *esboco.ESPECIALISTA,
+        *extra.ESPECIALISTA, *esboco.ESPECIALISTA, *ferramentas.ESPECIALISTA,
         # Teste final do Sr. Burns
         *extra.FINAL,
     ]
